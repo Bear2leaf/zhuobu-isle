@@ -1,17 +1,19 @@
 import 'minigame-api-typings';
 import Renderer from './Renderer';
 import Device from './device/Device';
+import { mat4 } from 'gl-matrix';
 
 
 async function start(device: Device) {
 	device.onmessage = (data) => console.log("message from worker", data);
 	device.createWorker("dist/worker/index.js");
 	device.emit("hello");
+	console.log(mat4.create());
 	const renderer = new Renderer(device.contextGL);
 	await renderer.loadShaderSource(device);
 	renderer.initVAO()
 	function loop() {
-		renderer.prepare([0, 0, ...device.getWindowInfo()], [0.3, 0.3, 0.3, 1])
+		renderer.prepare([0, 0, ...device.getWindowInfo()], [0.3, 0.4, 0.3, 1])
 		renderer.render()
 		requestAnimationFrame(() => {
 			loop();

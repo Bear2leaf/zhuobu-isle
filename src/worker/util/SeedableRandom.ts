@@ -1,4 +1,4 @@
-import Alea from "../alea/index";
+import Alea from "alea";
 
 export default class SeedableRandom {
     private readonly prng;

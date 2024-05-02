@@ -1,3 +1,4 @@
+import { createPlan } from "./goap/planner";
 import BrowserWorker from "./interface/BrowserWorker";
 import MinigameWorker from "./interface/MinigameWorker";
 import WorkerInterface from "./interface/WorkerInterface";
@@ -7,8 +8,51 @@ import TriangleMesh from "./map/TriangleMesh";
 import PoissonDiskSampling from "./poisson/PoissonDiskSampling";
 import SeedableRandom from "./util/SeedableRandom";
 import { createNoise2D } from "./util/simplex-noise";
-
+ const initialState = {
+    axe_available: true,
+    player: {
+      axe_equipped: false,
+      wood: 0
+    }
+  };
+  
+   const actions = {
+    chopWood: {
+      condition: s => s.player.axe_equipped,
+      effect: s => {
+        s.player.wood++;
+        return s;
+      },
+      cost: s => 2
+    },
+    getAxe: {
+      condition: s => !s.player.axe_equipped && s.axe_available,
+      effect: s => {
+        s.player.axe_equipped = true;
+        return s;
+      },
+      cost: s => 2
+    },
+    gatherWood: {
+      condition: s => true,
+      effect: s => {
+        s.player.wood++;
+        return s;
+      },
+      cost: s => 5
+    }
+  };
+  
+   const goals = {
+    collectWood: {
+      label: "Collect Wood",
+      validate: (prevState, nextState) => {
+        return nextState.player.wood > prevState.player.wood;
+      }
+    }
+  };
 function createIsland() {
+    console.log(createPlan(initialState, actions, goals.collectWood))
     const spacing = 64;
     const distanceRNG = new SeedableRandom(42);
     const simplex = { noise2D: createNoise2D(() => distanceRNG.nextFloat()) };

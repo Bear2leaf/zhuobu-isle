@@ -8,13 +8,25 @@ import commonjs from '@rollup/plugin-commonjs';
  */
 const config = {
 	input: 'src/main.ts',
+	external: [
+		"lodash"
+	],
 	output: {
 		dir: 'dist',
 		format: 'es',
 		chunkFileNames: "[name].js",
-		manualChunks(id) {
+		manualChunks(id, info) {
 			if (id.includes('worker')) {
 				return 'worker/index'
+			}
+			if (id.includes('alea')) {
+				return 'worker/vendor';
+			}
+			if (id.includes('fastpriorityqueue')) {
+				return 'worker/vendor';
+			}
+			if (id.includes('lodash')) {
+				return 'worker/vendor';
 			}
 			if (id.includes('src')) {
 				return 'main';
@@ -25,7 +37,10 @@ const config = {
 	plugins: [
 		typescript({ target: "ES6", allowSyntheticDefaultImports: true }),
 		nodeResolve(),
-		commonjs(),
+		commonjs({
+			ignoreGlobal: true,
+			defaultIsModuleExports: true,
+		}),
 	]
 };
 export default config;
