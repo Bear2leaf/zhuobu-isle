@@ -22,7 +22,7 @@ export default class MinigameDevice implements Device {
         this.divideTimeBy = isDevTool ? 1 : 1000;
     }
 
-    getWindowInfo(): [number , number] {
+    getWindowInfo(): [number, number] {
         return [
             this.canvasGL.width,
             this.canvasGL.height
@@ -37,7 +37,7 @@ export default class MinigameDevice implements Device {
     async loadSubpackage() {
         return await new Promise<null>(resolve => {
             const task = wx.loadSubpackage({
-                name: "public",
+                name: "resources",
                 success(res: { errMsg: string }) {
                     console.debug("load resources success", res)
                     resolve(null);
@@ -64,10 +64,16 @@ export default class MinigameDevice implements Device {
     createWebAudioContext(): AudioContext {
         return wx.createWebAudioContext() as unknown as AudioContext;
     }
-    createWorker(url: string, onMessageCallback: (data: any, callback: (data: any) => void) => void) {
+    createWorker(url: string) {
         this.worker = wx.createWorker(url);
-        this.worker.onMessage((data) => onMessageCallback(data, this.worker!.postMessage.bind(this.worker)))
+        if (!this.onmessage) {
+            throw new Error("onmessage not set");
+        }
+        this.worker.onMessage((data) => this.onmessage(data))
+        this.emit = this.worker!.postMessage.bind(this.worker)
     }
+    onmessage: (data: any) =>void;
+    emit: (data: any) => void;
     terminateWorker(): void {
         this.worker?.terminate();
     }

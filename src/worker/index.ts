@@ -1,3 +1,6 @@
+import BrowserWorker from "./interface/BrowserWorker";
+import MinigameWorker from "./interface/MinigameWorker";
+import WorkerInterface from "./interface/WorkerInterface";
 import IslandMap from "./map/IslandMap";
 import MeshBuilder from "./map/MeshBuilder";
 import TriangleMesh from "./map/TriangleMesh";
@@ -25,5 +28,17 @@ function createIsland() {
     });
     return map;
 }
-console.log("hello from worker", createIsland())
-export {  };
+declare const worker: WechatMinigame.Worker;
+let device: WorkerInterface;
+if (typeof worker === 'undefined') {
+    device = new BrowserWorker();
+} else {
+    device = new MinigameWorker();
+}
+device.onmessage = function (data: any) {
+    if (data === "hello") {
+        device.emit(createIsland().r_biome)
+    }
+    console.log("message from main", data);
+}
+export { };

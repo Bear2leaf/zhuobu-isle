@@ -5,7 +5,9 @@ export default interface Device {
   contextGL: WebGL2RenderingContext;
   now(): number;
   loadSubpackage(): Promise<null>;
-  createWorker(url: string, onMessageCallback: (data: any, callback: (data: any) => void) => void): void;
+  emit: (data: any) => void;
+  onmessage: (data: any) =>void;
+  createWorker(url: string): void;
   terminateWorker(): void;
   createWebAudioContext(): AudioContext;
   onTouchStart(listener: Function): void;

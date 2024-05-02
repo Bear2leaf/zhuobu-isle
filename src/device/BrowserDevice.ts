@@ -39,18 +39,27 @@ export default class BrowserDevice implements Device {
     }
     async readImage(file: string): Promise<HTMLImageElement> {
         const image = new Image();
-        image.src = file.replace("public/", "/");
+        image.src = file;
         await new Promise((resolve, reject) => { image.onload = resolve; image.onerror = reject; });
         return image;
     }
     createWebAudioContext(): AudioContext {
         return new AudioContext();
     }
-    createWorker(url: string, onMessageCallback: (data: unknown, callback: (data: unknown) => void) => void): void {
+    createWorker(url: string): void {
         import("../worker/index")
+        if (this.worker) {
+            this.worker.terminate();
+        }
+        if (!this.onmessage) {
+            throw new Error("onmessage not set");
+        }
         this.worker = new Worker(url, {type: "module"});
-        this.worker.onmessage = (e: MessageEvent) => onMessageCallback(e.data, this.worker!.postMessage.bind(this.worker))
+        this.worker.onmessage = (e: MessageEvent) => this.onmessage(e.data);
+        this.emit = this.worker!.postMessage.bind(this.worker)
     }
+    onmessage: (data: any) =>void;
+    emit: (data: any) => void;
     terminateWorker(): void {
         this.worker?.terminate();
     }
@@ -92,15 +101,15 @@ export default class BrowserDevice implements Device {
         }
     }
     async readJson(file: string): Promise<Object> {
-        const response = await fetch(file.replace("public/", "/"));
+        const response = await fetch(file);
         return await response.json();
     }
     async readText(file: string): Promise<string> {
-        const response = await fetch(file.replace("public/", "/"));
+        const response = await fetch(file);
         return await response.text();
     }
     async readBuffer(file: string): Promise<ArrayBuffer> {
-        const response = await fetch(file.replace("public/", "/"));
+        const response = await fetch(file);
         return await response.arrayBuffer();
     }
 }
