@@ -1,0 +1,25 @@
+{
+  "name": "zhuobu-isle",
+  "version": "0.0.1",
+  "type": "module",
+  "scripts": {
+    "build": "rollup --config",
+    "dev": "rollup --config --watch",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Jake Chen",
+  "license": "ISC",
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^25.0.7",
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "@rollup/plugin-typescript": "^11.1.6",
+    "minigame-api-typings": "^3.8.4",
+    "rollup": "^4.17.2",
+    "tslib": "^2.6.2",
+    "typescript": "^5.4.5"
+  },
+  "dependencies": {
+    "alea": "^1.0.1",
+    "gl-matrix": "^3.4.3"
+  }
+}
