@@ -1,15 +1,22 @@
 import 'minigame-api-typings';
-
-async function mainH5 () {
-	const bar = (await import("./bar")).default;
-	const foo = (await import("./foo")).default;
-	console.log(foo, bar);
+const WORKER_URL = "dist/worker/index.js";
+async function mainH5() {
+	const BrowserDevice = (await import("./device/BrowserDevice")).default;
+	const canvasGL = document.createElement("canvas");
+	const canvas2D =document.createElement("canvas");
+	document.body.appendChild(canvasGL);
+	document.body.appendChild(canvas2D);
+	const device = new BrowserDevice(
+		canvasGL,
+		canvas2D
+	);
+	device.createWorker(WORKER_URL, console.log);
 }
 
 async function mainMinigame() {
-	const bar = (await import("./bar")).default;
-	const foo = (await import("./foo")).default;
-	console.log(foo, bar);
+	const MinigameDevice = (await import("./device/MinigameDevice")).default;
+	const device = new MinigameDevice();
+	device.createWorker(WORKER_URL, console.log);
 }
 export {
 	mainH5,

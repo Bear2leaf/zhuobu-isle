@@ -1,2 +1,2 @@
-import {mainMinigame} from "./dist/main";
+import { mainMinigame } from "./dist/main";
 mainMinigame();

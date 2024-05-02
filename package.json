@@ -13,6 +13,7 @@
     "@rollup/plugin-commonjs": "^25.0.7",
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@rollup/plugin-typescript": "^11.1.6",
+    "@types/lodash": "^4.17.0",
     "minigame-api-typings": "^3.8.4",
     "rollup": "^4.17.2",
     "tslib": "^2.6.2",
@@ -20,6 +21,8 @@
   },
   "dependencies": {
     "alea": "^1.0.1",
-    "gl-matrix": "^3.4.3"
+    "fastpriorityqueue": "^0.7.5",
+    "gl-matrix": "^3.4.3",
+    "lodash": "^4.17.21"
   }
 }
