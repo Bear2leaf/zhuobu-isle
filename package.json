@@ -10,6 +10,11 @@
   "author": "Jake Chen",
   "license": "ISC",
   "devDependencies": {
+    "@babel/core": "^7.24.5",
+    "@babel/plugin-proposal-class-static-block": "^7.21.0",
+    "@babel/plugin-transform-class-properties": "^7.24.1",
+    "@babel/preset-env": "^7.24.5",
+    "@rollup/plugin-babel": "^6.0.4",
     "@rollup/plugin-commonjs": "^25.0.7",
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@rollup/plugin-typescript": "^11.1.6",
@@ -23,6 +28,7 @@
     "alea": "^1.0.1",
     "fastpriorityqueue": "^0.7.5",
     "gl-matrix": "^3.4.3",
+    "kaboom": "^3000.1.17",
     "lodash": "^4.17.21"
   }
 }

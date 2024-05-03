@@ -2,10 +2,10 @@
 export default interface Device {
   reload(): void;
   getWindowInfo(): [number, number];
-  contextGL: WebGL2RenderingContext;
+  canvasGL: HTMLCanvasElement;
   now(): number;
   loadSubpackage(): Promise<null>;
-  emit: (data: any) => void;
+  sendmessage: (data: any) => void;
   onmessage: (data: any) =>void;
   createWorker(url: string): void;
   terminateWorker(): void;

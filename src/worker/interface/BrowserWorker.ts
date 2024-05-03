@@ -5,7 +5,7 @@ export default class BrowserWorker implements WorkerInterface {
         self.onmessage = result => this.onmessage!(result.data);
     }
     onmessage?: (data: any) => void;
-    emit(data: any): void {
+    postmessage(data: any): void {
         self.postMessage(data);
     }
 }

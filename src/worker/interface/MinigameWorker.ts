@@ -6,7 +6,7 @@ export default class MinigameWorker implements WorkerInterface {
         worker.onMessage((result: any) => this.onmessage!(result));
     }
     onmessage?: (data: any) => void;
-    emit(data: any): void {
+    postmessage(data: any): void {
         worker.postMessage(data);
     }
 }

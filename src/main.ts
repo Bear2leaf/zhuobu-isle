@@ -1,5 +1,4 @@
-import 'minigame-api-typings';
-import Renderer from './Renderer';
+import kaboom from 'kaboom';
 import Device from './device/Device';
 import { mat4 } from 'gl-matrix';
 
@@ -7,33 +6,36 @@ import { mat4 } from 'gl-matrix';
 async function start(device: Device) {
 	device.onmessage = (data) => console.log("message from worker", data);
 	device.createWorker("dist/worker/index.js");
-	device.emit("hello");
+	device.sendmessage("hello");
 	console.log(mat4.create());
-	const renderer = new Renderer(device.contextGL);
-	await renderer.loadShaderSource(device);
-	renderer.initVAO()
-	function loop() {
-		renderer.prepare([0, 0, ...device.getWindowInfo()], [0.3, 0.4, 0.3, 1])
-		renderer.render()
-		requestAnimationFrame(() => {
-			loop();
-		})
-	}
-	loop();
+	// const renderer = new Renderer(device.contextGL);
+	// await renderer.loadShaderSource(device);
+	// renderer.initVAO()
+	// function loop() {
+	// 	renderer.prepare([0, 0, ...device.getWindowInfo()], [0.4, 0.4, 0.3, 1])
+	// 	renderer.render()
+	// 	requestAnimationFrame(() => {
+	// 		loop();
+	// 	})
+	// }
+	// loop();
+	console.log(device.canvasGL)
+	const kb =kaboom({
+		canvas: device.canvasGL,
+		global: false,
+		background: '#3a3a3a'
+	});
+	kb.add([
+		kb.text("oh hi"),
+		kb.pos(80, 40),
+	])
 }
 
 
 
 async function mainH5() {
 	const BrowserDevice = (await import("./device/BrowserDevice")).default;
-	const canvasGL = document.createElement("canvas");
-	const canvas2D = document.createElement("canvas");
-	document.body.appendChild(canvasGL);
-	document.body.appendChild(canvas2D);
-	const device = new BrowserDevice(
-		canvasGL,
-		canvas2D
-	);
+	const device = new BrowserDevice();
 	return device;
 }
 

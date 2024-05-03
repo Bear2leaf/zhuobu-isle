@@ -81,7 +81,7 @@ if (typeof worker === 'undefined') {
 }
 device.onmessage = function (data: any) {
     if (data === "hello") {
-        device.emit(createIsland().r_biome)
+        device.postmessage(createIsland().r_biome)
     }
     console.log("message from main", data);
 }

@@ -3,19 +3,15 @@ export default class BrowserDevice implements Device {
     private worker?: Worker;
     private isMouseDown: boolean;
     readonly canvasGL: HTMLCanvasElement;
-    readonly canvas2D: HTMLCanvasElement;
-    readonly contextGL: WebGL2RenderingContext;
-    readonly context2D: CanvasRenderingContext2D;
-    constructor(canvasGL: HTMLCanvasElement, canvas2D: HTMLCanvasElement) {
+    constructor() {
+        const canvasGL = document.createElement("canvas");
+        document.body.appendChild(canvasGL);
         canvasGL.width = 512;
         canvasGL.height = 512;
-        canvas2D.style.display = "none";
-        this.contextGL = canvasGL.getContext("webgl2")!;
-        this.context2D = canvas2D.getContext("2d")!;
         this.canvasGL = canvasGL;
-        this.canvas2D = canvas2D;
         this.isMouseDown = false;
     }
+    contextGL: WebGL2RenderingContext;
     getWindowInfo(): [number, number] {
         return [
             this.canvasGL.width,
@@ -54,12 +50,12 @@ export default class BrowserDevice implements Device {
         if (!this.onmessage) {
             throw new Error("onmessage not set");
         }
-        this.worker = new Worker(url, {type: "module"});
+        this.worker = new Worker(url, { type: "module" });
         this.worker.onmessage = (e: MessageEvent) => this.onmessage(e.data);
-        this.emit = this.worker!.postMessage.bind(this.worker)
+        this.sendmessage = this.worker!.postMessage.bind(this.worker)
     }
-    onmessage: (data: any) =>void;
-    emit: (data: any) => void;
+    onmessage: (data: any) => void;
+    sendmessage: (data: any) => void;
     terminateWorker(): void {
         this.worker?.terminate();
     }

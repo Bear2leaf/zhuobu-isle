@@ -1,6 +1,7 @@
 import typescript from '@rollup/plugin-typescript';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
+import { babel } from '@rollup/plugin-babel';
 
 
 /**
@@ -8,9 +9,6 @@ import commonjs from '@rollup/plugin-commonjs';
  */
 const config = {
 	input: 'src/main.ts',
-	external: [
-		"lodash"
-	],
 	output: {
 		dir: 'dist',
 		format: 'es',
@@ -31,9 +29,13 @@ const config = {
 			if (id.includes('src')) {
 				return 'main';
 			}
+			if (id.includes('kaboom')) {
+				return 'kaboom';
+			}
 			return 'vendor';
 		}
 	},
+	presets: ['@babel/preset-env'],
 	plugins: [
 		typescript({ target: "ES6", allowSyntheticDefaultImports: true }),
 		nodeResolve(),
@@ -41,6 +43,13 @@ const config = {
 			ignoreGlobal: true,
 			defaultIsModuleExports: true,
 		}),
+		babel({
+			babelHelpers: 'bundled',
+			plugins: [
+				"@babel/plugin-proposal-class-static-block",
+				"@babel/plugin-transform-class-properties"
+			]
+		})
 	]
 };
 export default config;

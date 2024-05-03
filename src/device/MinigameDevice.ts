@@ -1,25 +1,15 @@
+import 'minigame-api-typings';
 import Device from "./Device";
 
 
 export default class MinigameDevice implements Device {
     private worker?: WechatMinigame.Worker;
-    private readonly divideTimeBy: number;
-    private readonly canvasGL: WechatMinigame.Canvas
-    private readonly canvas2D: WechatMinigame.Canvas;
-    readonly contextGL: WebGL2RenderingContext;
-    readonly context2D: CanvasRenderingContext2D;
+    readonly canvasGL: HTMLCanvasElement
     constructor() {
-        this.canvasGL = wx.createCanvas()
-        this.canvas2D = wx.createCanvas()
-        this.contextGL = this.canvasGL.getContext("webgl2")!;
-        this.context2D = this.canvas2D.getContext("2d")!;
+        this.canvasGL = document.createElement("canvas") as unknown as HTMLCanvasElement
         const info = wx.getWindowInfo();
         (this.canvasGL.width) = info.windowWidth * info.pixelRatio;
         (this.canvasGL.height) = info.windowHeight * info.pixelRatio;
-        (this.canvas2D.width) = info.windowWidth * info.pixelRatio;
-        (this.canvas2D.height) = info.windowHeight * info.pixelRatio;
-        const isDevTool = wx.getSystemInfoSync().platform === "devtools";
-        this.divideTimeBy = isDevTool ? 1 : 1000;
     }
 
     getWindowInfo(): [number, number] {
@@ -29,7 +19,7 @@ export default class MinigameDevice implements Device {
         ];
     }
     now(): number {
-        return wx.getPerformance().now() / this.divideTimeBy;
+        return window.performance.now();
     }
     reload(): void {
         throw new Error("MiniGame not support reload.")
@@ -70,10 +60,10 @@ export default class MinigameDevice implements Device {
             throw new Error("onmessage not set");
         }
         this.worker.onMessage((data) => this.onmessage(data))
-        this.emit = this.worker!.postMessage.bind(this.worker)
+        this.sendmessage = this.worker!.postMessage.bind(this.worker)
     }
-    onmessage: (data: any) =>void;
-    emit: (data: any) => void;
+    onmessage: (data: any) => void;
+    sendmessage: (data: any) => void;
     terminateWorker(): void {
         this.worker?.terminate();
     }
