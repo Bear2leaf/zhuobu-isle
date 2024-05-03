@@ -8,26 +8,9 @@ async function start(device: Device) {
 	device.createWorker("dist/worker/index.js");
 	device.sendmessage("hello");
 	console.log(mat4.create());
-	// const renderer = new Renderer(device.contextGL);
-	// await renderer.loadShaderSource(device);
-	// renderer.initVAO()
-	// function loop() {
-	// 	renderer.prepare([0, 0, ...device.getWindowInfo()], [0.4, 0.4, 0.3, 1])
-	// 	renderer.render()
-	// 	requestAnimationFrame(() => {
-	// 		loop();
-	// 	})
-	// }
-	// loop();
-	console.log(device.canvasGL)
-	const kb =kaboom({
-		canvas: device.canvasGL,
-		global: false,
-		background: '#3a3a3a'
-	});
-	kb.add([
-		kb.text("oh hi"),
-		kb.pos(80, 40),
+	device.engine.add([
+		device.engine.text("oh hi"),
+		device.engine.pos(80, 40),
 	])
 }
 

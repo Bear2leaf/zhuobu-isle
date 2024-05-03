@@ -1,28 +1,22 @@
 import Device from "./Device";
-export default class BrowserDevice implements Device {
+export default class BrowserDevice extends Device {
     private worker?: Worker;
     private isMouseDown: boolean;
-    readonly canvasGL: HTMLCanvasElement;
+    private readonly windowInfo: readonly [number, number];
+    private readonly canvas: HTMLCanvasElement
     constructor() {
         const canvasGL = document.createElement("canvas");
         document.body.appendChild(canvasGL);
         canvasGL.width = 512;
         canvasGL.height = 512;
-        this.canvasGL = canvasGL;
+        super(canvasGL)
+        this.canvas = canvasGL;
+        this.windowInfo = [canvasGL.width, canvasGL.height];
         this.isMouseDown = false;
     }
     contextGL: WebGL2RenderingContext;
-    getWindowInfo(): [number, number] {
-        return [
-            this.canvasGL.width,
-            this.canvasGL.height
-        ]
-    }
-    hideCanvas() {
-        this.canvasGL.style.display = "none";
-    }
-    showCanvas() {
-        this.canvasGL.style.display = "block;"
+    getWindowInfo(): readonly [number, number] {
+        return this.windowInfo
     }
     now(): number {
         return performance.now();
@@ -61,18 +55,18 @@ export default class BrowserDevice implements Device {
     }
     onTouchStart(listener: Function): void {
         const windowInfo = this.getWindowInfo();
-        this.canvasGL.onpointerdown = (e: PointerEvent) => {
+        this.canvas.onpointerdown = (e: PointerEvent) => {
             this.isMouseDown = true;
-            const rect = this.canvasGL.getBoundingClientRect();
+            const rect = this.canvas.getBoundingClientRect();
             const scaleRatio = windowInfo[0] / rect.width;
             listener({ x: e.clientX * scaleRatio - rect.left, y: e.clientY * scaleRatio - rect.top });
         };
     }
     onTouchMove(listener: Function): void {
         const windowInfo = this.getWindowInfo();
-        this.canvasGL.onpointermove = (e: PointerEvent) => {
+        this.canvas.onpointermove = (e: PointerEvent) => {
             if (this.isMouseDown) {
-                const rect = this.canvasGL.getBoundingClientRect();
+                const rect = this.canvas.getBoundingClientRect();
                 const scaleRatio = windowInfo[0] / rect.width;
                 listener({ x: e.clientX * scaleRatio - rect.left, y: e.clientY * scaleRatio - rect.top });
             }
@@ -80,18 +74,18 @@ export default class BrowserDevice implements Device {
     }
     onTouchEnd(listener: Function): void {
         const windowInfo = this.getWindowInfo();
-        this.canvasGL.onpointerup = (e: PointerEvent) => {
+        this.canvas.onpointerup = (e: PointerEvent) => {
             this.isMouseDown = false;
-            const rect = this.canvasGL.getBoundingClientRect();
+            const rect = this.canvas.getBoundingClientRect();
             const scaleRatio = windowInfo[0] / rect.width;
             listener({ x: e.clientX * scaleRatio - rect.left, y: e.clientY * scaleRatio - rect.top });
         }
     }
     onTouchCancel(listener: Function): void {
         const windowInfo = this.getWindowInfo();
-        this.canvasGL.onpointercancel = (e: PointerEvent) => {
+        this.canvas.onpointercancel = (e: PointerEvent) => {
             this.isMouseDown = false;
-            const rect = this.canvasGL.getBoundingClientRect();
+            const rect = this.canvas.getBoundingClientRect();
             const scaleRatio = windowInfo[0] / rect.width;
             listener({ x: e.clientX * scaleRatio - rect.left, y: e.clientY * scaleRatio - rect.top });
         }

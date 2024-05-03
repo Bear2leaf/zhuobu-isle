@@ -2,21 +2,19 @@ import 'minigame-api-typings';
 import Device from "./Device";
 
 
-export default class MinigameDevice implements Device {
+export default class MinigameDevice extends Device {
     private worker?: WechatMinigame.Worker;
-    readonly canvasGL: HTMLCanvasElement
+    private readonly windowInfo: readonly [number, number];
     constructor() {
-        this.canvasGL = document.createElement("canvas") as unknown as HTMLCanvasElement
+        const canvasGL = document.createElement("canvas");
         const info = wx.getWindowInfo();
-        (this.canvasGL.width) = info.windowWidth * info.pixelRatio;
-        (this.canvasGL.height) = info.windowHeight * info.pixelRatio;
+        (canvasGL.width) = info.windowWidth * info.pixelRatio;
+        (canvasGL.height) = info.windowHeight * info.pixelRatio;
+        super(canvasGL)
     }
 
-    getWindowInfo(): [number, number] {
-        return [
-            this.canvasGL.width,
-            this.canvasGL.height
-        ];
+    getWindowInfo(): readonly [number, number] {
+        return this.windowInfo;
     }
     now(): number {
         return window.performance.now();
