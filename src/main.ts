@@ -1,4 +1,3 @@
-import kaboom from 'kaboom';
 import Device from './device/Device';
 import { mat4 } from 'gl-matrix';
 
@@ -6,7 +5,7 @@ import { mat4 } from 'gl-matrix';
 async function start(device: Device) {
 	device.onmessage = (data) => console.log("message from worker", data);
 	device.createWorker("dist/worker/index.js");
-	device.sendmessage("hello");
+	device.sendmessage({type: "hello"});
 	console.log(mat4.create());
 	device.engine.add([
 		device.engine.text("oh hi"),

@@ -13,8 +13,8 @@ export default abstract class Device {
   abstract getWindowInfo(): readonly [number, number];
   abstract now(): number;
   abstract loadSubpackage(): Promise<null>;
-  abstract sendmessage: (data: any) => void;
-  abstract onmessage: (data: any) => void;
+  abstract sendmessage: (data: MainMessage) => void;
+  abstract onmessage: (data: WorkerMessage) => void;
   abstract createWorker(url: string): void;
   abstract terminateWorker(): void;
   abstract createWebAudioContext(): AudioContext;
