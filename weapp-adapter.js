@@ -495,6 +495,8 @@
 	    key: 'getBoundingClientRect',
 	    value: function getBoundingClientRect() {
 	      return {
+	        x: 0,
+	        y: 0,
 	        top: 0,
 	        left: 0,
 	        width: _WindowProperties.innerWidth,
@@ -518,30 +520,10 @@
 	  }, {
 	    key: 'addEventListener',
 	    value: function addEventListener() {
+	      var _document;
+
 	      (0, _tempFuncWrapper.tempFuncWrapper)('HTMLElement.addEventListener', [].concat(Array.prototype.slice.call(arguments)));
-	      // if (arguments[0] === 'mousedown' || arguments[0] === 'touchstart' || arguments[0] === 'click' && this === document.canvas) {
-	      //   wx.onTouchStart((result) => {
-	      //     const event = {
-	      //       button: 0,
-	      //       TouchList: result.touches,
-	      //       sourceCapabilities: null,
-	      //       preventDefault: () => { },
-	      //     };
-	      //     console.log(arguments[1], event)
-	      //     arguments[1](event);
-	      //   })
-	      // } else if (arguments[0] === 'mouseup' || arguments[0] === 'touchend') {
-	      //   wx.onTouchEnd((result) => {
-	      //     const event = {
-	      //       button: 0,
-	      //       TouchList: result.touches,
-	      //       sourceCapabilities: null,
-	      //       preventDefault: () => { },
-	      //     };
-	      //     console.log(arguments[1], event)
-	      //     arguments[1](event);
-	      //   })
-	      // }
+	      (_document = document).addEventListener.apply(_document, arguments);
 	    }
 	  }, {
 	    key: 'clientWidth',
@@ -586,23 +568,23 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-	var ELement = function (_Node) {
-	  _inherits(ELement, _Node);
+	var Element = function (_Node) {
+	  _inherits(Element, _Node);
 
-	  function ELement() {
-	    _classCallCheck(this, ELement);
+	  function Element() {
+	    _classCallCheck(this, Element);
 
-	    var _this = _possibleConstructorReturn(this, (ELement.__proto__ || Object.getPrototypeOf(ELement)).call(this));
+	    var _this = _possibleConstructorReturn(this, (Element.__proto__ || Object.getPrototypeOf(Element)).call(this));
 
 	    _this.className = '';
 	    _this.children = [];
 	    return _this;
 	  }
 
-	  return ELement;
+	  return Element;
 	}(_Node3.default);
 
-	exports.default = ELement;
+	exports.default = Element;
 
 /***/ }),
 /* 7 */
@@ -1104,16 +1086,6 @@
 	  }
 	  var _getContext = canvas.getContext;
 
-	  canvas.getBoundingClientRect = function () {
-	    var ret = {
-	      top: 0,
-	      left: 0,
-	      width: window.innerWidth,
-	      height: window.innerHeight
-	    };
-	    return ret;
-	  };
-
 	  return canvas;
 	}
 
@@ -1396,37 +1368,35 @@
 
 /***/ }),
 /* 20 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
 	"use strict";
 
 	Object.defineProperty(exports, "__esModule", {
-	  value: true
+	    value: true
 	});
-
-	var _Image2 = __webpack_require__(11);
-
-	var _Image3 = _interopRequireDefault(_Image2);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var ImageData = function (_Image) {
-	  _inherits(ImageData, _Image);
-
-	  function ImageData() {
+	var ImageData = function ImageData(data, w, h) {
 	    _classCallCheck(this, ImageData);
 
-	    return _possibleConstructorReturn(this, (ImageData.__proto__ || Object.getPrototypeOf(ImageData)).apply(this, arguments));
-	  }
-
-	  return ImageData;
-	}(_Image3.default);
+	    if (!window.canvas2d) {
+	        var canvas2d = document.createElement("canvas");
+	        window.canvas2d = canvas2d;
+	        var canvas2dCtx = canvas2d.getContext("2d");
+	        window.canvas2dCtx = canvas2dCtx;
+	    }
+	    var imageData = window.canvas2dCtx.createImageData(w, h);
+	    for (var i = 0; i < imageData.data.length; i += 4) {
+	        imageData.data[i + 0] = data[i + 0];
+	        imageData.data[i + 1] = data[i + 1];
+	        imageData.data[i + 2] = data[i + 2];
+	        imageData.data[i + 3] = data[i + 3];
+	    }
+	    window.canvas2dCtx.putImageData(imageData, w, h);
+	    return imageData;
+	};
 
 	exports.default = ImageData;
 

@@ -6,7 +6,6 @@ export default abstract class Device {
     this.engine = kaboom({
       canvas,
       global: false,
-      background: '#3a3a3a'
     });
   }
   abstract reload(): void;

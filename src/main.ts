@@ -7,10 +7,12 @@ async function start(device: Device) {
 	device.createWorker("dist/worker/index.js");
 	device.sendmessage({type: "hello"});
 	console.log(mat4.create());
-	device.engine.add([
+	const text = device.engine.add([
 		device.engine.text("oh hi"),
 		device.engine.pos(80, 40),
 	])
+	device.engine.onTouchStart((n) => text.text = `${n.x}, ${n.y}`)
+
 }
 
 

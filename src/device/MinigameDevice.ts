@@ -11,6 +11,7 @@ export default class MinigameDevice extends Device {
         (canvasGL.width) = info.windowWidth * info.pixelRatio;
         (canvasGL.height) = info.windowHeight * info.pixelRatio;
         super(canvasGL)
+        this.windowInfo = [info.windowWidth, info.windowHeight];
     }
 
     getWindowInfo(): readonly [number, number] {
