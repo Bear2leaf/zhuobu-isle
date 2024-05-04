@@ -46,8 +46,8 @@ const config = {
 		babel({
 			babelHelpers: 'bundled',
 			plugins: [
-				"@babel/plugin-proposal-class-static-block",
-				"@babel/plugin-transform-class-properties"
+				"@babel/plugin-transform-class-properties",
+				"@babel/plugin-transform-class-static-block"
 			]
 		})
 	]

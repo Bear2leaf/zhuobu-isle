@@ -8,8 +8,8 @@ async function start(device: Device) {
 	device.sendmessage({type: "hello"});
 	console.log(mat4.create());
 	const text = device.engine.add([
-		device.engine.text("oh hi"),
-		device.engine.pos(80, 40),
+		device.engine.text("oh hi, 你好👋"),
+		device.engine.pos(0, 120),
 	])
 	device.engine.onTouchStart((n) => text.text = `${n.x}, ${n.y}`)
 
