@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "build": "esbuild src/main.ts src/worker/index.ts --outdir=dist --bundle --format=esm",
-    "dev": "esbuild src/main.ts src/worker/index.ts --outdir=dist --bundle --format=esm --watch --servedir=.",
+    "dev": "esbuild --sourcemap src/main.ts src/worker/index.ts --outdir=dist --bundle --format=esm --watch --servedir=.",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Jake Chen",
@@ -19,7 +19,6 @@
     "alea": "^1.0.1",
     "fastpriorityqueue": "^0.7.5",
     "gl-matrix": "^3.4.3",
-    "kaboom": "^3000.1.17",
     "lodash": "^4.17.21"
   }
 }

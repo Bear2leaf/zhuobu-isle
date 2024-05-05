@@ -1,20 +1,29 @@
 import Device from "./Device";
-export default class BrowserDevice extends Device {
+export default class BrowserDevice implements Device {
     private worker?: Worker;
     private isMouseDown: boolean;
     private readonly windowInfo: readonly [number, number];
     private readonly canvas: HTMLCanvasElement
+    private contextCreated: boolean = false;
     constructor() {
-        const canvasGL = document.createElement("canvas");
-        document.body.appendChild(canvasGL);
-        canvasGL.width = 512;
-        canvasGL.height = 512;
-        super(canvasGL)
-        this.canvas = canvasGL;
-        this.windowInfo = [canvasGL.width, canvasGL.height];
+        this.canvas = document.createElement("canvas");
+        document.body.appendChild(this.canvas);
+        this.canvas.width = 512 * devicePixelRatio;
+        this.canvas.height = 512 * devicePixelRatio;
+        this.windowInfo = [this.canvas.width, this.canvas.height];
         this.isMouseDown = false;
     }
-    contextGL: WebGL2RenderingContext;
+    getContext(): WebGL2RenderingContext {
+        const context = this.canvas.getContext("webgl2");
+        if (!context) {
+            throw new Error("context not created");
+        }
+        if (this.contextCreated) {
+            throw new Error("context already created");
+        }
+        this.contextCreated = true;
+        return context;
+    }
     getWindowInfo(): readonly [number, number] {
         return this.windowInfo
     }

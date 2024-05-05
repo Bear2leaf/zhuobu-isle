@@ -2,23 +2,38 @@ import 'minigame-api-typings';
 import Device from "./Device";
 
 
-export default class MinigameDevice extends Device {
+export default class MinigameDevice implements Device {
     private worker?: WechatMinigame.Worker;
     private readonly windowInfo: readonly [number, number];
+    private readonly canvas: WechatMinigame.Canvas
+    private contextCreated: boolean = false;
+    private readonly divideTimeBy: number;
     constructor() {
-        const canvasGL = document.createElement("canvas");
+        this.canvas = wx.createCanvas();
         const info = wx.getWindowInfo();
-        (canvasGL.width) = info.windowWidth * info.pixelRatio;
-        (canvasGL.height) = info.windowHeight * info.pixelRatio;
-        super(canvasGL)
-        this.windowInfo = [info.windowWidth, info.windowHeight];
+        (this.canvas.width) = info.windowWidth * info.pixelRatio;
+        (this.canvas.height) = info.windowHeight * info.pixelRatio;
+        this.windowInfo = [this.canvas.width, this.canvas.height];
+        const isDevTool = wx.getSystemInfoSync().platform === "devtools";
+        this.divideTimeBy = isDevTool ? 1 : 1000;
     }
-
+    getContext(): WebGL2RenderingContext {
+        const context = this.canvas.getContext("webgl2");
+        if (!context) {
+            throw new Error("context not created");
+        }
+        if (this.contextCreated) {
+            throw new Error("context already created");
+        }
+        this.contextCreated = true;
+        return context;
+    }
     getWindowInfo(): readonly [number, number] {
         return this.windowInfo;
     }
     now(): number {
-        return window.performance.now();
+        return wx.getPerformance().now() / this.divideTimeBy;
+
     }
     reload(): void {
         throw new Error("MiniGame not support reload.")
