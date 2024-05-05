@@ -5,13 +5,17 @@ import { mat4 } from 'gl-matrix';
 async function start(device: Device) {
 	device.onmessage = (data) => console.log("message from worker", data);
 	device.createWorker("dist/worker/index.js");
-	device.sendmessage({type: "hello"});
+	device.sendmessage({ type: "hello" });
 	console.log(mat4.create());
 	const text = device.engine.add([
 		device.engine.text("oh hi, 你好👋"),
 		device.engine.pos(0, 120),
 	])
-	device.engine.onTouchStart((n) => text.text = `${n.x}, ${n.y}`)
+	device.engine.onMouseDown((n) => {
+		const {x, y} = device.engine.mousePos();
+		text.text = `${x}, ${y}`
+	})
+
 
 }
 

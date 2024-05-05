@@ -1,4 +1,5 @@
 import kaboom, { KaboomCtx } from "kaboom";
+import { MainMessage, WorkerMessage } from "../message";
 
 export default abstract class Device {
   readonly engine: KaboomCtx;

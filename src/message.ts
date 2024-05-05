@@ -1,8 +1,9 @@
-declare type WorkerMessage = {
+
+export type WorkerMessage = {
     type: "worker"
     data: number[]
 }
 
-declare type MainMessage = {
+export type MainMessage = {
     type: "hello"
 }

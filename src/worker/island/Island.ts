@@ -32,7 +32,7 @@ import { NoiseFunction2D } from '../util/simplex-noise';
  * noisyEdgeOptions: {length, amplitude, seed}
  * makeRandInt: function(seed) -> function(N) -> an int from 0 to N-1
  */
-class IslandMap {
+class Island {
     readonly mesh: TriangleMesh;
     private readonly makeRandInt: (seed?: number) => (n: number) => number;
     private readonly r_ocean: boolean[];
@@ -142,4 +142,4 @@ class IslandMap {
     }
 }
 
-export default IslandMap;
+export default Island;

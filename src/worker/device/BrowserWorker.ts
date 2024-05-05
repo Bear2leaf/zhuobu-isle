@@ -1,6 +1,7 @@
-import WorkerInterface from "./WorkerInterface.js";
+import { MainMessage, WorkerMessage } from "../../message.js";
+import WorkerDevice from "./WorkerDevice.js";
 
-export default class BrowserWorker implements WorkerInterface {
+export default class BrowserWorker implements WorkerDevice {
     constructor() {
         self.onmessage = (result: { data: MainMessage; }) => this.onmessage!(result.data);
     }

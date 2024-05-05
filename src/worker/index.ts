@@ -1,10 +1,10 @@
 import { createPlan } from "./goap/planner";
-import BrowserWorker from "./interface/BrowserWorker";
-import MinigameWorker from "./interface/MinigameWorker";
-import WorkerInterface from "./interface/WorkerInterface";
-import IslandMap from "./map/IslandMap";
-import MeshBuilder from "./map/MeshBuilder";
-import TriangleMesh from "./map/TriangleMesh";
+import BrowserWorker from "./device/BrowserWorker";
+import MinigameWorker from "./device/MinigameWorker";
+import WorkerDevice from "./device/WorkerDevice";
+import Island from "./island/Island";
+import MeshBuilder from "./island/MeshBuilder";
+import TriangleMesh from "./island/TriangleMesh";
 import PoissonDiskSampling from "./poisson/PoissonDiskSampling";
 import SeedableRandom from "./util/SeedableRandom";
 import { createNoise2D } from "./util/simplex-noise";
@@ -57,7 +57,7 @@ function createIsland() {
   const distanceRNG = new SeedableRandom(42);
   const simplex = { noise2D: createNoise2D(() => distanceRNG.nextFloat()) };
   const rng = new SeedableRandom(25);
-  const map = new IslandMap(new TriangleMesh(new MeshBuilder({ boundarySpacing: spacing }).addPoisson(PoissonDiskSampling, spacing, () => rng.nextFloat()).create()), {
+  const map = new Island(new TriangleMesh(new MeshBuilder({ boundarySpacing: spacing }).addPoisson(PoissonDiskSampling, spacing, () => rng.nextFloat()).create()), {
     amplitude: 0.5,
     length: 4,
   }, () => (N) => Math.round(rng.nextFloat() * N));
@@ -73,7 +73,7 @@ function createIsland() {
   return map;
 }
 declare const worker: WechatMinigame.Worker;
-let device: WorkerInterface;
+let device: WorkerDevice;
 if (typeof worker === 'undefined') {
   device = new BrowserWorker();
 } else {

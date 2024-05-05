@@ -1,7 +1,8 @@
-import WorkerInterface from "./WorkerInterface.js";
+import { MainMessage, WorkerMessage } from "../../message.js";
+import WorkerDevice from "./WorkerDevice.js";
 
 declare const worker: WechatMinigame.Worker;
-export default class MinigameWorker implements WorkerInterface {
+export default class MinigameWorker implements WorkerDevice {
     constructor() {
         worker.onMessage((result) => this.onmessage!(result as any));
     }
