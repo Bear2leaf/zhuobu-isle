@@ -68,14 +68,17 @@ export default abstract class Renderer {
             throw new Error("Failed to compile fragment shader");
         }
         context.attachShader(program, fragmentShader);
+        context.deleteShader(fragmentShader)
+
+    }
+    protected linkProgram() {
+        const context = this.context;
+        const program = this.handler.program;
         context.linkProgram(program);
         if (!context.getProgramParameter(program, context.LINK_STATUS)) {
             console.error(context.getProgramInfoLog(program));
             throw new Error("Failed to link program");
         }
-        context.deleteShader(vertexShader)
-        context.deleteShader(fragmentShader)
-
     }
     abstract loadTextureSource(device: Device): Promise<void>;
     abstract initVAO(): void;
@@ -92,5 +95,6 @@ export default abstract class Renderer {
         context.bindVertexArray(this.handler.vao);
         context.bindBuffer(context.ARRAY_BUFFER, this.handler.buffer);
         context.drawArrays(context.TRIANGLES, 0, this.count);
+        context.bindBuffer(context.ARRAY_BUFFER, null);
     }
 }
