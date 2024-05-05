@@ -1,14 +1,19 @@
 
 
-import Device from "./device/Device";
+import Device from "../device/Device";
 
 
-export default class Renderer {
-    private readonly context: WebGL2RenderingContext;
-    private readonly vao: WebGLVertexArrayObject;
-    private readonly buffer: WebGLBuffer;
-    private readonly program: WebGLProgram;
-    constructor(context: WebGL2RenderingContext) {
+export default abstract class Renderer {
+    protected readonly context: WebGL2RenderingContext;
+    protected readonly handler: {
+        readonly vao: WebGLVertexArrayObject,
+        readonly buffer: WebGLBuffer,
+        readonly program: WebGLProgram,
+        readonly texture: WebGLTexture,
+    }
+    protected count: number = 0;
+    constructor(context: WebGL2RenderingContext, private readonly name: string) {
+        this.context = context;
         const program = context.createProgram();
         if (program === null) {
             throw new Error("program not create");
@@ -21,19 +26,26 @@ export default class Renderer {
         if (buffer === null) {
             throw new Error("buffer not create");
         }
-        this.program = program;
-        this.vao = vao;
-        this.buffer = buffer;
-        this.context = context;
+        const texture = context.createTexture();
+        if (texture === null) {
+            throw new Error("texture not create");
+        }
+        this.handler = {
+            program,
+            vao,
+            buffer,
+            texture
+        }
     }
     async loadShaderSource(device: Device) {
-        const vertexShaderSource = await device.readText(`resources/glsl/demo.vert.sk`)
-        const fragmentShaderSource = await device.readText(`resources/glsl/demo.frag.sk`)
+        const name: string = this.name;
+        const vertexShaderSource = await device.readText(`resources/glsl/${name}.vert.sk`)
+        const fragmentShaderSource = await device.readText(`resources/glsl/${name}.frag.sk`)
         const context = this.context;
         if (vertexShaderSource === undefined || fragmentShaderSource === undefined) {
             throw new Error("Shader source is undefined");
         }
-        const program = this.program;
+        const program = this.handler.program;
         const vertexShader = context.createShader(context.VERTEX_SHADER);
         if (vertexShader === null) {
             throw new Error("Failed to create vertex shader");
@@ -65,19 +77,8 @@ export default class Renderer {
         context.deleteShader(fragmentShader)
 
     }
-	initVAO() {
-        const context = this.context;
-        const vao = this.vao;
-        const buffer = this.buffer;
-        context.bindVertexArray(vao);
-        const attributeLocation = context.getAttribLocation(this.program, "a_position");
-        context.enableVertexAttribArray(attributeLocation);
-        context.bindBuffer(context.ARRAY_BUFFER, buffer);
-        context.bufferData(context.ARRAY_BUFFER, new Float32Array([0, 0, 0.5, 0, 0.5, 0.5]), context.STATIC_DRAW);
-        context.vertexAttribPointer(attributeLocation, 2, context.FLOAT, false, 0, 0);
-        context.bindVertexArray(null);
-        context.bindBuffer(context.ARRAY_BUFFER, null)
-	}
+    abstract loadTextureSource(device: Device): Promise<void>;
+    abstract initVAO(): void;
     prepare(viewport: [number, number, number, number], color: [r: number, g: number, b: number, a: number]) {
         const context = this.context;
         context.viewport(...viewport);
@@ -85,11 +86,11 @@ export default class Renderer {
         context.clearColor(...color);
         context.clear(context.COLOR_BUFFER_BIT | context.DEPTH_BUFFER_BIT | context.STENCIL_BUFFER_BIT);
     }
-	render() {
+    render() {
         const context = this.context
-        context.useProgram(this.program);
-		context.bindVertexArray(this.vao);
-		context.bindBuffer(context.ARRAY_BUFFER, this.buffer);
-        context.drawArrays(context.TRIANGLES, 0, 3);
-	}
+        context.useProgram(this.handler.program);
+        context.bindVertexArray(this.handler.vao);
+        context.bindBuffer(context.ARRAY_BUFFER, this.handler.buffer);
+        context.drawArrays(context.TRIANGLES, 0, this.count);
+    }
 }

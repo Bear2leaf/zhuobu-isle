@@ -2,15 +2,22 @@ import Device from "./Device";
 export default class BrowserDevice implements Device {
     private worker?: Worker;
     private isMouseDown: boolean;
-    private readonly windowInfo: readonly [number, number];
+    private readonly windowInfo: [number, number];
     private readonly canvas: HTMLCanvasElement
     private contextCreated: boolean = false;
     constructor() {
         this.canvas = document.createElement("canvas");
         document.body.appendChild(this.canvas);
-        this.canvas.width = 512 * devicePixelRatio;
-        this.canvas.height = 512 * devicePixelRatio;
+        this.canvas.width = window.innerWidth * devicePixelRatio
+        this.canvas.height = window.innerHeight * devicePixelRatio
         this.windowInfo = [this.canvas.width, this.canvas.height];
+
+        window.addEventListener('resize', () => {
+            this.canvas.width = window.innerWidth * devicePixelRatio
+            this.canvas.height = window.innerHeight * devicePixelRatio
+            this.windowInfo[0] = this.canvas.width;
+            this.windowInfo[1] = this.canvas.height;
+        })
         this.isMouseDown = false;
     }
     getContext(): WebGL2RenderingContext {

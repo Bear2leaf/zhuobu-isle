@@ -1,0 +1,11 @@
+#version 300 es
+precision highp float;
+
+uniform sampler2D u_texture;
+
+layout(location = 0) out vec4 o_color;
+
+void main() {
+    o_color = texture(u_texture, gl_FragCoord.xy / 1024.0f);
+    // o_color = vec4(gl_FragCoord.xyz / 1024.0f, 1.0f);
+}
