@@ -1,7 +1,6 @@
 import Device from './device/Device';
 import { mat4 } from 'gl-matrix';
 
-
 async function start(device: Device) {
 	device.onmessage = (data) => console.log("message from worker", data);
 	device.createWorker("dist/worker/index.js");
@@ -46,7 +45,11 @@ async function start(device: Device) {
 		[2, 3],
 		[3, 3]
 	]);
-	k.loadSprite("creatures", "resources/image/gfx/character.png", {
+	k.loadSprite("buttons", "resources/image/button/arcade_button.png", {
+		sliceX: 8,
+		sliceY: 6
+	});
+	k.loadSprite("planer", "resources/image/gfx/character.png", {
 		frames: [
 			...walkdown,
 			...walkright,
@@ -57,7 +60,7 @@ async function start(device: Device) {
 			idle: {
 				from: 0,
 				to: 0,
-				loop: true
+				loop: true,
 			},
 			walkright: {
 				from: 4,
@@ -82,8 +85,14 @@ async function start(device: Device) {
 		}
 	})
 	const level = k.addLevel([
-		"asd",
-		"fff",
+		"aaaaaaaaaaa",
+		"bbbbbbbbbbb",
+		"aaaaaaaaaaa",
+		"bbbbbbbbbbb",
+		"aaaaaaaaaaa",
+		"bbbbbbbbbbb",
+		"aaaaaaaaaaa",
+		"bbbbbbbbbbb",
 	], {
 		tileHeight: 16,
 		tileWidth: 16,
@@ -91,33 +100,101 @@ async function start(device: Device) {
 		wildcardTile: (sym, pos) => {
 			return [
 				k.rect(16, 16),
-				k.outline(2, k.Color.BLUE)
 			]
 		}
 	})
-	const bg = k.add([
-		k.rect(16, 32),
-		k.scale(10),
-		k.pos(120, 120)
-	])
 	const joe = k.add([
-		k.sprite("creatures", {
+		k.sprite("planer", {
 			anim: "idle"
 		}),
-		k.pos(120, 120),
-		k.scale(10)
+		k.pos(),
 	])
-
-	k.onMouseMove((btn) => {
-		const mousePos = k.mousePos();
-		text.text = `${mousePos.x}, ${mousePos.y}`
+	const btnUp = k.add([
+		k.sprite("buttons", {
+			frame: 0,
+		}),
+		k.pos(),
+		k.follow(joe, k.vec2(0, 50)),
+		k.area(),
+		k.anchor("center"),
+	])
+	const btnRight = k.add([
+		k.sprite("buttons", {
+			frame: 2,
+		}),
+		k.pos(),
+		k.follow(joe, k.vec2(48, 96)),
+		k.area(),
+		k.anchor("center"),
+	])
+	const btnDown = k.add([
+		k.sprite("buttons", {
+			frame: 4,
+		}),
+		k.pos(),
+		k.follow(joe, k.vec2(0, 96)),
+		k.area(),
+		k.anchor("center"),
+	])
+	const btnLeft = k.add([
+		k.sprite("buttons", {
+			frame: 6,
+		}),
+		k.pos(),
+		k.follow(joe, k.vec2(-48, 96)),
+		k.area(),
+		k.anchor("center"),
+	])
+	joe.onUpdate(() => {
+		k.camPos(joe.pos)
+		switch (joe.curAnim()) {
+			case "walkdown":
+				joeAction(joe, "down");
+				break;
+			case "walkup":
+				joeAction(joe, "up");
+				break;
+			case "walkleft":
+				joeAction(joe, "left");
+				break;
+			case "walkright":
+				joeAction(joe, "right");
+				break;
+			default:
+				;
+		}
+	});
+	btnUp.onClick(() => {
+		joeAction(joe, "up");
+	})
+	btnDown.onClick(() => {
+		joeAction(joe, "down");
+	})
+	btnLeft.onClick(() => {
+		joeAction(joe, "left");
+	})
+	btnRight.onClick(() => {
+		joeAction(joe, "right");
+	})
+	k.onKeyDown("right", () => {
+		joeAction(joe, "right");
+	})
+	k.onKeyDown("down", () => {
+		joeAction(joe, "down");
 
 	})
-	k.onKeyDown("right", () => joe.curAnim() !== "walkright" && joe.play("walkright"))
-	k.onKeyDown("down", () => joe.curAnim() !== "walkdown" && joe.play("walkdown"))
-	k.onKeyDown("up", () => joe.curAnim() !== "walkup" && joe.play("walkup"))
-	k.onKeyDown("left", () => joe.curAnim() !== "walkleft" && joe.play("walkleft"))
+	k.onKeyDown("up", () => {
+		joeAction(joe, "up");
 
+	})
+	k.onKeyDown("left", () => {
+		joeAction(joe, "left");
+
+	})
+	btnDown.onMouseRelease(() => joe.stop());
+	btnLeft.onMouseRelease(() => joe.stop());
+	btnRight.onMouseRelease(() => joe.stop());
+	btnUp.onMouseRelease(() => joe.stop());
 	k.onKeyRelease("right", () => joe.stop())
 	k.onKeyRelease("down", () => joe.stop())
 	k.onKeyRelease("up", () => joe.stop())
@@ -126,6 +203,36 @@ async function start(device: Device) {
 
 }
 
+function joeAction(joe, action: "right" | "down" | "left" | "up") {
+	const speed = 100;
+	switch (action) {
+		case "right":
+			if (joe.curAnim() !== "walkright") {
+				joe.play("walkright");
+			}
+			joe.move(speed, 0);
+			break;
+		case "down":
+			if (joe.curAnim() !== "walkdown") {
+				joe.play("walkdown");
+			}
+			joe.move(0, speed);
+			break;
+		case "left":
+			if (joe.curAnim() !== "walkleft") {
+				joe.play("walkleft");
+			}
+			joe.move(-speed, 0);
+			break;
+		case "up":
+			if (joe.curAnim() !== "walkup") {
+				joe.play("walkup");
+			}
+			joe.move(0, -speed);
+			break;
+		default:
+	}
+}
 
 
 async function mainH5() {
