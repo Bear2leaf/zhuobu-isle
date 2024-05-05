@@ -2,13 +2,14 @@ import Renderer from './renderer/Renderer.ts';
 import Device from './device/Device';
 import { mat4 } from 'gl-matrix';
 import ImageRenderer from './renderer/ImageRenderer.ts';
+import SpriteRenderer from './renderer/SpriteRenderer.ts';
 
 async function start(device: Device) {
 	device.onmessage = (data) => console.log("message from worker", data);
 	device.createWorker("dist/worker/index.js");
 	device.sendmessage({ type: "hello" });
 	console.log(mat4.create());
-	const renderer = new ImageRenderer(device.getContext());
+	const renderer = new SpriteRenderer(device.getContext());
 	await renderer.loadShaderSource(device);
 	await renderer.loadTextureSource(device);
 	renderer.initVAO();
