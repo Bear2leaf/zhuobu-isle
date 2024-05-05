@@ -3,25 +3,16 @@
   "version": "0.0.1",
   "type": "module",
   "scripts": {
-    "build": "rollup --config",
-    "dev": "rollup --config --watch",
+    "build": "esbuild src/main.ts src/worker/index.ts --outdir=dist --bundle --format=esm",
+    "dev": "esbuild src/main.ts src/worker/index.ts --outdir=dist --bundle --format=esm --watch --servedir=.",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Jake Chen",
   "license": "ISC",
   "devDependencies": {
-    "@babel/core": "^7.24.5",
-    "@babel/plugin-transform-class-properties": "^7.24.1",
-    "@babel/plugin-transform-class-static-block": "^7.24.4",
-    "@babel/preset-env": "^7.24.5",
-    "@rollup/plugin-babel": "^6.0.4",
-    "@rollup/plugin-commonjs": "^25.0.7",
-    "@rollup/plugin-node-resolve": "^15.2.3",
-    "@rollup/plugin-typescript": "^11.1.6",
     "@types/lodash": "^4.17.0",
+    "esbuild": "^0.20.2",
     "minigame-api-typings": "^3.8.4",
-    "rollup": "^4.17.2",
-    "tslib": "^2.6.2",
     "typescript": "^5.4.5"
   },
   "dependencies": {

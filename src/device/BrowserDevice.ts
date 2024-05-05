@@ -37,7 +37,6 @@ export default class BrowserDevice extends Device {
         return new AudioContext();
     }
     createWorker(url: string): void {
-        import("../worker/index")
         if (this.worker) {
             this.worker.terminate();
         }
