@@ -36,6 +36,11 @@ export default abstract class Renderer {
             buffer,
             texture
         }
+        context.enable(context.BLEND);
+        context.enable(context.SCISSOR_TEST);
+        context.blendFunc(context.ONE, context.ONE_MINUS_SRC_ALPHA);
+        context.blendFuncSeparate(context.SRC_ALPHA, context.ONE_MINUS_SRC_ALPHA, context.ONE, context.ONE);
+        context.pixelStorei(context.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
     }
     async loadShaderSource(device: Device) {
         const name: string = this.name;
@@ -87,7 +92,7 @@ export default abstract class Renderer {
         context.viewport(...viewport);
         context.scissor(...viewport);
         context.clearColor(...color);
-        context.clear(context.COLOR_BUFFER_BIT | context.DEPTH_BUFFER_BIT | context.STENCIL_BUFFER_BIT);
+        context.clear(context.COLOR_BUFFER_BIT | context.STENCIL_BUFFER_BIT);
     }
     updateBuffer(start: number, buffer: number[]) {
         const context = this.context;
