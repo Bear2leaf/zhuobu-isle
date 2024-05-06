@@ -78,7 +78,7 @@ export default class SpriteFeedback extends Renderer {
         context.bindBuffer(context.ARRAY_BUFFER, null);
         context.bindVertexArray(null);
     }
-    async loadTextureSource(device: Device): Promise<void> {
+    async loadTextureSource(device: Device, tex: string): Promise<void> {
     }
     async loadShaderSource(device: Device): Promise<void> {
         await super.loadShaderSource(device);

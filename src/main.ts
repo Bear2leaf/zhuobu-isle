@@ -10,9 +10,12 @@ async function start(device: Device) {
 	const tilemap = await device.readJson("resources/json/overworld.json") as any;
 	const context = device.getContext();
 	const input = new Input(device);
+	const characterRenderer = new SpriteRenderer(context);
+	await characterRenderer.loadShaderSource(device);
+	await characterRenderer.loadTextureSource(device, "character");
 	const renderer = new SpriteRenderer(context);
 	await renderer.loadShaderSource(device);
-	await renderer.loadTextureSource(device);
+	await renderer.loadTextureSource(device, "Overworld");
 	const layers = tilemap.layers;
 	const buffer: number[] = [];
 	for (let k = 0; k < layers.length; k++) {
@@ -41,7 +44,18 @@ async function start(device: Device) {
 	renderer.initVAO(buffer.length / 9);
 	const feedback = new SpriteFeedback(context, renderer.getTarget());
 	await feedback.loadShaderSource(device)
-	await feedback.loadTextureSource(device)
+	characterRenderer.initVAO(6);
+	const characterFeedback = new SpriteFeedback(context, characterRenderer.getTarget());
+	await characterFeedback.loadShaderSource(device)
+	characterFeedback.initVAO(6);
+	characterFeedback.updateBuffer(0, [
+		0, 0, 0, 0, 0, 0, 3, 16, 32,
+		0, 1, 0, 1, 0, 0, 3, 16, 32,
+		0, 1, 2, 1, 1, 0, 3, 16, 32,
+		0, 1, 2, 1, 1, 0, 3, 16, 32,
+		0, 0, 2, 0, 1, 0, 3, 16, 32,
+		0, 0, 0, 0, 0, 0, 3, 16, 32,
+	])
 	feedback.initVAO(buffer.length / 9);
 	feedback.updateBuffer(0, buffer);
 	const projection = mat4.create();
@@ -71,19 +85,25 @@ async function start(device: Device) {
 		velocity[1] = 0;
 	}
 	renderer.updateProjection(projection);
+	characterRenderer.updateProjection(projection);
 	function tick() {
 		input.update();
 		cameraPos[0] += velocity[0];
 		cameraPos[1] += velocity[1];
 		renderer.updateModel(model);
+		characterRenderer.updateModel(model);
 		mat4.lookAt(view, vec3.fromValues(cameraPos[0], cameraPos[1], 1), vec3.fromValues(cameraPos[0], cameraPos[1], 0), vec3.fromValues(0, 1, 0));
 		const invert = mat4.create();
 		mat4.invert(invert, view);
 		renderer.updateView(invert);
+		characterRenderer.updateView(invert);
 		feedback.updateDelta(device);
+		characterFeedback.updateDelta(device);
 		renderer.prepare([0, 0, ...device.getWindowInfo()], [0.3, 0.3, 0.3, 1]);
 		feedback.render();
 		renderer.render();
+		characterFeedback.render();
+		characterRenderer.render();
 		requestAnimationFrame(tick);
 	}
 	tick();

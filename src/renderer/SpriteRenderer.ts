@@ -32,10 +32,10 @@ export default class SpriteRenderer extends Renderer {
         context.bindBuffer(context.ARRAY_BUFFER, null);
         context.bindVertexArray(null);
     }
-    async loadTextureSource(device: Device): Promise<void> {
+    async loadTextureSource(device: Device, tex: string): Promise<void> {
         const context = this.context;
         context.bindTexture(context.TEXTURE_2D, this.handler.texture);
-        const img = await device.readImage("resources/image/gfx/Overworld.png");
+        const img = await device.readImage(`resources/image/gfx/${tex}.png`);
         context.texImage2D(context.TEXTURE_2D, 0, context.RGBA, img.width, img.height, 0, context.RGBA, context.UNSIGNED_BYTE, img);
         context.texParameteri(context.TEXTURE_2D, context.TEXTURE_WRAP_S, context.CLAMP_TO_EDGE);
         context.texParameteri(context.TEXTURE_2D, context.TEXTURE_WRAP_T, context.CLAMP_TO_EDGE);
@@ -65,9 +65,6 @@ export default class SpriteRenderer extends Renderer {
         super.prepare(viewport, color);
         const context = this.context;
         context.useProgram(this.handler.program);
-        context.activeTexture(context.TEXTURE0);
-        context.bindTexture(context.TEXTURE_2D, this.handler.texture);
-        context.uniform1i(context.getUniformLocation(this.handler.program, "u_texture"), 0);
     }
     async loadShaderSource(device: Device): Promise<void> {
         await super.loadShaderSource(device);

@@ -85,7 +85,7 @@ export default abstract class Renderer {
             throw new Error("Failed to link program");
         }
     }
-    abstract loadTextureSource(device: Device): Promise<void>;
+    abstract loadTextureSource(device: Device, tex: string): Promise<void>;
     abstract initVAO(count: number): void;
     prepare(viewport: [number, number, number, number], color: [r: number, g: number, b: number, a: number]) {
         const context = this.context;
@@ -102,6 +102,9 @@ export default abstract class Renderer {
     render() {
         const context = this.context
         context.useProgram(this.handler.program);
+        context.activeTexture(context.TEXTURE0);
+        context.bindTexture(context.TEXTURE_2D, this.handler.texture);
+        context.uniform1i(context.getUniformLocation(this.handler.program, "u_texture"), 0);
         context.bindVertexArray(this.handler.vao);
         context.bindBuffer(context.ARRAY_BUFFER, this.handler.buffer);
         context.drawArrays(context.TRIANGLES, 0, this.count);

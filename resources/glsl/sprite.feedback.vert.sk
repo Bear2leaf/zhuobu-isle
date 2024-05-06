@@ -12,7 +12,7 @@ out vec2 v_texcoord;
 out vec4 v_frame;
 
 void main() {
-    float delta = u_delta * 1e-3f;
+    float delta = u_delta * 5e-3f;
     v_time = a_time + delta;
     v_frame = a_frame;
     v_position = a_position;
