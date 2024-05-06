@@ -19,18 +19,18 @@ async function start(device: Device) {
 	await feedback.loadTextureSource(device)
 	feedback.initVAO(12);
 	feedback.updateBuffer(0, [
-		0, -100, -100, 0, 0, 0, 0, 16, 16,
-		0, 100, -100, 1, 0, 0, 0, 16, 16,
-		0, 100, 100, 1, 1, 0, 0, 16, 16,
-		0, 100, 100, 1, 1, 0, 0, 16, 16,
-		0, -100, 100, 0, 1, 0, 0, 16, 16,
-		0, -100, -100, 0, 0, 0, 0, 16, 16,
-		0, 100, -100, 0, 0, 1, 2, 16, 16,
-		0, 300, -100, 1, 0, 1, 2, 16, 16,
-		0, 300, 100, 1, 1, 1, 2, 16, 16,
-		0, 300, 100, 1, 1, 1, 2, 16, 16,
-		0, 100, 100, 0, 1, 1, 2, 16, 16,
-		0, 100, -100, 0, 0, 1, 2, 16, 16,
+		0, -1, -1, 0, 0, 0, 0, 16, 16,
+		0, 1, -1, 1, 0, 0, 0, 16, 16,
+		0, 1, 1, 1, 1, 0, 0, 16, 16,
+		0, 1, 1, 1, 1, 0, 0, 16, 16,
+		0, -1, 1, 0, 1, 0, 0, 16, 16,
+		0, -1, -1, 0, 0, 0, 0, 16, 16,
+		0, 1, -1, 0, 0, 1, 2, 16, 16,
+		0, 3, -1, 1, 0, 1, 2, 16, 16,
+		0, 3, 1, 1, 1, 1, 2, 16, 16,
+		0, 3, 1, 1, 1, 1, 2, 16, 16,
+		0, 1, 1, 0, 1, 1, 2, 16, 16,
+		0, 1, -1, 0, 0, 1, 2, 16, 16,
 	]);
 	const projection = mat4.create();
 	const view = mat4.create();
@@ -72,6 +72,7 @@ async function start(device: Device) {
 		cameraPos[0] += velocity[0];
 		cameraPos[1] += velocity[1];
 		mat4.fromTranslation(model, vec3.fromValues(position[0], position[1], 0))
+		mat4.scale(model, model, vec3.fromValues(100, 100, 100))
 		renderer.updateModel(model);
 		mat4.lookAt(view, vec3.fromValues(cameraPos[0], cameraPos[1], 1), vec3.fromValues(cameraPos[0], cameraPos[1], 0), vec3.fromValues(0, 1, 0));
 		mat4.invert(view, view);
