@@ -8,30 +8,38 @@ async function start(device: Device) {
 	device.onmessage = (data) => console.log("message from worker", data);
 	device.createWorker("dist/worker/index.js");
 	device.sendmessage({ type: "hello" });
+	const tilemap = await device.readJson("resources/json/overworld.json") as any;
 	const context = device.getContext();
 	const input = new Input(device);
 	const renderer = new SpriteRenderer(context);
 	await renderer.loadShaderSource(device);
 	await renderer.loadTextureSource(device);
-	renderer.initVAO(12);
+	const layer = tilemap.layers[0];
+	const data = layer.data;
+	const width = layer.width;
+	const height = layer.height;
+	const count = width * height * 6;
+	renderer.initVAO(count);
 	const feedback = new SpriteFeedback(context, renderer.getTarget());
 	await feedback.loadShaderSource(device)
 	await feedback.loadTextureSource(device)
-	feedback.initVAO(12);
-	feedback.updateBuffer(0, [
-		0, -1, -1, 0, 0, 0, 0, 16, 16,
-		0, 1, -1, 1, 0, 0, 0, 16, 16,
-		0, 1, 1, 1, 1, 0, 0, 16, 16,
-		0, 1, 1, 1, 1, 0, 0, 16, 16,
-		0, -1, 1, 0, 1, 0, 0, 16, 16,
-		0, -1, -1, 0, 0, 0, 0, 16, 16,
-		0, 1, -1, 0, 0, 1, 2, 16, 16,
-		0, 3, -1, 1, 0, 1, 2, 16, 16,
-		0, 3, 1, 1, 1, 1, 2, 16, 16,
-		0, 3, 1, 1, 1, 1, 2, 16, 16,
-		0, 1, 1, 0, 1, 1, 2, 16, 16,
-		0, 1, -1, 0, 0, 1, 2, 16, 16,
-	]);
+	feedback.initVAO(count);
+	console.log(layer);
+	const buffer: number[] = [];
+	for (let i = 0; i < height; i++) {
+		for (let j = 0; j < width; j++) {
+			const element = data[i * width + j] - 1;
+			buffer.push(
+				0, 0 + j, 0 + i, 0, 0, element, element, 16, 16,
+				0, 1 + j, 0 + i, 1, 0, element, element, 16, 16,
+				0, 1 + j, 1 + i, 1, 1, element, element, 16, 16,
+				0, 1 + j, 1 + i, 1, 1, element, element, 16, 16,
+				0, 0 + j, 1 + i, 0, 1, element, element, 16, 16,
+				0, 0 + j, 0 + i, 0, 0, element, element, 16, 16,
+			)
+		}
+	}
+	feedback.updateBuffer(0, buffer);
 	const projection = mat4.create();
 	const view = mat4.create();
 	const windowInfo = device.getWindowInfo();
