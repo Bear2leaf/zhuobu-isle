@@ -12,20 +12,23 @@ export default class SpriteRenderer extends Renderer {
         const vao = this.handler.vao;
         const buffer = this.handler.buffer;
         context.bindBuffer(context.ARRAY_BUFFER, this.handler.buffer);
-        context.bufferData(context.ARRAY_BUFFER, 5 * 4 * count, context.STATIC_DRAW);
+        context.bufferData(context.ARRAY_BUFFER, 9 * 4 * count, context.STATIC_DRAW);
         context.bindBuffer(context.ARRAY_BUFFER, null)
 
         const attributeLocation0 = context.getAttribLocation(this.handler.program, "a_time");
         const attributeLocation1 = context.getAttribLocation(this.handler.program, "a_position");
         const attributeLocation2 = context.getAttribLocation(this.handler.program, "a_texcoord");
+        const attributeLocation3 = context.getAttribLocation(this.handler.program, "a_frame");
         context.bindVertexArray(this.handler.vao);
         context.bindBuffer(context.ARRAY_BUFFER, this.handler.buffer);
-        context.vertexAttribPointer(attributeLocation0, 1, context.FLOAT, false, 5 * 4, 0);
-        context.vertexAttribPointer(attributeLocation1, 2, context.FLOAT, false, 5 * 4, 4 * 1);
-        context.vertexAttribPointer(attributeLocation2, 2, context.FLOAT, false, 5 * 4, 4 * 3);
+        context.vertexAttribPointer(attributeLocation0, 1, context.FLOAT, false, 9 * 4, 0);
+        context.vertexAttribPointer(attributeLocation1, 2, context.FLOAT, false, 9 * 4, 4 * 1);
+        context.vertexAttribPointer(attributeLocation2, 2, context.FLOAT, false, 9 * 4, 4 * 3);
+        context.vertexAttribPointer(attributeLocation3, 4, context.FLOAT, false, 9 * 4, 4 * 5);
         context.enableVertexAttribArray(attributeLocation0);
         context.enableVertexAttribArray(attributeLocation1);
         context.enableVertexAttribArray(attributeLocation2);
+        context.enableVertexAttribArray(attributeLocation3);
         context.bindBuffer(context.ARRAY_BUFFER, null);
         context.bindVertexArray(null);
     }

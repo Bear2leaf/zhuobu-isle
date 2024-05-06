@@ -2,15 +2,28 @@
 layout(location = 0) in float a_time;
 layout(location = 1) in vec2 a_position;
 layout(location = 2) in vec2 a_texcoord;
+layout(location = 3) in vec4 a_frame;
 
 uniform mat4 u_projection;
 uniform mat4 u_view;
 uniform mat4 u_model;
 
+uniform sampler2D u_texture;
+
 out vec2 v_texcoord;
 
 void main() {
-    gl_Position.z = a_time; // hold it.
     gl_Position = u_projection * u_view * u_model * vec4(a_position, 0.0f, 1.0f);
-    v_texcoord = a_texcoord;
+    vec2 texSize = vec2(textureSize(u_texture, 0));
+    float start = a_frame.x;
+    float end = a_frame.y;
+    float width = a_frame.z;
+    float height = a_frame.w;
+    float frames = end - start + 1.0f;
+    float cols = texSize.x / width;
+    float currentFrame = start + mod(a_time, frames);
+    float frameX = mod(currentFrame, cols);
+    float frameY = floor(currentFrame / cols);
+    v_texcoord = (a_texcoord + vec2(floor(frameX), floor(frameY))) * vec2(width, height) / vec2(texSize);
+
 }

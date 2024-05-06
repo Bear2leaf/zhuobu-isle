@@ -13,18 +13,24 @@ async function start(device: Device) {
 	const renderer = new SpriteRenderer(context);
 	await renderer.loadShaderSource(device);
 	await renderer.loadTextureSource(device);
-	renderer.initVAO(6);
+	renderer.initVAO(12);
 	const feedback = new SpriteFeedback(context, renderer.getTarget());
 	await feedback.loadShaderSource(device)
 	await feedback.loadTextureSource(device)
-	feedback.initVAO(6);
+	feedback.initVAO(12);
 	feedback.updateBuffer(0, [
-		0, -100, -100, 0, 0,
-		0, 100, -100, 16 , 0,
-		0, 100, 100, 16 , 16,
-		0, 100, 100, 16 , 16,
-		0, -100, 100, 0, 16,
-		0, -100, -100, 0, 0
+		0, -100, -100, 0, 0, 0, 0, 16, 16,
+		0, 100, -100, 1, 0, 0, 0, 16, 16,
+		0, 100, 100, 1, 1, 0, 0, 16, 16,
+		0, 100, 100, 1, 1, 0, 0, 16, 16,
+		0, -100, 100, 0, 1, 0, 0, 16, 16,
+		0, -100, -100, 0, 0, 0, 0, 16, 16,
+		0, 100, -100, 0, 0, 1, 2, 16, 16,
+		0, 300, -100, 1, 0, 1, 2, 16, 16,
+		0, 300, 100, 1, 1, 1, 2, 16, 16,
+		0, 300, 100, 1, 1, 1, 2, 16, 16,
+		0, 100, 100, 0, 1, 1, 2, 16, 16,
+		0, 100, -100, 0, 0, 1, 2, 16, 16,
 	]);
 	const projection = mat4.create();
 	const view = mat4.create();
