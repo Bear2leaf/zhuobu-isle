@@ -81,13 +81,18 @@ export default abstract class Renderer {
         }
     }
     abstract loadTextureSource(device: Device): Promise<void>;
-    abstract initVAO(): void;
+    abstract initVAO(count: number): void;
     prepare(viewport: [number, number, number, number], color: [r: number, g: number, b: number, a: number]) {
         const context = this.context;
         context.viewport(...viewport);
         context.scissor(...viewport);
         context.clearColor(...color);
         context.clear(context.COLOR_BUFFER_BIT | context.DEPTH_BUFFER_BIT | context.STENCIL_BUFFER_BIT);
+    }
+    updateBuffer(start: number, buffer: number[]) {
+        const context = this.context;
+        context.bindBuffer(context.ARRAY_BUFFER, this.handler.buffer);
+        context.bufferSubData(context.ARRAY_BUFFER, start * 4, new Float32Array(buffer));
     }
     render() {
         const context = this.context

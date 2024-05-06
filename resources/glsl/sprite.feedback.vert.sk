@@ -3,12 +3,15 @@ layout(location = 0) in float a_time;
 layout(location = 1) in vec2 a_position;
 layout(location = 2) in vec2 a_texcoord;
 
+uniform float u_delta;
+
 out float v_time;
 out vec2 v_position;
 out vec2 v_texcoord;
 
 void main() {
-    v_time = a_time + 0.0001f;
-    v_position = a_position + 0.0001f;
-    v_texcoord = a_texcoord + 0.0001f;
+    float delta = u_delta * 1e-5f;
+    v_time = a_time;
+    v_position = a_position;
+    v_texcoord = a_texcoord;
 }

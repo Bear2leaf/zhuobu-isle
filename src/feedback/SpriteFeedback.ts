@@ -28,26 +28,22 @@ export default class SpriteFeedback extends Renderer {
         };
     }
     private curIdx = 0;
+    private now = 0;
+    private lastTime = 0;
     private readonly backHandler: {
         readonly vao: WebGLVertexArrayObject,
         readonly buffer: WebGLBuffer,
     };
-    initVAO(): void {
+    initVAO(count: number): void {
+        this.count = count
         const context = this.context;
         context.bindBuffer(context.ARRAY_BUFFER, this.transform.buffer);
-        context.bufferData(context.ARRAY_BUFFER, new Float32Array([
-            0, -1, -1, 0, 0,
-            0, 1, -1, 1 / (640 / 16), 0,
-            0, 1, 1, 1 / (640 / 16), 1 / (640 / 16),
-            0, 1, 1, 1 / (640 / 16), 1 / (640 / 16),
-            0, -1, 1, 0, 1 / (640 / 16),
-            0, -1, -1, 0, 0
-        ]), context.STATIC_DRAW);
+        context.bufferData(context.ARRAY_BUFFER, 5 * 4 * count, context.STATIC_DRAW);
         context.bindBuffer(context.ARRAY_BUFFER, null)
 
 
         context.bindBuffer(context.ARRAY_BUFFER, this.feedback.buffer);
-        context.bufferData(context.ARRAY_BUFFER, 5 * 4 * 6, context.STATIC_DRAW);
+        context.bufferData(context.ARRAY_BUFFER, 5 * 4 * count, context.STATIC_DRAW);
         context.bindBuffer(context.ARRAY_BUFFER, null)
 
 
@@ -76,7 +72,6 @@ export default class SpriteFeedback extends Renderer {
         context.enableVertexAttribArray(attributeLocation2);
         context.bindBuffer(context.ARRAY_BUFFER, null);
         context.bindVertexArray(null);
-        this.count = 6
     }
     async loadTextureSource(device: Device): Promise<void> {
     }
@@ -93,6 +88,18 @@ export default class SpriteFeedback extends Renderer {
         context.useProgram(this.handler.program);
         context.activeTexture(context.TEXTURE0);
         context.bindTexture(context.TEXTURE_2D, this.handler.texture);
+    }
+    updateDelta(device: Device): void {
+        this.lastTime = this.now;
+        if (!this.lastTime) {
+            this.lastTime = device.now();
+        }
+        this.now = device.now();
+        const delta = this.now - this.lastTime;
+        const context = this.context;
+        const program = this.handler.program;
+        context.useProgram(program);
+        context.uniform1f(context.getUniformLocation(program, "u_delta"), delta);
     }
     render(): void {
         const context = this.context

@@ -2,7 +2,8 @@ import Device from "../device/Device.ts";
 import Renderer from "./Renderer.ts";
 
 export default class ImageRenderer extends Renderer {
-    initVAO(): void {
+    initVAO(count: number): void {
+        this.count = count;
         const context = this.context;
         const vao = this.handler.vao;
         const buffer = this.handler.buffer;
@@ -10,11 +11,10 @@ export default class ImageRenderer extends Renderer {
         const attributeLocation = context.getAttribLocation(this.handler.program, "a_position");
         context.enableVertexAttribArray(attributeLocation);
         context.bindBuffer(context.ARRAY_BUFFER, buffer);
-        context.bufferData(context.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, 1, 1, 1, 1, -1, 1, -1, -1]), context.STATIC_DRAW);
+        context.bufferData(context.ARRAY_BUFFER, 2 * 4 * count, context.STATIC_DRAW);
         context.vertexAttribPointer(attributeLocation, 2, context.FLOAT, false, 0, 0);
         context.bindVertexArray(null);
         context.bindBuffer(context.ARRAY_BUFFER, null)
-        this.count = 6
     }
     async loadTextureSource(device: Device): Promise<void> {
         const context = this.context;

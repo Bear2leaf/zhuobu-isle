@@ -1,3 +1,4 @@
+import { mat4 } from "gl-matrix";
 import Device from "../device/Device.ts";
 import Renderer from "./Renderer.ts";
 
@@ -5,19 +6,13 @@ export default class SpriteRenderer extends Renderer {
     getTarget() {
         return { vao: this.handler.vao, buffer: this.handler.buffer };
     }
-    initVAO(): void {
+    initVAO(count: number): void {
+        this.count = count;
         const context = this.context;
         const vao = this.handler.vao;
         const buffer = this.handler.buffer;
         context.bindBuffer(context.ARRAY_BUFFER, this.handler.buffer);
-        context.bufferData(context.ARRAY_BUFFER, new Float32Array([
-            0, -1, -1, 0, 0,
-            0, 1, -1, 1 / (640 / 16), 0,
-            0, 1, 1, 1 / (640 / 16), 1 / (640 / 16),
-            0, 1, 1, 1 / (640 / 16), 1 / (640 / 16),
-            0, -1, 1, 0, 1 / (640 / 16),
-            0, -1, -1, 0, 0
-        ]), context.STATIC_DRAW);
+        context.bufferData(context.ARRAY_BUFFER, 5 * 4 * count, context.STATIC_DRAW);
         context.bindBuffer(context.ARRAY_BUFFER, null)
 
         const attributeLocation0 = context.getAttribLocation(this.handler.program, "a_time");
@@ -33,7 +28,6 @@ export default class SpriteRenderer extends Renderer {
         context.enableVertexAttribArray(attributeLocation2);
         context.bindBuffer(context.ARRAY_BUFFER, null);
         context.bindVertexArray(null);
-        this.count = 6
     }
     async loadTextureSource(device: Device): Promise<void> {
         const context = this.context;
@@ -46,6 +40,24 @@ export default class SpriteRenderer extends Renderer {
         context.texParameteri(context.TEXTURE_2D, context.TEXTURE_MAG_FILTER, context.NEAREST);
         context.bindTexture(context.TEXTURE_2D, null);
     }
+	updateProjection(projection: mat4) {
+        const context = this.context;
+        const program = this.handler.program;
+        context.useProgram(program);
+        context.uniformMatrix4fv(context.getUniformLocation(program, "u_projection"), false, projection);
+	}
+	updateView(view: mat4) {
+        const context = this.context;
+        const program = this.handler.program;
+        context.useProgram(program);
+        context.uniformMatrix4fv(context.getUniformLocation(program, "u_view"), false, view);
+	}
+	updateModel(model: mat4) {
+        const context = this.context;
+        const program = this.handler.program;
+        context.useProgram(program);
+        context.uniformMatrix4fv(context.getUniformLocation(program, "u_model"), false, model);
+	}
     prepare(viewport: [number, number, number, number], color: [r: number, g: number, b: number, a: number]): void {
         super.prepare(viewport, color);
         const context = this.context;

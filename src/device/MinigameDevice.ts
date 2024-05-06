@@ -82,21 +82,23 @@ export default class MinigameDevice implements Device {
         this.worker?.terminate();
     }
     onTouchStart(listener: Function): void {
+        const pixelRatio = wx.getWindowInfo().pixelRatio;
         wx.onTouchStart((e) => {
             const touch = e.touches[0];
             if (!touch) {
                 throw new Error("touch not exist")
             }
-            listener({ x: touch.clientX, y: touch.clientY });
+            listener({ x: touch.clientX * pixelRatio, y: touch.clientY * pixelRatio });
         });
     }
     onTouchMove(listener: Function): void {
+        const pixelRatio = wx.getWindowInfo().pixelRatio;
         wx.onTouchMove((e) => {
             const touch = e.touches[0];
             if (!touch) {
                 throw new Error("touch not exist")
             }
-            listener({ x: touch.clientX, y: touch.clientY });
+            listener({ x: touch.clientX * pixelRatio, y: touch.clientY * pixelRatio });
         });
     }
     onTouchEnd(listener: Function): void {
