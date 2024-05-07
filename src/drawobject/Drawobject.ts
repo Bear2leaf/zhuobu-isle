@@ -42,4 +42,6 @@ export default abstract class Drawobject {
     updateView(view: mat4) {
         mat4.copy(this.view, view);
     }
+    abstract onmessage(data: WorkerMessage): void;
+    abstract sendmessage?: (data: MainMessage) => void;
 }

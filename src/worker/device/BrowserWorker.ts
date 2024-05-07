@@ -1,5 +1,4 @@
-import { MainMessage, WorkerMessage } from "../../message.js";
-import WorkerDevice from "./WorkerDevice.js";
+import WorkerDevice from "./WorkerDevice";
 
 export default class BrowserWorker implements WorkerDevice {
     constructor() {

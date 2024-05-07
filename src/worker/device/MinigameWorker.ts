@@ -1,5 +1,4 @@
-import { MainMessage, WorkerMessage } from "../../message.js";
-import WorkerDevice from "./WorkerDevice.js";
+import WorkerDevice from "./WorkerDevice";
 
 declare const worker: WechatMinigame.Worker;
 export default class MinigameWorker implements WorkerDevice {

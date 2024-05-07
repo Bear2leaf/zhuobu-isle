@@ -3,6 +3,6 @@
         "strict": true,
         "module": "ESNext",
         "lib": ["ES2015", "DOM"],
-        "moduleResolution": "Bundler",
+        "moduleResolution": "Bundler"
     }
 }

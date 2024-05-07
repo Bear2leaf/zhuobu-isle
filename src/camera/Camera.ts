@@ -1,5 +1,5 @@
 import { mat4, vec2, vec3, vec4 } from "gl-matrix";
-import Drawobject from "../drawobject/Drawobject.js";
+import Drawobject from "../drawobject/Drawobject";
 
 export default class Camera {
     private readonly velocity: vec2;

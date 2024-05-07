@@ -3,14 +3,37 @@ import Device from "../device/Device";
 import SpriteFeedback from "../feedback/SpriteFeedback";
 import SpriteRenderer from "../renderer/SpriteRenderer";
 import Drawobject from "./Drawobject";
-import { Tween } from "@tweenjs/tween.js";
+import { Tween, update } from "@tweenjs/tween.js";
 
 export default class Character extends Drawobject {
-    private readonly tween: Tween<vec2>;
+    onmessage(data: WorkerMessage): void {
+        if (data.type === "path") {
+            const points = data.data;
+            console.log(points);
+            this.tweens.forEach(tween => tween.stop());
+            this.tweens.splice(0, this.tweens.length, ...[{ x: 0, y: 0 }, ...points].map((p, i, arr) => {
+                const from = arr[i - 1];
+                if (from) {
+                    return new Tween<vec2>(vec2.fromValues(from.x, from.y))
+                        .to(vec2.fromValues(p.x, p.y));
+                } else {
+                    return new Tween<vec2>(vec2.fromValues(p.x, p.y));
+                }
+            }));
+            for (let index = 1; index < this.tweens.length; index++) {
+                const tweenTo = this.tweens[index - 1].onUpdate(this.onTweenUpdate.bind(this));
+                const tweenFrom = this.tweens[index].onUpdate(this.onTweenUpdate.bind(this));
+                tweenTo.chain(tweenFrom);
+            }
+            this.tweens[0].start()
+        }
+    }
+    sendmessage?: ((data: MainMessage) => void) | undefined;
+    private readonly tweens: Tween<vec2>[];
     constructor(context: WebGL2RenderingContext) {
         const renderer = new SpriteRenderer(context);
         super(renderer, new SpriteFeedback(context, renderer.getTarget()));
-        this.tween = new Tween(vec2.create());
+        this.tweens = [];
     }
     init(): void {
         this.renderer.initVAO(6);
@@ -35,14 +58,14 @@ export default class Character extends Drawobject {
         this.feedback.updateBuffer(46, [0 + x, 0 + y]);
     }
     onclick(x: number, y: number): void {
-        this.tween.stop().to([x, y]).onUpdate(this.onTweenUpdate.bind(this)).startFromCurrentValues().start()
+        // this.tween.stop().to([x, y]).onUpdate(this.onTweenUpdate.bind(this)).startFromCurrentValues().start()
     }
     async load(device: Device): Promise<void> {
         await super.load(device);
         await this.renderer.loadTextureSource(device, "character");
     }
     update(elapsed: number, delta: number): void {
-        this.tween.update(elapsed);
+        update(elapsed);
         super.update(elapsed, delta);
     }
 }

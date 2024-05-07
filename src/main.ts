@@ -4,11 +4,15 @@ import Input from './input/Input';
 import Character from './drawobject/Character';
 import Tilemap from './drawobject/Tilemap';
 import Drawobject from './drawobject/Drawobject';
-import Camera from './camera/Camera.js';
+import Camera from './camera/Camera';
 async function start(device: Device) {
-	device.onmessage = (data) => console.log("message from worker", data);
+	device.onmessage = (data) => {
+		console.log("message from worker", data);
+		for (const drawobject of drawobjects) {
+			drawobject.onmessage(data);	
+		} 
+	};
 	device.createWorker("dist/worker/index.js");
-	device.sendmessage && device.sendmessage({ type: "hello" });
 	const context = device.getContext();
 	const input = new Input(device);
 	const camera = new Camera();
@@ -17,6 +21,7 @@ async function start(device: Device) {
 	drawobjects.push(new Character(context));
 	for await (const drawobject of drawobjects) {
 		await drawobject.load(device);
+		drawobject.sendmessage = device.sendmessage?.bind(device);
 		drawobject.init();
 	}
 	input.ondrag = (x, y) => {

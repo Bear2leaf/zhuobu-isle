@@ -9,6 +9,9 @@ import PoissonDiskSampling from "./poisson/PoissonDiskSampling";
 import SeedableRandom from "./util/SeedableRandom";
 import { createNoise2D } from "./util/simplex-noise";
 import { actions, goal, initialState } from "./goap/data";
+import astar, { Graph } from "javascript-astar";
+import { chunk } from "lodash";
+import { AnyLayer, Map, UnencodedTileLayer } from "@kayahr/tiled";
 
 function createIsland() {
   console.log(createPlan(initialState, actions, goal))
@@ -38,10 +41,25 @@ if (typeof worker === 'undefined') {
 } else {
   device = new MinigameWorker();
 }
-device.onmessage = function (data) {
-  if (data.type === "hello") {
+let tiled: Map;
+let graph: Graph;
+device.onmessage = function (message) {
+  if (message.type === "hello") {
     device.postmessage({ type: "worker", data: createIsland().r_biome })
+  } else if (message.type === "initTileMap") {
+    tiled = message.data as Map;
+    const firstLayer = tiled.layers[0] as UnencodedTileLayer;
+    graph = new astar.Graph(chunk(firstLayer.data, tiled.width));
+  } else if (message.type === "findPath") {
+    const startX = message.data.start.x;
+    const startY = message.data.start.y;
+    const endX = message.data.end.x;
+    const endY = message.data.end.y;
+    const start = graph.grid[startX][startY];
+    const end = graph.grid[endX][endY];
+    const result = astar.astar.search(graph, start, end)
+    device.postmessage({ type: "path", data: result.map(p => ({ x: p.x, y: p.y })) })
   }
-  console.log("message from main", data);
+  console.log("message from main", message);
 }
 export { };

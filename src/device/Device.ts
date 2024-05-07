@@ -1,5 +1,3 @@
-import { MainMessage, WorkerMessage } from "../message";
-
 export default interface Device {
   getContext(): WebGL2RenderingContext;
   reload(): void;
