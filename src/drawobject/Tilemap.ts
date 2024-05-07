@@ -1,7 +1,7 @@
-import Device from "../device/Device.ts";
-import SpriteFeedback from "../feedback/SpriteFeedback.ts";
-import SpriteRenderer from "../renderer/SpriteRenderer.ts";
-import Drawobject from "./Drawobject.ts";
+import Device from "../device/Device";
+import SpriteFeedback from "../feedback/SpriteFeedback";
+import SpriteRenderer from "../renderer/SpriteRenderer";
+import Drawobject from "./Drawobject";
 
 export default class Tilemap extends Drawobject {
     private readonly tilemap: any;

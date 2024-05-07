@@ -1,5 +1,5 @@
-import Device from "../device/Device.ts";
-import Renderer from "./Renderer.ts";
+import Device from "../device/Device";
+import Renderer from "./Renderer";
 
 export default class ImageRenderer extends Renderer {
     initVAO(count: number): void {

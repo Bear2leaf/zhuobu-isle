@@ -1,8 +1,8 @@
 import { vec2, vec3 } from "gl-matrix";
-import Device from "../device/Device.ts";
-import SpriteFeedback from "../feedback/SpriteFeedback.ts";
-import SpriteRenderer from "../renderer/SpriteRenderer.ts";
-import Drawobject from "./Drawobject.ts";
+import Device from "../device/Device";
+import SpriteFeedback from "../feedback/SpriteFeedback";
+import SpriteRenderer from "../renderer/SpriteRenderer";
+import Drawobject from "./Drawobject";
 import { Tween } from "@tweenjs/tween.js";
 
 export default class Character extends Drawobject {

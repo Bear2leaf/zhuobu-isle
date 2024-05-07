@@ -1,5 +1,5 @@
-import Device from "../device/Device.ts";
-import Renderer from "../renderer/Renderer.ts";
+import Device from "../device/Device";
+import Renderer from "../renderer/Renderer";
 
 export default class SpriteFeedback extends Renderer {
     private readonly transformFeedback: WebGLTransformFeedback;

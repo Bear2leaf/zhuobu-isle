@@ -4,7 +4,5 @@
         "module": "ESNext",
         "lib": ["ES2015", "DOM"],
         "moduleResolution": "Bundler",
-        "noEmit": true,
-        "allowImportingTsExtensions": true
     }
 }

@@ -1,9 +1,9 @@
 import Device from './device/Device';
 import { mat3, mat4, vec2, vec3, vec4 } from 'gl-matrix';
-import Input from './input/Input.ts';
-import Character from './drawobject/Character.ts';
-import Tilemap from './drawobject/Tilemap.ts';
-import Drawobject from './drawobject/Drawobject.ts';
+import Input from './input/Input';
+import Character from './drawobject/Character';
+import Tilemap from './drawobject/Tilemap';
+import Drawobject from './drawobject/Drawobject';
 async function start(device: Device) {
 	device.onmessage = (data) => console.log("message from worker", data);
 	device.createWorker("dist/worker/index.js");

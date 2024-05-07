@@ -1,6 +1,6 @@
 import { mat4 } from "gl-matrix";
-import Device from "../device/Device.ts";
-import Renderer from "./Renderer.ts";
+import Device from "../device/Device";
+import Renderer from "./Renderer";
 
 export default class SpriteRenderer extends Renderer {
     getTarget() {

@@ -1,4 +1,4 @@
-import Device from "../device/Device.ts";
+import Device from "../device/Device";
 type InputType = "TouchStart" | "TouchMove" | "TouchEnd" | "TouchCancel";
 export default class Input {
     private last?: InputType;

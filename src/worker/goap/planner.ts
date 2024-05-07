@@ -1,16 +1,6 @@
 import _ from "lodash";
 import PriorityQueue from "fastpriorityqueue";
-export type Action = {
-  key: string,
-  condition: (state: State) => boolean,
-  effect: (state: State) => State,
-  cost: (state: State) => number
-}
-export type State = Record<string, any>;
-export type Goal = {
-  label: string,
-  validate: (prev: State, next: State) => boolean
-}
+import { State, Action, Goal } from "./data";
 class Node {
   cost: number;
   parent?: Node;
@@ -34,7 +24,7 @@ const buildGraph = (parent: Node, leaves: PriorityQueue<Node>, actions: Action[]
       if (goal.validate(parent.state, nextState)) {
         leaves.add(node);
       } else {
-        const subset = actions.filter(a => a.key !== action.key);
+        const subset = actions.filter(a => a.label !== action.label);
         return buildGraph(node, leaves, subset, goal);
       }
     }
@@ -52,7 +42,7 @@ const getPlanFromLeaf = (goal: Goal, node?: Node) => {
   return {
     cost,
     goal,
-    actions: plan.map(n => n.key)
+    actions: plan.map(n => n.label)
   };
 };
 

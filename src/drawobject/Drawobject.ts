@@ -1,6 +1,6 @@
 import { mat4, vec3 } from "gl-matrix";
-import Device from "../device/Device.ts";
-import Renderer from "../renderer/Renderer.ts";
+import Device from "../device/Device";
+import Renderer from "../renderer/Renderer";
 
 export default abstract class Drawobject {
     protected readonly renderer: Renderer;
