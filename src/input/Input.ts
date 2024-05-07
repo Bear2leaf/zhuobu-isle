@@ -7,24 +7,24 @@ export default class Input {
         x: number,
         y: number
     }[];
-    onclick: (x: number, y: number) => void
-    ondrag: (x: number, y: number) => void
+    onclick?: (x: number, y: number) => void
+    ondrag?: (x: number, y: number) => void
     constructor(device: Device) {
         this.queue = [];
-        device.onTouchStart((e) => {
+        device.onTouchStart((e: typeof this.queue[0]) => {
             this.queue.push(Object.assign(e, { type: "TouchStart" }));
         })
-        device.onTouchMove((e) => {
+        device.onTouchMove((e: typeof this.queue[0]) => {
             this.queue.push(Object.assign(e, { type: "TouchMove" }));
         })
-        device.onTouchEnd((e) => {
+        device.onTouchEnd((e: typeof this.queue[0]) => {
             this.queue.push({ x: 0, y: 0, type: "TouchEnd" });
         })
-        device.onTouchCancel((e) => {
+        device.onTouchCancel((e: typeof this.queue[0]) => {
             this.queue.push({ x: 0, y: 0, type: "TouchEnd" });
         })
     }
-    onrelease: () => void;
+    onrelease?: () => void;
     update() {
         const e = this.queue[this.queue.length - 1];
         if (e === undefined) {
@@ -37,10 +37,10 @@ export default class Input {
             if (lastE === undefined) {
                 return;
             }
-            this.onclick(lastE.x, lastE.y);
+            this.onclick && this.onclick(lastE.x, lastE.y);
         }
         if (e.type === "TouchEnd") {
-            this.onrelease();
+            this.onrelease && this.onrelease();
             this.queue.splice(0, this.queue.length);
         }
         if (e.type === "TouchMove") {
@@ -49,7 +49,7 @@ export default class Input {
                 return;
             }
             const delta: [number, number] = [e.x - lastE.x, lastE.y - e.y]
-            this.ondrag(...delta)
+            this.ondrag && this.ondrag(...delta)
         }
         this.last = e.type;
     }

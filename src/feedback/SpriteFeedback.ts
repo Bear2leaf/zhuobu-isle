@@ -28,8 +28,6 @@ export default class SpriteFeedback extends Renderer {
         };
     }
     private curIdx = 0;
-    private now = 0;
-    private lastTime = 0;
     private readonly backHandler: {
         readonly vao: WebGLVertexArrayObject,
         readonly buffer: WebGLBuffer,
@@ -87,24 +85,11 @@ export default class SpriteFeedback extends Renderer {
         context.transformFeedbackVaryings(program, ["v_time", "v_position", "v_texcoord", "v_frame"], context.INTERLEAVED_ATTRIBS);
         this.linkProgram();
     }
-    prepare(viewport: [number, number, number, number], color: [r: number, g: number, b: number, a: number]): void {
-        super.prepare(viewport, color);
+    updateBuffer(start: number, buffer: number[]): void {
+        super.updateBuffer(start, buffer);
         const context = this.context;
-        context.useProgram(this.handler.program);
-        context.activeTexture(context.TEXTURE0);
-        context.bindTexture(context.TEXTURE_2D, this.handler.texture);
-    }
-    updateDelta(device: Device): void {
-        this.lastTime = this.now;
-        if (!this.lastTime) {
-            this.lastTime = device.now();
-        }
-        this.now = device.now();
-        const delta = this.now - this.lastTime;
-        const context = this.context;
-        const program = this.handler.program;
-        context.useProgram(program);
-        context.uniform1f(context.getUniformLocation(program, "u_delta"), delta);
+        context.bindBuffer(context.ARRAY_BUFFER, this.backHandler.buffer);
+        context.bufferSubData(context.ARRAY_BUFFER, start * 4, new Float32Array(buffer));
     }
     render(): void {
         const context = this.context

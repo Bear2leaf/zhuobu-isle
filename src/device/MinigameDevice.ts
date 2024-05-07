@@ -73,11 +73,11 @@ export default class MinigameDevice implements Device {
         if (!this.onmessage) {
             throw new Error("onmessage not set");
         }
-        this.worker.onMessage((data) => this.onmessage(data))
+        this.worker.onMessage((data) => this.onmessage && this.onmessage(data))
         this.sendmessage = this.worker!.postMessage.bind(this.worker)
     }
-    onmessage: (data: any) => void;
-    sendmessage: (data: any) => void;
+    onmessage?: (data: any) => void;
+    sendmessage?: (data: any) => void;
     terminateWorker(): void {
         this.worker?.terminate();
     }

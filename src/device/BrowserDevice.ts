@@ -60,11 +60,11 @@ export default class BrowserDevice implements Device {
             throw new Error("onmessage not set");
         }
         this.worker = new Worker(url, { type: "module" });
-        this.worker.onmessage = (e: MessageEvent) => this.onmessage(e.data);
+        this.worker.onmessage = (e: MessageEvent) => this.onmessage && this.onmessage(e.data);
         this.sendmessage = this.worker!.postMessage.bind(this.worker)
     }
-    onmessage: (data: any) => void;
-    sendmessage: (data: any) => void;
+    onmessage?: (data: any) => void;
+    sendmessage?: (data: any) => void;
     terminateWorker(): void {
         this.worker?.terminate();
     }

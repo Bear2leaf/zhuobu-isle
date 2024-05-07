@@ -1,5 +1,6 @@
 
 
+import { mat4 } from "gl-matrix";
 import Device from "../device/Device";
 
 
@@ -87,17 +88,34 @@ export default abstract class Renderer {
     }
     abstract loadTextureSource(device: Device, tex: string): Promise<void>;
     abstract initVAO(count: number): void;
-    prepare(viewport: [number, number, number, number], color: [r: number, g: number, b: number, a: number]) {
-        const context = this.context;
-        context.viewport(...viewport);
-        context.scissor(...viewport);
-        context.clearColor(...color);
-        context.clear(context.COLOR_BUFFER_BIT | context.STENCIL_BUFFER_BIT);
-    }
     updateBuffer(start: number, buffer: number[]) {
         const context = this.context;
         context.bindBuffer(context.ARRAY_BUFFER, this.handler.buffer);
         context.bufferSubData(context.ARRAY_BUFFER, start * 4, new Float32Array(buffer));
+    }
+	updateProjection(projection: mat4) {
+        const context = this.context;
+        const program = this.handler.program;
+        context.useProgram(program);
+        context.uniformMatrix4fv(context.getUniformLocation(program, "u_projection"), false, projection);
+	}
+	updateView(view: mat4) {
+        const context = this.context;
+        const program = this.handler.program;
+        context.useProgram(program);
+        context.uniformMatrix4fv(context.getUniformLocation(program, "u_view"), false, view);
+	}
+	updateModel(model: mat4) {
+        const context = this.context;
+        const program = this.handler.program;
+        context.useProgram(program);
+        context.uniformMatrix4fv(context.getUniformLocation(program, "u_model"), false, model);
+	}
+    updateDelta(delta: number): void {
+        const context = this.context;
+        const program = this.handler.program;
+        context.useProgram(program);
+        context.uniform1f(context.getUniformLocation(program, "u_delta"), delta);
     }
     render() {
         const context = this.context

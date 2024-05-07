@@ -1,4 +1,4 @@
-import { createPlan } from "./goap/planner";
+import { Action, Goal, State, createPlan } from "./goap/planner";
 import BrowserWorker from "./device/BrowserWorker";
 import MinigameWorker from "./device/MinigameWorker";
 import WorkerDevice from "./device/WorkerDevice";
@@ -8,7 +8,7 @@ import TriangleMesh from "./island/TriangleMesh";
 import PoissonDiskSampling from "./poisson/PoissonDiskSampling";
 import SeedableRandom from "./util/SeedableRandom";
 import { createNoise2D } from "./util/simplex-noise";
-const initialState = {
+const initialState: State = {
   axe_available: true,
   player: {
     axe_equipped: false,
@@ -16,8 +16,9 @@ const initialState = {
   }
 };
 
-const actions = {
-  chopWood: {
+const actions: Action[] = [
+  {
+    key: "chopWood",
     condition: s => s.player.axe_equipped,
     effect: s => {
       s.player.wood++;
@@ -25,7 +26,8 @@ const actions = {
     },
     cost: s => 2
   },
-  getAxe: {
+  {
+    key: "getAxe",
     condition: s => !s.player.axe_equipped && s.axe_available,
     effect: s => {
       s.player.axe_equipped = true;
@@ -33,7 +35,8 @@ const actions = {
     },
     cost: s => 2
   },
-  gatherWood: {
+  {
+    key: "gatherWood",
     condition: s => true,
     effect: s => {
       s.player.wood++;
@@ -41,18 +44,16 @@ const actions = {
     },
     cost: s => 5
   }
-};
+];
 
-const goals = {
-  collectWood: {
-    label: "Collect Wood",
-    validate: (prevState, nextState) => {
-      return nextState.player.wood > prevState.player.wood;
-    }
+const goal: Goal = {
+  label: "Collect Wood",
+  validate: (prevState, nextState) => {
+    return nextState.player.wood > prevState.player.wood;
   }
 };
 function createIsland() {
-  console.log(createPlan(initialState, actions, goals.collectWood))
+  console.log(createPlan(initialState, actions, goal))
   const spacing = 64;
   const distanceRNG = new SeedableRandom(42);
   const simplex = { noise2D: createNoise2D(() => distanceRNG.nextFloat()) };

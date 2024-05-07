@@ -27,14 +27,6 @@ export default class ImageRenderer extends Renderer {
         context.texParameteri(context.TEXTURE_2D, context.TEXTURE_MAG_FILTER, context.NEAREST);
         context.bindTexture(context.TEXTURE_2D, null);
     }
-    prepare(viewport: [number, number, number, number], color: [r: number, g: number, b: number, a: number]): void {
-        super.prepare(viewport, color);
-        const context = this.context;
-        context.useProgram(this.handler.program);
-        context.activeTexture(context.TEXTURE0);
-        context.bindTexture(context.TEXTURE_2D, this.handler.texture);
-        context.uniform1i(context.getUniformLocation(this.handler.program, "u_texture"), 0);
-    }
     constructor(context: WebGL2RenderingContext) {
         super(context, "image");
     }

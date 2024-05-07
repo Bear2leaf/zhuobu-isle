@@ -43,29 +43,6 @@ export default class SpriteRenderer extends Renderer {
         context.texParameteri(context.TEXTURE_2D, context.TEXTURE_MAG_FILTER, context.NEAREST);
         context.bindTexture(context.TEXTURE_2D, null);
     }
-	updateProjection(projection: mat4) {
-        const context = this.context;
-        const program = this.handler.program;
-        context.useProgram(program);
-        context.uniformMatrix4fv(context.getUniformLocation(program, "u_projection"), false, projection);
-	}
-	updateView(view: mat4) {
-        const context = this.context;
-        const program = this.handler.program;
-        context.useProgram(program);
-        context.uniformMatrix4fv(context.getUniformLocation(program, "u_view"), false, view);
-	}
-	updateModel(model: mat4) {
-        const context = this.context;
-        const program = this.handler.program;
-        context.useProgram(program);
-        context.uniformMatrix4fv(context.getUniformLocation(program, "u_model"), false, model);
-	}
-    prepare(viewport: [number, number, number, number], color: [r: number, g: number, b: number, a: number]): void {
-        super.prepare(viewport, color);
-        const context = this.context;
-        context.useProgram(this.handler.program);
-    }
     async loadShaderSource(device: Device): Promise<void> {
         await super.loadShaderSource(device);
         this.linkProgram();

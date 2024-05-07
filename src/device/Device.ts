@@ -6,8 +6,8 @@ export default interface Device {
   getWindowInfo(): readonly [number, number];
   now(): number;
   loadSubpackage(): Promise<null>;
-  sendmessage: (data: MainMessage) => void;
-  onmessage: (data: WorkerMessage) => void;
+  sendmessage?: (data: MainMessage) => void;
+  onmessage?: (data: WorkerMessage) => void;
   createWorker(url: string): void;
   terminateWorker(): void;
   createWebAudioContext(): AudioContext;
