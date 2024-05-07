@@ -8,6 +8,7 @@ export default class MinigameDevice implements Device {
     private readonly canvas: WechatMinigame.Canvas
     private contextCreated: boolean = false;
     private readonly divideTimeBy: number;
+    private startupTime: number = wx.getPerformance().now();
     constructor() {
         this.canvas = wx.createCanvas();
         const info = wx.getWindowInfo();
@@ -16,6 +17,10 @@ export default class MinigameDevice implements Device {
         this.windowInfo = [this.canvas.width, this.canvas.height];
         const isDevTool = wx.getSystemInfoSync().platform === "devtools";
         this.divideTimeBy = isDevTool ? 1 : 1000;
+
+        GameGlobal.performance = {
+            now: () => this.now()
+        }
     }
     getContext(): WebGL2RenderingContext {
         const context = this.canvas.getContext("webgl2");
@@ -32,7 +37,7 @@ export default class MinigameDevice implements Device {
         return this.windowInfo;
     }
     now(): number {
-        return wx.getPerformance().now() / this.divideTimeBy;
+        return (wx.getPerformance().now() - this.startupTime) / this.divideTimeBy;
 
     }
     reload(): void {

@@ -1,4 +1,4 @@
-import { mat4 } from "gl-matrix";
+import { mat4, vec3 } from "gl-matrix";
 import Device from "../device/Device.ts";
 import Renderer from "../renderer/Renderer.ts";
 
@@ -20,7 +20,7 @@ export default abstract class Drawobject {
         await this.feedback.loadShaderSource(device)
     }
     abstract init(): void;
-    update(delta: number) {
+    update(elapsed: number, delta: number) {
         this.renderer.updateProjection(this.projection);
         this.renderer.updateModel(this.model);
         this.renderer.updateView(this.view);

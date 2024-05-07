@@ -45,8 +45,7 @@ async function start(device: Device) {
 		velocity[0] = 0;
 		velocity[1] = 0;
 	}
-	let lastTime = 0;
-	let now = 0;
+	let last = 0;
 	function tick() {
 		input.update();
 		cameraPos[0] += velocity[0];
@@ -54,21 +53,18 @@ async function start(device: Device) {
 		mat4.lookAt(view, vec3.fromValues(cameraPos[0], cameraPos[1], 1), vec3.fromValues(cameraPos[0], cameraPos[1], 0), vec3.fromValues(0, 1, 0));
 		const invert = mat4.create();
 		mat4.invert(invert, view);
-		lastTime = now;
-		if (!lastTime) {
-			lastTime = device.now();
-		}
-		now = device.now();
-		const delta = now - lastTime;
-        context.viewport(0, 0, ...device.getWindowInfo());
-        context.scissor(0, 0, ...device.getWindowInfo());
-        context.clearColor(0.3, 0.3, 0.3, 1);
-        context.clear(context.COLOR_BUFFER_BIT | context.STENCIL_BUFFER_BIT);
+		const now = device.now();
+		const delta = now - last;
+		last = now;
+		context.viewport(0, 0, ...device.getWindowInfo());
+		context.scissor(0, 0, ...device.getWindowInfo());
+		context.clearColor(0.3, 0.3, 0.3, 1);
+		context.clear(context.COLOR_BUFFER_BIT | context.STENCIL_BUFFER_BIT);
 		for (const drawobject of drawobjects) {
 			drawobject.updateProjection(projection);
 			drawobject.updateModel(model);
 			drawobject.updateView(invert);
-			drawobject.update(delta);
+			drawobject.update(device.now(), delta);
 			drawobject.draw();
 		}
 		requestAnimationFrame(tick);

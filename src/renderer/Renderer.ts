@@ -92,6 +92,7 @@ export default abstract class Renderer {
         const context = this.context;
         context.bindBuffer(context.ARRAY_BUFFER, this.handler.buffer);
         context.bufferSubData(context.ARRAY_BUFFER, start * 4, new Float32Array(buffer));
+        context.bindBuffer(context.ARRAY_BUFFER, null)
     }
 	updateProjection(projection: mat4) {
         const context = this.context;
