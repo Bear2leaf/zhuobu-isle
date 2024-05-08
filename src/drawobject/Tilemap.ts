@@ -60,7 +60,7 @@ export default class Tilemap extends Drawobject {
         this.sendmessage && this.sendmessage({
             type: "findPath",
             data: {
-                start: { x: 0, y: 0 },
+                start: this.worldPositionToTilePoint(0, 0),
                 end: this.worldPositionToTilePoint(x, y)
             }
         });

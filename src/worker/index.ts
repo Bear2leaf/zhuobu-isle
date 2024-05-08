@@ -55,8 +55,8 @@ device.onmessage = function (message) {
     const startY = message.data.start.y;
     const endX = message.data.end.x;
     const endY = message.data.end.y;
-    const start = graph.grid[startX][startY];
-    const end = graph.grid[endX][endY];
+    const start = graph.grid[startY][startX];
+    const end = graph.grid[endY][endX];
     const result = astar.astar.search(graph, start, end)
     device.postmessage({ type: "path", data: result.map(p => ({ x: p.x, y: p.y })) })
   }

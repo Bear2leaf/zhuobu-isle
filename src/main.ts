@@ -5,6 +5,7 @@ import Character from './drawobject/Character';
 import Tilemap from './drawobject/Tilemap';
 import Drawobject from './drawobject/Drawobject';
 import Camera from './camera/Camera';
+import { update } from '@tweenjs/tween.js';
 async function start(device: Device) {
 	device.onmessage = (data) => {
 		console.log("message from worker", data);
@@ -43,6 +44,7 @@ async function start(device: Device) {
 		const now = device.now();
 		const delta = now - last;
 		last = now;
+		update(now);
 		const windowInfo = device.getWindowInfo();
 		camera.updateWindowInfo(...windowInfo)
 		camera.update(now, delta);
