@@ -1,42 +1,32 @@
 import Device from './device/Device';
 import { vec4 } from 'gl-matrix';
 import Input from './input/Input';
-import Character from './drawobject/Character';
-import Tilemap from './drawobject/Tilemap';
-import Drawobject from './drawobject/Drawobject';
 import Camera from './camera/Camera';
 import { update } from '@tweenjs/tween.js';
+import TiledMap from './map/TiledMap';
 async function start(device: Device) {
 	device.onmessage = (data) => {
 		console.log("message from worker", data);
-		for (const drawobject of drawobjects) {
-			drawobject.onmessage(data);	
-		} 
+		world.onmessage(data);
 	};
 	device.createWorker("dist/worker/index.js");
 	const context = device.getContext();
 	const input = new Input(device);
 	const camera = new Camera();
-	const drawobjects: Drawobject[] = [];
-	drawobjects.push(new Tilemap(context));
-	drawobjects.push(new Character(context));
-	for await (const drawobject of drawobjects) {
-		await drawobject.load(device);
-		drawobject.sendmessage = device.sendmessage?.bind(device);
-		drawobject.init();
-	}
+	const world = new TiledMap(context);
+	device.sendmessage && world.setSendMessage(device.sendmessage.bind(device));
+	await world.load("world", device);
+	world.init();
 	input.ondrag = (x, y) => {
-		camera.setVelocity(x, y);
+		camera.ondrag(x, y);
 	};
 	input.onclick = (x, y) => {
 		const p = vec4.create()
 		camera.screenToWorld(x, y, p);
-		for (const drawobject of drawobjects) {
-			drawobject.onclick(p[0], p[1]);
-		}
+		world.onclick(p[0], p[1]);
 	}
 	input.onrelease = () => {
-		camera.setVelocity(0, 0);
+		camera.ondrag(0, 0);
 	}
 	let last = 0;
 	function tick() {
@@ -52,11 +42,9 @@ async function start(device: Device) {
 		context.scissor(0, 0, ...windowInfo);
 		context.clearColor(0.3, 0.3, 0.3, 1);
 		context.clear(context.COLOR_BUFFER_BIT | context.STENCIL_BUFFER_BIT);
-		for (const drawobject of drawobjects) {
-			camera.updateDrawobject(drawobject);
-			drawobject.update(now, delta);
-			drawobject.draw();
-		}
+		world.updateCamera(camera);
+		world.update(now, delta);
+		world.render();
 		requestAnimationFrame(tick);
 	}
 	tick();

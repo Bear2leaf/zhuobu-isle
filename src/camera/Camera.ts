@@ -18,7 +18,7 @@ export default class Camera {
         this.model = mat4.create();
         this.speed = 0.1;
     }
-    setVelocity(x: number, y: number) {
+    ondrag(x: number, y: number) {
         this.velocity[0] = x;
         this.velocity[1] = -y;
 

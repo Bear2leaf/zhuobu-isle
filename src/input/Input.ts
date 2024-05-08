@@ -8,7 +8,7 @@ export default class Input {
         y: number
     }[];
     onclick?: (x: number, y: number) => void
-    ondrag?: (x: number, y: number) => void
+    ondrag?: (deltaX: number, deltaY: number) => void
     constructor(device: Device) {
         this.queue = [];
         device.onTouchStart((e: typeof this.queue[0]) => {
@@ -32,7 +32,7 @@ export default class Input {
         }
         if (e.type === "TouchStart") {
         }
-        if (e.type === "TouchEnd" && (this.last === "TouchStart" || this.last === "TouchMove")) {
+        if (e.type === "TouchEnd" && (this.last === "TouchStart" || (this.last === "TouchMove" && this.queue.length < 4))) {
             const lastE = this.queue[this.queue.length - 2];
             if (lastE === undefined) {
                 return;

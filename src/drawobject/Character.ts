@@ -3,7 +3,7 @@ import Device from "../device/Device";
 import SpriteFeedback from "../feedback/SpriteFeedback";
 import SpriteRenderer from "../renderer/SpriteRenderer";
 import Drawobject from "./Drawobject";
-import { Tween, update } from "@tweenjs/tween.js";
+import { Tween } from "@tweenjs/tween.js";
 
 export default class Character extends Drawobject {
     onmessage(data: WorkerMessage): void {
