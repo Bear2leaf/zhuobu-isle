@@ -2,6 +2,7 @@ import { vec4 } from "gl-matrix";
 import Device from "../device/Device";
 import Camera from "../camera/Camera.js";
 import Scene from "../scene/Scene.js";
+import InputListener from "../Component/listener/InputListener.js";
 type InputType = "TouchStart" | "TouchMove" | "TouchEnd" | "TouchCancel";
 export default class Input {
     private last?: InputType;
@@ -63,7 +64,10 @@ export default class Input {
         this.onclick = (x, y) => {
             const p = vec4.create()
             camera.screenToWorld(x, y, p);
-            scene.onclick(p[0], p[1]);
+            for (const listener of scene.getComponents(InputListener)) {
+                listener.onclick(p[0], p[1]);;
+            } 
+            
         }
         this.onrelease = () => {
             camera.ondrag(0, 0);

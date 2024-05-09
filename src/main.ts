@@ -2,26 +2,25 @@ import Device from './device/Device';
 import Input from './input/Input';
 import Camera from './camera/Camera';
 import { update } from '@tweenjs/tween.js';
-import TiledScene from './scene/TiledScene';
 import Clock from './clock/Clock.js';
-import GameobjectBuilder from './Component/builder/GameobjectBuilder.js';
 import { Map } from '@kayahr/tiled';
+import SceneBuilder from './Component/builder/SceneBuilder.js';
 async function start(device: Device) {
-	device.onmessage = (data) => {
-		console.log("message from worker", data);
-		scene.onmessage(data);
-	};
+	const sceneBuilder = new SceneBuilder()
+		.addMessageHandler(device)
 	device.createWorker("dist/worker/index.js");
 	const context = device.getContext();
 	const input = new Input(device);
 	const camera = new Camera();
 	const clock = new Clock(device);
 	const tiledMapData = await device.readJson(`resources/tiled/isle.json`) as Map;
-	const scene = new TiledScene(tiledMapData);
-	scene.sendmessage = device.sendmessage?.bind(device);
-	scene.buildScene(context);
-	await scene.load(device);
-	scene.init();
+	const scene = await sceneBuilder
+		.setTiledMapData(tiledMapData)
+		.emitTiledMapData(device.sendmessage?.bind(device))
+		.initContext(context)
+		.addClickHandler(device.sendmessage?.bind(device))
+		.load(device)
+		.then(builder => builder.init().build());
 	input.init(camera, scene)
 	function tick() {
 		clock.tick();

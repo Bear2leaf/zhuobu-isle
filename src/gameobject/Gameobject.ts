@@ -31,6 +31,9 @@ export default class Gameobject {
         }
         return false;
     }
+    all(): readonly Component[] {
+        return this.components;
+    }
     update(elapsed: number, delta: number) {
         for (const component of this.components) {
             component.update(elapsed, delta);

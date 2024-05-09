@@ -5,21 +5,21 @@ import Component from "../Component.js";
 import SpriteFeedback from "../../feedback/SpriteFeedback.js";
 import SpriteRenderer from "../../renderer/SpriteRenderer.js";
 
-export default abstract class Drawable extends Component {
+export default class Drawable extends Component {
     private textureName: string = "";
     private _renderer?: Renderer;
     private _feedback?: Renderer;
 
     protected get renderer() {
 
-        if (!this._renderer ) {
+        if (!this._renderer) {
             throw new Error("renderer is undefined")
         }
         return this._renderer;
     }
     protected get feedback() {
 
-        if (!this._feedback ) {
+        if (!this._feedback) {
             throw new Error("feedback is undefined")
         }
         return this._feedback;
@@ -46,7 +46,6 @@ export default abstract class Drawable extends Component {
         await this.feedback.loadShaderSource(device)
         await this.renderer.loadTextureSource(device, this.textureName);
     }
-    abstract init(): void;
     update(elapsed: number, delta: number) {
         if (!this.renderer || !this.feedback) {
             throw new Error("renderers is not inited")
