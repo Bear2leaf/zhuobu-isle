@@ -3,48 +3,39 @@ import { vec4 } from 'gl-matrix';
 import Input from './input/Input';
 import Camera from './camera/Camera';
 import { update } from '@tweenjs/tween.js';
-import TiledMap from './map/TiledMap';
+import TiledScene from './scene/TiledScene';
+import Clock from './clock/Clock.js';
 async function start(device: Device) {
 	device.onmessage = (data) => {
 		console.log("message from worker", data);
-		world.onmessage(data);
+		scene.onmessage(data);
 	};
 	device.createWorker("dist/worker/index.js");
 	const context = device.getContext();
 	const input = new Input(device);
 	const camera = new Camera();
-	const world = new TiledMap(context);
-	device.sendmessage && world.setSendMessage(device.sendmessage.bind(device));
-	await world.load("world", device);
-	world.init();
-	input.ondrag = (x, y) => {
-		camera.ondrag(x, y);
-	};
-	input.onclick = (x, y) => {
-		const p = vec4.create()
-		camera.screenToWorld(x, y, p);
-		world.onclick(p[0], p[1]);
-	}
-	input.onrelease = () => {
-		camera.ondrag(0, 0);
-	}
-	let last = 0;
+	const clock = new Clock(device);
+	const scene = new TiledScene(context);
+	scene.initEvents(device);
+	await scene.load("isle", device);
+	scene.init();
+	input.init(camera, scene)
 	function tick() {
+		clock.tick();
 		input.update();
-		const now = device.now();
-		const delta = now - last;
-		last = now;
+		const now = clock.now;
+		const delta = clock.delta;
 		update(now);
 		const windowInfo = device.getWindowInfo();
-		camera.updateWindowInfo(...windowInfo)
-		camera.update(now, delta);
 		context.viewport(0, 0, ...windowInfo);
 		context.scissor(0, 0, ...windowInfo);
 		context.clearColor(0.3, 0.3, 0.3, 1);
 		context.clear(context.COLOR_BUFFER_BIT | context.STENCIL_BUFFER_BIT);
-		world.updateCamera(camera);
-		world.update(now, delta);
-		world.render();
+		camera.updateWindowInfo(...windowInfo)
+		camera.update(now, delta);
+		scene.updateCamera(camera);
+		scene.update(now, delta);
+		scene.render();
 		requestAnimationFrame(tick);
 	}
 	tick();

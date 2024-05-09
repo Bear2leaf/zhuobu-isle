@@ -1,11 +1,10 @@
 import Device from "../device/Device";
 import Camera from "../camera/Camera";
 
-export default interface GameMap {
-    worldPositionToTilePoint(x: number, y: number): Point
+export default interface Scene {
     load(name: string, device: Device): Promise<void>
     onmessage(data: WorkerMessage): void
-    setSendMessage(sendmessage: (data: MainMessage) => void): void
+    initEvents(device: Device): void;
     init(): void
     onclick(x: number, y: number): void
     updateCamera(camera: Camera): void

@@ -1,11 +1,8 @@
 import { vec2, vec3 } from "gl-matrix";
-import Device from "../device/Device";
-import SpriteFeedback from "../feedback/SpriteFeedback";
-import SpriteRenderer from "../renderer/SpriteRenderer";
-import Drawobject from "./Drawobject";
 import { Tween } from "@tweenjs/tween.js";
+import Layer from "./Layer.js";
 
-export default class Character extends Drawobject {
+export default class Character extends Layer {
     onmessage(data: WorkerMessage): void {
         if (data.type === "path") {
             const points = data.data;
@@ -33,8 +30,7 @@ export default class Character extends Drawobject {
     sendmessage?: ((data: MainMessage) => void) | undefined;
     private readonly tweens: Tween<vec2>[];
     constructor(context: WebGL2RenderingContext) {
-        const renderer = new SpriteRenderer(context);
-        super(renderer, new SpriteFeedback(context, renderer.getTarget()));
+        super(context);
         this.tweens = [];
     }
     init(): void {
@@ -58,12 +54,5 @@ export default class Character extends Drawobject {
         this.feedback.updateBuffer(28, [1 + x, 2 + y]);
         this.feedback.updateBuffer(37, [0 + x, 2 + y]);
         this.feedback.updateBuffer(46, [0 + x, 0 + y]);
-    }
-    onclick(x: number, y: number): void {
-        // this.tween.stop().to([x, y]).onUpdate(this.onTweenUpdate.bind(this)).startFromCurrentValues().start()
-    }
-    async load(device: Device): Promise<void> {
-        await super.load(device);
-        await this.renderer.loadTextureSource(device, "character");
     }
 }

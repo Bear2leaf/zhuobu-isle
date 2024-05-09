@@ -1,25 +1,34 @@
-import Device from "../device/Device";
 import SpriteFeedback from "../feedback/SpriteFeedback";
 import SpriteRenderer from "../renderer/SpriteRenderer";
 import Drawobject from "./Drawobject";
-import {  UnencodedTileLayer } from "@kayahr/tiled";
+import { UnencodedTileLayer } from "@kayahr/tiled";
 
-export default class Land extends Drawobject {
+export default class Layer extends Drawobject {
+    private layer?: UnencodedTileLayer;
+    private firstgrid?: number;
+    setData(layer: UnencodedTileLayer, firstgrid?: number) {
+        this.layer = layer
+        this.firstgrid = firstgrid
+    }
     sendmessage?: ((data: MainMessage) => void) | undefined;
     private readonly buffer: number[] = [];
-    private textureName?: string;
     constructor(context: WebGL2RenderingContext) {
         const renderer = new SpriteRenderer(context);
         super(renderer, new SpriteFeedback(context, renderer.getTarget()))
     }
-    initLayerBuffer(layer: UnencodedTileLayer): void {
+    initLayerBuffer(): void {
+        if (!this.layer) {
+            throw new Error("layer is undefined");
+        }
+        const layer = this.layer;
         const buffer: number[] = [];
         const data = layer.data as number[];
         const width = layer.width;
         const height = layer.height;
+        const firstgrid = this.firstgrid || 1;
         for (let i = 0; i < height; i++) {
             for (let j = 0; j < width; j++) {
-                const element = data[i * width + j] - 1;
+                const element = data[i * width + j] - firstgrid;
                 if (element < 0) {
                     continue;
                 }
@@ -40,29 +49,5 @@ export default class Land extends Drawobject {
         this.renderer.initVAO(buffer.length / 9);
         this.feedback.initVAO(buffer.length / 9);
         this.feedback.updateBuffer(0, buffer);
-    }
-    async loadTexture(name: string, device: Device) {
-
-        await this.renderer.loadTextureSource(device, name);
-    }
-    onmessage(data: WorkerMessage): void {
-        if (data.type === "path") {
-            console.log(data);
-        }
-    }
-    worldPositionToTilePoint(x: number, y: number): Point {
-        return {
-            x: Math.floor(x),
-            y: Math.floor(y)
-        }
-    }
-    onclick(x: number, y: number): void {
-        this.sendmessage && this.sendmessage({
-            type: "findPath",
-            data: {
-                start: this.worldPositionToTilePoint(0, 0),
-                end: this.worldPositionToTilePoint(x, y)
-            }
-        });
     }
 }

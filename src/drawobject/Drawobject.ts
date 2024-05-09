@@ -3,6 +3,7 @@ import Device from "../device/Device";
 import Renderer from "../renderer/Renderer";
 
 export default abstract class Drawobject {
+    private textureName: string = "";
     protected readonly renderer: Renderer;
     protected readonly feedback: Renderer;
     private readonly projection: mat4;
@@ -15,9 +16,13 @@ export default abstract class Drawobject {
         this.model = mat4.create();
         this.view = mat4.create();
     }
+    setTextureName(name: string) {
+        this.textureName = name;
+    }
     async load(device: Device) {
         await this.renderer.loadShaderSource(device);
         await this.feedback.loadShaderSource(device)
+        await this.renderer.loadTextureSource(device, this.textureName);
     }
     abstract init(): void;
     update(elapsed: number, delta: number) {
@@ -31,7 +36,6 @@ export default abstract class Drawobject {
         this.renderer.render();
     }
     onclick(x: number, y: number): void {
-
     }
     updateProjection(projection: mat4) {
         mat4.copy(this.projection, projection);
@@ -42,6 +46,8 @@ export default abstract class Drawobject {
     updateView(view: mat4) {
         mat4.copy(this.view, view);
     }
-    abstract onmessage(data: WorkerMessage): void;
+    onmessage(data: WorkerMessage): void {
+
+    };
     abstract sendmessage?: (data: MainMessage) => void;
 }
