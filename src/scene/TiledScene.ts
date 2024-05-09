@@ -1,39 +1,48 @@
 import Device from "../device/Device";
-import { AnyLayer, EmbeddedTileset, Map, Tileset, TilesetRef, UnencodedTileLayer } from "@kayahr/tiled";
-import Layer from "../drawobject/Layer";
-import Character from "../drawobject/Character";
+import { EmbeddedTileset, Map, UnencodedTileLayer } from "@kayahr/tiled";
+import Layer from "../Component/drawable/Layer";
 import Camera from "../camera/Camera";
 import Scene from "./Scene";
+import GameobjectBuilder from "../Component/builder/GameobjectBuilder.js";
+import Gameobject from "../gameobject/Gameobject.js";
+import MessageListener from "../Component/listener/MessageListener.js";
+import InputListener from "../Component/listener/InputListener.js";
 
 export default class TiledScene implements Scene {
-    private readonly drawobjects: Layer[];
-    private sendmessage?: (data: MainMessage) => void;
-    constructor(context: WebGL2RenderingContext) {
-        this.drawobjects = [
-            new Layer(context),
-            new Layer(context),
-            new Layer(context),
-            new Character(context),
-            new Layer(context),
-        ];
+    private readonly gameobject: Gameobject[];
+    private readonly builder: GameobjectBuilder;
+    sendmessage?: (data: MainMessage) => void;
+    constructor(private readonly tiledMapData: Map) {
+        this.gameobject = [];
+        this.builder = new GameobjectBuilder();
     }
-    async load(name: string, device: Device): Promise<void> {
-        const tiledMapData = await device.readJson(`resources/tiled/${name}.json`) as Map;
+    buildScene(context: WebGL2RenderingContext) {
+        const tiledMapData = this.tiledMapData;
+        if (!tiledMapData) {
+            throw new Error("tiledMapData is undefined");
+        }
         this.sendmessage && this.sendmessage({
             type: "initTileMap",
             data: tiledMapData
         })
         const layers = tiledMapData.layers as UnencodedTileLayer[];
-        for await (const layer of layers) {
-            const layerobject = this.drawobjects[layers.indexOf(layer)];
-            if (!layerobject) {
-                continue;
-            }
+        const builder = this.builder;
+        for (const layer of layers) {
             const image = this.getTilesetImage(tiledMapData, layer)
             const firstgrid = this.getTilesetFirstgrid(tiledMapData, layer)
-            layerobject.setTextureName(`..\/${image}`.split(".png")[0]);
-            layerobject.setData(layer, firstgrid);
-            await layerobject.load(device);
+            if (layer.name === "character") {
+                builder.addCharacter(context, image)
+            } else {
+                builder.addLayer(context, image, layer, firstgrid);
+            }
+            builder.addInputListener()
+            builder.addMessageListener()
+            this.gameobject.push(builder.build());
+        }
+    }
+    async load(device: Device): Promise<void> {
+        for await (const object of this.gameobject) {
+            await object.get(Layer).load(device);
         }
     }
     private getTilesetFirstgrid(tiledMapData: Map, layer: UnencodedTileLayer) {
@@ -50,25 +59,21 @@ export default class TiledScene implements Scene {
             const match = layer.data?.every(tile => !tile || (tileset.firstgid <= tile && tile < tileset.firstgid + tileset.tilecount))
             if (match) {
                 const image = (tileset as EmbeddedTileset).image;
-                return image;
+                const imagePaths = `${image}`.split('\/');
+                const imageName = imagePaths[imagePaths.length - 1].replace(".png","");
+                return imageName;
             }
         }
+        throw new Error("image not found")
     }
     onmessage(data: WorkerMessage) {
-        for (const drawobject of this.drawobjects) {
-            drawobject.onmessage(data);
-        }
-    }
-    initEvents(device: Device) {
-        this.sendmessage = device.sendmessage?.bind(device);
-        for (const drawobject of this.drawobjects) {
-            drawobject.sendmessage = device.sendmessage?.bind(device);
+        for (const object of this.gameobject) {
+            object.get(MessageListener).onmessage(data);
         }
     }
     init() {
-        for (const drawobject of this.drawobjects) {
-            drawobject.initLayerBuffer();
-            drawobject.init();
+        for (const object of this.gameobject) {
+            object.get(Layer).init();
         }
     }
     onclick(x: number, y: number) {
@@ -85,23 +90,23 @@ export default class TiledScene implements Scene {
                 }
             }
         });
-        for (const drawobject of this.drawobjects) {
-            drawobject.onclick(x, y);
+        for (const drawobject of this.gameobject) {
+            drawobject.get(InputListener).onclick(x, y);
         }
     }
     updateCamera(camera: Camera) {
-        for (const drawobject of this.drawobjects) {
-            camera.updateDrawobject(drawobject);
+        for (const object of this.gameobject) {
+            camera.updateDrawable(object.get(Layer));
         }
     }
     update(now: number, delta: number) {
-        for (const drawobject of this.drawobjects) {
-            drawobject.update(now, delta);
+        for (const object of this.gameobject) {
+            object.update(now, delta);
         }
     }
     render() {
-        for (const drawobject of this.drawobjects) {
-            drawobject.draw();
+        for (const object of this.gameobject) {
+            object.get(Layer).draw();
         }
     }
 }

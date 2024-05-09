@@ -43,6 +43,9 @@ export default abstract class Renderer {
         context.blendFuncSeparate(context.SRC_ALPHA, context.ONE_MINUS_SRC_ALPHA, context.ONE, context.ONE);
         context.pixelStorei(context.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
     }
+    getTarget() {
+        return { vao: this.handler.vao, buffer: this.handler.buffer };
+    }
     async loadShaderSource(device: Device) {
         const name: string = this.name;
         const vertexShaderSource = await device.readText(`resources/glsl/${name}.vert.sk`)

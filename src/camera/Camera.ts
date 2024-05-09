@@ -1,5 +1,5 @@
 import { mat4, vec2, vec3, vec4 } from "gl-matrix";
-import Drawobject from "../drawobject/Drawobject";
+import Drawable from "../Component/drawable/Drawable";
 
 export default class Camera {
     private readonly velocity: vec2;
@@ -47,7 +47,7 @@ export default class Camera {
         mat4.ortho(this.projection, 0, width, height, 0, 1, -1);
         mat4.fromScaling(this.model, vec3.fromValues(100, 100, 1))
     }
-    updateDrawobject(drawobject: Drawobject) {
+    updateDrawable(drawobject: Drawable) {
         const invert = mat4.create();
         mat4.invert(invert, this.view);
         drawobject.updateProjection(this.projection);

@@ -1,10 +1,11 @@
 import Device from './device/Device';
-import { vec4 } from 'gl-matrix';
 import Input from './input/Input';
 import Camera from './camera/Camera';
 import { update } from '@tweenjs/tween.js';
 import TiledScene from './scene/TiledScene';
 import Clock from './clock/Clock.js';
+import GameobjectBuilder from './Component/builder/GameobjectBuilder.js';
+import { Map } from '@kayahr/tiled';
 async function start(device: Device) {
 	device.onmessage = (data) => {
 		console.log("message from worker", data);
@@ -15,9 +16,11 @@ async function start(device: Device) {
 	const input = new Input(device);
 	const camera = new Camera();
 	const clock = new Clock(device);
-	const scene = new TiledScene(context);
-	scene.initEvents(device);
-	await scene.load("isle", device);
+	const tiledMapData = await device.readJson(`resources/tiled/isle.json`) as Map;
+	const scene = new TiledScene(tiledMapData);
+	scene.sendmessage = device.sendmessage?.bind(device);
+	scene.buildScene(context);
+	await scene.load(device);
 	scene.init();
 	input.init(camera, scene)
 	function tick() {

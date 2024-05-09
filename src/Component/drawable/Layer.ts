@@ -1,22 +1,16 @@
-import SpriteFeedback from "../feedback/SpriteFeedback";
-import SpriteRenderer from "../renderer/SpriteRenderer";
-import Drawobject from "./Drawobject";
+import Drawable from "./Drawable";
 import { UnencodedTileLayer } from "@kayahr/tiled";
 
-export default class Layer extends Drawobject {
+export default class Layer extends Drawable {
     private layer?: UnencodedTileLayer;
     private firstgrid?: number;
     setData(layer: UnencodedTileLayer, firstgrid?: number) {
         this.layer = layer
         this.firstgrid = firstgrid
     }
-    sendmessage?: ((data: MainMessage) => void) | undefined;
     private readonly buffer: number[] = [];
-    constructor(context: WebGL2RenderingContext) {
-        const renderer = new SpriteRenderer(context);
-        super(renderer, new SpriteFeedback(context, renderer.getTarget()))
-    }
-    initLayerBuffer(): void {
+    init(): void {
+
         if (!this.layer) {
             throw new Error("layer is undefined");
         }
@@ -43,9 +37,6 @@ export default class Layer extends Drawobject {
             }
         }
         this.buffer.splice(0, this.buffer.length, ...buffer);
-    }
-    init(): void {
-        const buffer: number[] = this.buffer;
         this.renderer.initVAO(buffer.length / 9);
         this.feedback.initVAO(buffer.length / 9);
         this.feedback.updateBuffer(0, buffer);

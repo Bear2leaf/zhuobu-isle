@@ -3,9 +3,6 @@ import Device from "../device/Device";
 import Renderer from "./Renderer";
 
 export default class SpriteRenderer extends Renderer {
-    getTarget() {
-        return { vao: this.handler.vao, buffer: this.handler.buffer };
-    }
     initVAO(count: number): void {
         this.count = count;
         const context = this.context;

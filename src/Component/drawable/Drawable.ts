@@ -1,20 +1,42 @@
 import { mat4, vec3 } from "gl-matrix";
-import Device from "../device/Device";
-import Renderer from "../renderer/Renderer";
+import Device from "../../device/Device";
+import Renderer from "../../renderer/Renderer";
+import Component from "../Component.js";
+import SpriteFeedback from "../../feedback/SpriteFeedback.js";
+import SpriteRenderer from "../../renderer/SpriteRenderer.js";
 
-export default abstract class Drawobject {
+export default abstract class Drawable extends Component {
     private textureName: string = "";
-    protected readonly renderer: Renderer;
-    protected readonly feedback: Renderer;
+    private _renderer?: Renderer;
+    private _feedback?: Renderer;
+
+    protected get renderer() {
+
+        if (!this._renderer ) {
+            throw new Error("renderer is undefined")
+        }
+        return this._renderer;
+    }
+    protected get feedback() {
+
+        if (!this._feedback ) {
+            throw new Error("feedback is undefined")
+        }
+        return this._feedback;
+    }
     private readonly projection: mat4;
     private readonly model: mat4;
     private readonly view: mat4;
-    constructor(renderer: Renderer, feedback: Renderer) {
-        this.renderer = renderer;
-        this.feedback = feedback;
+    constructor() {
+        super();
         this.projection = mat4.create();
         this.model = mat4.create();
         this.view = mat4.create();
+    }
+    initRenderer(context: WebGL2RenderingContext) {
+
+        this._renderer = new SpriteRenderer(context);
+        this._feedback = new SpriteFeedback(context, this.renderer.getTarget());
     }
     setTextureName(name: string) {
         this.textureName = name;
@@ -26,12 +48,18 @@ export default abstract class Drawobject {
     }
     abstract init(): void;
     update(elapsed: number, delta: number) {
+        if (!this.renderer || !this.feedback) {
+            throw new Error("renderers is not inited")
+        }
         this.renderer.updateProjection(this.projection);
         this.renderer.updateModel(this.model);
         this.renderer.updateView(this.view);
         this.feedback.updateDelta(delta);
     }
     draw() {
+        if (!this.renderer || !this.feedback) {
+            throw new Error("renderers is not inited")
+        }
         this.feedback.render();
         this.renderer.render();
     }
@@ -46,8 +74,4 @@ export default abstract class Drawobject {
     updateView(view: mat4) {
         mat4.copy(this.view, view);
     }
-    onmessage(data: WorkerMessage): void {
-
-    };
-    abstract sendmessage?: (data: MainMessage) => void;
 }
