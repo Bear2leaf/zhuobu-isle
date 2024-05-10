@@ -15,7 +15,6 @@ export default class TiledScene extends Scene {
             const firstgrid = this.getTilesetFirstgrid(tiledMapData, layer)
             if (layer.name === "character") {
                 builder.addCharacter(context, image)
-                builder.addPathReceiver()
             } else {
                 builder.addLayer(context, image, layer, firstgrid);
             }

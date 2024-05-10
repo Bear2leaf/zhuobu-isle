@@ -1,22 +1,37 @@
+import { vec2, vec4 } from "gl-matrix";
+import Camera from "../camera/Camera.js";
+import Character from "../component/drawable/Character.js";
 import Command from "./Command.js";
-import InputReceiver from "../component/receiver/InputReceiver.js";
 
 export default class InputCmd implements Command {
-    private receiver?: InputReceiver;
-    constructor(private readonly x: number, private readonly y: number, private readonly type: string) {
+    constructor(
+        private readonly x: number,
+        private readonly y: number,
+        private readonly type: string,
+        private readonly camera?: Camera,
+        private readonly character?: Character,
+        private readonly sendmessage?: (data: MainMessage) => void
+    ) {
 
-    }
-    setReceiver(receiver: InputReceiver): void {
-        this.receiver = receiver;
     }
     execute(): void {
         if (this.type === "onclick") {
-            this.receiver?.onclick(this.x, this.y);
+            this.camera?.onclick(this.x, this.y);
+            if (this.character) {
+                const p = vec4.create()
+                this.camera?.screenToWorld(this.x, this.y, p);
+                this.sendmessage && this.sendmessage({
+                    type: "findPath",
+                    data: {
+                        start: { x: 0, y: 0 },
+                        end: { x: Math.floor(p[0]), y: Math.floor(p[1]) }
+                    }
+                })
+            }
         } else if (this.type === "ondrag") {
-            this.receiver?.ondrag(this.x, this.y);
-
+            this.camera?.ondrag(this.x, this.y);
         } else if (this.type === "onrelease") {
-            this.receiver?.onrelease();
+            this.camera?.onrelease();
         }
     }
 

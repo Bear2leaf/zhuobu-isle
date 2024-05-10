@@ -1,10 +1,7 @@
 import { mat4, vec2, vec3, vec4 } from "gl-matrix";
 import Drawable from "../component/drawable/Drawable";
-import Receiver from "../component/receiver/Receiver.js";
-import InputReceiver from "../component/receiver/InputReceiver.js";
-import Device from "../device/Device.js";
 
-export default class Camera implements InputReceiver {
+export default class Camera {
     private readonly velocity: vec2;
     private readonly windowInfo: [number, number];
     private readonly projection: mat4;

@@ -62,8 +62,6 @@ export default class Drawable extends Component {
         this.feedback.render();
         this.renderer.render();
     }
-    onclick(x: number, y: number): void {
-    }
     updateProjection(projection: mat4) {
         mat4.copy(this.projection, projection);
     }
