@@ -11,9 +11,13 @@ declare type Point = {
 }
 declare type MainMessage = {
     type: "hello"
+    data: void
 } | {
     type: "initTileMap",
     data: any
+} | {
+    type: "plan",
+    data:any
 } | {
     type: "findPath",
     data: {

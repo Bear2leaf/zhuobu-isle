@@ -1,42 +1,42 @@
 import Device from "../device/Device";
 import Camera from "../camera/Camera";
-import GameobjectBuilder from "../Component/builder/GameobjectBuilder.js";
+import GameobjectBuilder from "../builder/GameobjectBuilder.js";
 import Gameobject from "../gameobject/Gameobject.js";
-import Drawable from "../Component/drawable/Drawable.js";
-import Component from "../Component/Component.js";
+import Drawable from "../component/drawable/Drawable.js";
+import Component from "../component/Component.js";
 
-export default  class Scene {
-    protected readonly gameobject: Gameobject[];
+export default class Scene {
+    protected readonly gameobjects: Gameobject[];
     protected readonly builder: GameobjectBuilder;
     constructor() {
-        this.gameobject = [];
+        this.gameobjects = [];
         this.builder = new GameobjectBuilder();
     }
     async load(device: Device): Promise<void> {
-        for await (const object of this.gameobject) {
+        for await (const object of this.gameobjects) {
             await Promise.all(object.all().map(comp => comp.load(device)));
         }
     }
-    init() {
-        for (const object of this.gameobject) {
-            object.all().map(comp=> comp.init());
+    initGameobjects() {
+        for (const object of this.gameobjects) {
+            object.all().map(comp => comp.init());
         }
     }
-    getComponents<T extends Component>(ctor: new () => T) {
-        return this.gameobject.filter(obj => obj.has(ctor)).map(obj => obj.get(ctor));
+    getComponents<T extends Component>(ctor: new () => T): T[] {
+        return this.gameobjects.filter(obj => obj.has(ctor)).map(obj => obj.get(ctor));
     }
     updateCamera(camera: Camera) {
-        for (const object of this.gameobject) {
+        for (const object of this.gameobjects) {
             camera.updateDrawable(object.get(Drawable));
         }
     }
     update(now: number, delta: number) {
-        for (const object of this.gameobject) {
-            object.all().map(comp=> comp.update(now, delta));
+        for (const object of this.gameobjects) {
+            object.all().map(comp => comp.update(now, delta));
         }
     }
     render() {
-        for (const object of this.gameobject) {
+        for (const object of this.gameobjects) {
             object.get(Drawable).draw();
         }
     }

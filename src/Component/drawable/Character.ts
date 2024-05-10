@@ -3,29 +3,7 @@ import { Tween } from "@tweenjs/tween.js";
 import Layer from "./Layer.js";
 
 export default class Character extends Layer {
-    processPath(points: Point[]){
-        console.log(points);
-        this.tweens.forEach(tween => tween.stop());
-        this.tweens.splice(0, this.tweens.length, ...[{ x: 0, y: 0 }, ...points].map((p, i, arr) => {
-            const from = arr[i - 1];
-            if (from) {
-                return new Tween<vec2>(vec2.fromValues(from.y, from.x))
-                    .to(vec2.fromValues(p.y, p.x))
-                    .onUpdate(this.onTweenUpdate.bind(this))
-                    .duration(100);
-            } else {
-                return new Tween<vec2>(vec2.fromValues(p.y, p.x)).duration(0);
-            }
-        }));
-        for (let index = 1; index < this.tweens.length; index++) {
-            const tweenTo = this.tweens[index - 1];
-            const tweenFrom = this.tweens[index];
-            tweenTo.chain(tweenFrom);
-        }
-        this.tweens[0].start()
-
-    }
-    private readonly tweens: Tween<vec2>[] = [];
+    readonly tweens: Tween<vec2>[] = [];
     init(): void {
         this.renderer.initVAO(6);
         this.feedback.initVAO(6);

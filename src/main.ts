@@ -4,24 +4,31 @@ import Camera from './camera/Camera';
 import { update } from '@tweenjs/tween.js';
 import Clock from './clock/Clock.js';
 import { Map } from '@kayahr/tiled';
-import SceneBuilder from './Component/builder/SceneBuilder.js';
+import SceneBuilder from './builder/SceneBuilder.js';
 async function start(device: Device) {
-	const sceneBuilder = new SceneBuilder()
-		.addMessageHandler(device)
+	const onmessageHandlers: ((data: WorkerMessage) => void)[] = [];
+	device.onmessage = (data) => {
+		console.log("message from worker", data);
+		onmessageHandlers.forEach(handler => handler(data))
+	};
 	device.createWorker("dist/worker/index.js");
+
+	device.sendmessage && device.sendmessage({
+		type: "hello",
+		data: void (0)
+	});
 	const context = device.getContext();
 	const input = new Input(device);
 	const camera = new Camera();
 	const clock = new Clock(device);
 	const tiledMapData = await device.readJson(`resources/tiled/isle.json`) as Map;
-	const scene = await sceneBuilder
+	const scene = await new SceneBuilder()
 		.setTiledMapData(tiledMapData)
-		.emitTiledMapData(device.sendmessage?.bind(device))
 		.initContext(context)
-		.addClickHandler(device.sendmessage?.bind(device))
+		.setupCommands(onmessageHandlers, device.sendmessage?.bind(device))
 		.load(device)
 		.then(builder => builder.init().build());
-	input.init(camera, scene)
+	input.setupCommands(camera, scene, device.sendmessage?.bind(device))
 	function tick() {
 		clock.tick();
 		input.update();

@@ -1,7 +1,10 @@
 import { mat4, vec2, vec3, vec4 } from "gl-matrix";
-import Drawable from "../Component/drawable/Drawable";
+import Drawable from "../component/drawable/Drawable";
+import Receiver from "../component/receiver/Receiver.js";
+import InputReceiver from "../component/receiver/InputReceiver.js";
+import Device from "../device/Device.js";
 
-export default class Camera {
+export default class Camera implements InputReceiver {
     private readonly velocity: vec2;
     private readonly windowInfo: [number, number];
     private readonly projection: mat4;
@@ -18,10 +21,18 @@ export default class Camera {
         this.model = mat4.create();
         this.speed = 0.1;
     }
-    ondrag(x: number, y: number) {
+    onclick(x: number, y: number): void {
+    }
+    ondrag(x: number, y: number): void {
         this.velocity[0] = x;
         this.velocity[1] = -y;
-
+    }
+    onrelease(): void {
+        this.velocity[0] = 0;
+        this.velocity[1] = 0;
+    }
+    action(): void {
+        throw new Error("unimplemented")
     }
     screenToWorld(x: number, y: number, p: vec4) {
         const windowInfo = this.windowInfo;

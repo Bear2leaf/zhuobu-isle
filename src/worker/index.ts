@@ -14,7 +14,6 @@ import { chunk } from "lodash";
 import { AnyLayer, Map, UnencodedTileLayer } from "@kayahr/tiled";
 
 function createIsland() {
-  console.log(createPlan(initialState, actions, goal))
   const spacing = 64;
   const distanceRNG = new SeedableRandom(42);
   const simplex = { noise2D: createNoise2D(() => distanceRNG.nextFloat()) };
@@ -59,6 +58,8 @@ device.onmessage = function (message) {
     const end = graph.grid[endY][endX];
     const result = astar.astar.search(graph, start, end)
     device.postmessage({ type: "path", data: result.map(p => ({ x: p.x, y: p.y })) })
+  } else if (message.type === "plan") {
+    console.log(createPlan(initialState, actions, goal))
   }
   console.log("message from main", message);
 }

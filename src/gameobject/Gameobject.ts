@@ -1,4 +1,4 @@
-import Component from "../Component/Component.js";
+import Component from "../component/Component.js";
 
 export default class Gameobject {
     private readonly components: Component[];

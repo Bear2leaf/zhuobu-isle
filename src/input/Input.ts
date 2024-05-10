@@ -1,8 +1,10 @@
 import { vec4 } from "gl-matrix";
-import Device from "../device/Device";
+import CommandBuilder from "../builder/CommandBuilder.js";
 import Camera from "../camera/Camera.js";
+import Character from "../component/drawable/Character.js";
+import CharacterInputReceiver from "../component/receiver/CharacterInputReceiver.js";
+import Device from "../device/Device";
 import Scene from "../scene/Scene.js";
-import InputListener from "../Component/listener/InputListener.js";
 type InputType = "TouchStart" | "TouchMove" | "TouchEnd" | "TouchCancel";
 export default class Input {
     private last?: InputType;
@@ -13,6 +15,7 @@ export default class Input {
     }[];
     onclick?: (x: number, y: number) => void
     ondrag?: (deltaX: number, deltaY: number) => void
+    onrelease?: () => void;
     constructor(device: Device) {
         this.queue = [];
         device.onTouchStart((e: typeof this.queue[0]) => {
@@ -28,7 +31,6 @@ export default class Input {
             this.queue.push({ x: 0, y: 0, type: "TouchEnd" });
         })
     }
-    onrelease?: () => void;
     update() {
         const e = this.queue[this.queue.length - 1];
         if (e === undefined) {
@@ -57,20 +59,30 @@ export default class Input {
         }
         this.last = e.type;
     }
-    init(camera: Camera, scene: Scene) {
-        this.ondrag = (x, y) => {
-            camera.ondrag(x, y);
-        };
-        this.onclick = (x, y) => {
-            const p = vec4.create()
-            camera.screenToWorld(x, y, p);
-            for (const listener of scene.getComponents(InputListener)) {
-                listener.onclick(p[0], p[1]);;
-            } 
-            
+    setupCommands(camera: Camera, scene: Scene, sendmessage?: (data: MainMessage) => void) {
+        const builder = new CommandBuilder();
+        this.onclick = (x: number, y: number) => {
+            builder.prepareInput(x, y, "onclick").setReceiver(camera).build().execute();
+            for (const receiver of scene.getComponents(CharacterInputReceiver)) {
+                receiver.sendmessage = sendmessage;
+                const p = vec4.create()
+                camera.screenToWorld(x, y, p);
+                builder.prepareInput(p[0], p[1], "onclick").setReceiver(receiver).build().execute()
+            }
         }
         this.onrelease = () => {
-            camera.ondrag(0, 0);
+            builder.prepareInput(0, 0, "onrelease").setReceiver(camera).build().execute();
+            for (const receiver of scene.getComponents(CharacterInputReceiver)) {
+                receiver.sendmessage = sendmessage;
+                builder.prepareInput(0, 0, "onrelease").setReceiver(receiver).build().execute()
+            }
+        }
+        this.ondrag = (x: number, y: number) => {
+            builder.prepareInput(x, y, "ondrag").setReceiver(camera).build().execute();
+            for (const receiver of scene.getComponents(CharacterInputReceiver)) {
+                receiver.sendmessage = sendmessage;
+                builder.prepareInput(x, y, "ondrag").setReceiver(receiver).build().execute()
+            }
         }
     }
 }
