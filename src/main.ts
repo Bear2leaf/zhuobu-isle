@@ -5,6 +5,7 @@ import { update } from '@tweenjs/tween.js';
 import Clock from './clock/Clock.js';
 import { Map } from '@kayahr/tiled';
 import SceneBuilder from './builder/SceneBuilder.js';
+import CommandBuilder from './builder/CommandBuilder.js';
 async function start(device: Device) {
 	const onmessageHandlers: ((data: WorkerMessage) => void)[] = [];
 	device.onmessage = (data) => {
@@ -21,14 +22,28 @@ async function start(device: Device) {
 	const input = new Input(device);
 	const camera = new Camera();
 	const clock = new Clock(device);
+	const commandBuilder = new CommandBuilder();
 	const tiledMapData = await device.readJson(`resources/tiled/isle.json`) as Map;
 	const scene = await new SceneBuilder()
-		.setTiledMapData(tiledMapData)
+		.setData(tiledMapData)
 		.initContext(context)
-		.setupCommands(onmessageHandlers, device.sendmessage?.bind(device))
 		.load(device)
 		.then(builder => builder.init().build());
-	input.setupCommands(camera, scene, device.sendmessage?.bind(device))
+
+	commandBuilder.prepareSend({
+		type: "initTileMap",
+		data: tiledMapData
+	}, device.sendmessage?.bind(device))
+		?.build()
+		.execute();
+	commandBuilder.setupCommands(
+		input,
+		onmessageHandlers,
+		camera,
+		scene,
+		device.sendmessage?.bind(device)
+	)
+
 	function tick() {
 		clock.tick();
 		input.update();

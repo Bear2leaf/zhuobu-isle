@@ -1,9 +1,4 @@
-import { vec4 } from "gl-matrix";
-import CommandBuilder from "../builder/CommandBuilder.js";
-import Camera from "../camera/Camera.js";
-import Character from "../component/drawable/Character.js";
 import Device from "../device/Device";
-import Scene from "../scene/Scene.js";
 type InputType = "TouchStart" | "TouchMove" | "TouchEnd" | "TouchCancel";
 export default class Input {
     private last?: InputType;
@@ -57,20 +52,5 @@ export default class Input {
             this.ondrag && this.ondrag(...delta)
         }
         this.last = e.type;
-    }
-    setupCommands(camera: Camera, scene: Scene, sendmessage?: (data: MainMessage) => void) {
-        const builder = new CommandBuilder();
-        this.onclick = (x: number, y: number) => {
-            builder.prepareInput(x, y, "onclick", camera).build().execute();
-            for (const character of scene.getComponents(Character)) {
-                builder.prepareInput(x, y, "onclick", camera, character, sendmessage).build().execute()
-            }
-        }
-        this.onrelease = () => {
-            builder.prepareInput(0, 0, "onrelease", camera).build().execute();
-        }
-        this.ondrag = (x: number, y: number) => {
-            builder.prepareInput(x, y, "ondrag", camera).build().execute();
-        }
     }
 }

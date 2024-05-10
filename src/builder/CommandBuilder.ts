@@ -5,6 +5,8 @@ import InitTiledCmd from "../command/InitTiledCmd.js";
 import InputCmd from "../command/InputCmd.js";
 import PathCmd from "../command/PathCmd.js";
 import Character from "../component/drawable/Character.js";
+import Input from "../input/Input.js";
+import Scene from "../scene/Scene.js";
 import Builder from "./Builder.js";
 
 export default class CommandBuilder implements Builder<Command> {
@@ -33,6 +35,33 @@ export default class CommandBuilder implements Builder<Command> {
             throw new Error("command is not created");
         }
         return this.command;
+    }
+    setupCommands(
+        input: Input,
+        handlers: ((data: WorkerMessage) => void)[],
+        camera: Camera,
+        scene: Scene,
+        sendmessage?: (data: MainMessage) => void
+    ) {
+        input.onclick = (x: number, y: number) => {
+            this.prepareInput(x, y, "onclick", camera).build().execute();
+            for (const character of scene.getComponents(Character)) {
+                this.prepareInput(x, y, "onclick", camera, character, sendmessage).build().execute()
+            }
+        }
+        input.onrelease = () => {
+            this.prepareInput(0, 0, "onrelease", camera).build().execute();
+        }
+        input.ondrag = (x: number, y: number) => {
+            this.prepareInput(x, y, "ondrag", camera).build().execute();
+        }
+        handlers.push((data) => {
+            for (const character of scene.getComponents(Character)) {
+                this.preparePath(data, character)
+                    ?.build()
+                    .execute();
+            }
+        })
     }
 
 }
