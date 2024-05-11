@@ -3,11 +3,7 @@ declare type WorkerMessage = {
     data: number[]
 } | {
     type: "path",
-    data: Point[]
-}
-declare type Point = {
-    x: number,
-    y: number
+    data: [number, number][]
 }
 declare type MainMessage = {
     type: "hello"
@@ -17,11 +13,11 @@ declare type MainMessage = {
     data: any
 } | {
     type: "plan",
-    data:any
+    data: void
 } | {
     type: "findPath",
     data: {
-        start: Point,
-        end: Point
+        start: [number, number],
+        end: [number, number]
     }
 }

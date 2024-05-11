@@ -23,8 +23,8 @@ export default class InputCmd implements Command {
                 this.sendmessage && this.sendmessage({
                     type: "findPath",
                     data: {
-                        start: { x: 0, y: 0 },
-                        end: { x: Math.floor(p[0]), y: Math.floor(p[1]) }
+                        start: [0, 0],
+                        end: [Math.floor(p[0]), Math.floor(p[1])]
                     }
                 })
             }

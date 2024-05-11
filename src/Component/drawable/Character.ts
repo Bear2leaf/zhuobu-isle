@@ -1,9 +1,15 @@
 import { vec2, vec3 } from "gl-matrix";
-import { Tween } from "@tweenjs/tween.js";
 import Layer from "./Layer.js";
-
+function lerp(x0: number, x1: number, t: number) {
+    return x0 + (x1 - x0) * t;
+}
+function fract(x0: number) {
+    return x0 - parseInt('' + x0);
+}
 export default class Character extends Layer {
-    readonly tweens: Tween<vec2>[] = [];
+    private readonly path: vec2[] = []
+    private readonly duration = 100;
+    private accumulator = 0;
     init(): void {
         this.renderer.initVAO(6);
         this.feedback.initVAO(6);
@@ -16,7 +22,26 @@ export default class Character extends Layer {
             0, 0, 0, 0, 0, 0, 3, 16, 32,
         ])
     }
-    onTweenUpdate(data: vec2) {
+    addPath(points: vec2[]) {
+        this.accumulator = 0;
+        this.path.splice(0, this.path.length, ...points);
+    }
+    update(elapsed: number, delta: number): void {
+        super.update(elapsed, delta);
+        this.accumulator += delta;
+        const point0 = this.path[Math.floor(this.accumulator / this.duration)];
+        const point1 = this.path[Math.floor(this.accumulator / this.duration) + 1];
+        if (!point1) {
+            return;
+        }
+        const curPoint = vec2.fromValues(
+            lerp(point0[0], point1[0], fract(this.accumulator / this.duration)),
+            lerp(point0[1], point1[1], fract(this.accumulator / this.duration)),
+
+        )
+        this.updatePosition(curPoint)
+    }
+    updatePosition(data: vec2) {
         const x = data[0];
         const y = data[1];
         this.feedback.updateBuffer(1, [0 + x, 0 + y]);

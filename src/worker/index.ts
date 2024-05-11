@@ -50,14 +50,14 @@ device.onmessage = function (message) {
     const firstLayer = tiled.layers[0] as UnencodedTileLayer;
     graph = new astar.Graph(chunk(firstLayer.data, tiled.width));
   } else if (message.type === "findPath") {
-    const startX = message.data.start.x;
-    const startY = message.data.start.y;
-    const endX = message.data.end.x;
-    const endY = message.data.end.y;
+    const startX = message.data.start[0];
+    const startY = message.data.start[1];
+    const endX = message.data.end[0];
+    const endY = message.data.end[1];
     const start = graph.grid[startY][startX];
     const end = graph.grid[endY][endX];
     const result = astar.astar.search(graph, start, end)
-    device.postmessage({ type: "path", data: result.map(p => ({ x: p.x, y: p.y })) })
+    device.postmessage({ type: "path", data: result.map(p => [p.y, p.x]) })
   } else if (message.type === "plan") {
     console.log(createPlan(initialState, actions, goal))
   }

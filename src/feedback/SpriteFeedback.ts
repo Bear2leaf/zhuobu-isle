@@ -86,9 +86,8 @@ export default class SpriteFeedback extends Renderer {
         this.linkProgram();
     }
     updateBuffer(start: number, buffer: number[]): void {
-        super.updateBuffer(start, buffer);
         const context = this.context;
-        context.bindBuffer(context.ARRAY_BUFFER, this.backHandler.buffer);
+        context.bindBuffer(context.ARRAY_BUFFER, this.transform.buffer);
         context.bufferSubData(context.ARRAY_BUFFER, start * 4, new Float32Array(buffer));
         context.bindBuffer(context.ARRAY_BUFFER, null)
     }

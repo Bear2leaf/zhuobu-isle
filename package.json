@@ -17,7 +17,6 @@
     "typescript": "^5.4.5"
   },
   "dependencies": {
-    "@tweenjs/tween.js": "^23.1.2",
     "alea": "^1.0.1",
     "fastpriorityqueue": "^0.7.5",
     "gl-matrix": "^3.4.3",

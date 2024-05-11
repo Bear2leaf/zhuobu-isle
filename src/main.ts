@@ -1,7 +1,6 @@
 import Device from './device/Device';
 import Input from './input/Input';
 import Camera from './camera/Camera';
-import { update } from '@tweenjs/tween.js';
 import Clock from './clock/Clock.js';
 import { Map } from '@kayahr/tiled';
 import SceneBuilder from './builder/SceneBuilder.js';
@@ -46,7 +45,6 @@ async function start(device: Device) {
 		input.update();
 		const now = clock.now;
 		const delta = clock.delta;
-		update(now);
 		const windowInfo = device.getWindowInfo();
 		context.viewport(0, 0, ...windowInfo);
 		context.scissor(0, 0, ...windowInfo);

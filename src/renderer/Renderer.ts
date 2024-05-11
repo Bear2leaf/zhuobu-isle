@@ -12,9 +12,11 @@ export default abstract class Renderer {
         readonly program: WebGLProgram,
         readonly texture: WebGLTexture,
     }
+    private readonly locMap: Map<string, WebGLUniformLocation | null>;
     protected count: number = 0;
     constructor(context: WebGL2RenderingContext, private readonly name: string) {
         this.context = context;
+        this.locMap = new Map();
         const program = context.createProgram();
         if (program === null) {
             throw new Error("program not create");
@@ -97,29 +99,41 @@ export default abstract class Renderer {
         context.bufferSubData(context.ARRAY_BUFFER, start * 4, new Float32Array(buffer));
         context.bindBuffer(context.ARRAY_BUFFER, null)
     }
-	updateProjection(projection: mat4) {
+    updateProjection(projection: mat4) {
         const context = this.context;
         const program = this.handler.program;
         context.useProgram(program);
-        context.uniformMatrix4fv(context.getUniformLocation(program, "u_projection"), false, projection);
-	}
-	updateView(view: mat4) {
+        context.uniformMatrix4fv(this.cacheUniformLocation("u_projection"), false, projection);
+    }
+    cacheUniformLocation(name: string) {
+        let loc = this.locMap.get(name);
+        if (loc !== undefined) {
+            if (loc === null) {
+                throw new Error("unexpected loc")
+            }
+        } else {
+            loc = this.context.getUniformLocation(this.handler.program, name);
+            this.locMap.set(name, loc);
+        }
+        return loc;
+    }
+    updateView(view: mat4) {
         const context = this.context;
         const program = this.handler.program;
         context.useProgram(program);
-        context.uniformMatrix4fv(context.getUniformLocation(program, "u_view"), false, view);
-	}
-	updateModel(model: mat4) {
+        context.uniformMatrix4fv(this.cacheUniformLocation("u_view"), false, view);
+    }
+    updateModel(model: mat4) {
         const context = this.context;
         const program = this.handler.program;
         context.useProgram(program);
-        context.uniformMatrix4fv(context.getUniformLocation(program, "u_model"), false, model);
-	}
+        context.uniformMatrix4fv(this.cacheUniformLocation("u_model"), false, model);
+    }
     updateDelta(delta: number): void {
         const context = this.context;
         const program = this.handler.program;
         context.useProgram(program);
-        context.uniform1f(context.getUniformLocation(program, "u_delta"), delta);
+        context.uniform1f(this.cacheUniformLocation("u_delta"), delta);
     }
     render() {
         const context = this.context
