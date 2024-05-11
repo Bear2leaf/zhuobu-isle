@@ -1,19 +1,11 @@
-import { vec2, vec3 } from "gl-matrix";
+import { vec2 } from "gl-matrix";
 import Layer from "./Layer.js";
-import Animate from "../../state/Animate.js";
 import Idle from "../../state/Idle.js";
-import Walk from "../../state/Walk.js";
-function lerp(x0: number, x1: number, t: number) {
-    return x0 + (x1 - x0) * t;
-}
-function fract(x0: number) {
-    return x0 - parseInt('' + x0);
-}
+import CharacterState from "../../state/CharacterState.js";
 export default class Character extends Layer {
     private readonly path: vec2[] = []
-    private readonly duration = 100;
-    private state = new Animate();
-    private accumulator = 0;
+    state: CharacterState = new Idle();
+    delta: number = 0;
     init(): void {
         this.renderer.initVAO(6);
         this.feedback.initVAO(6);
@@ -27,26 +19,14 @@ export default class Character extends Layer {
         ])
     }
     addPath(points: vec2[]) {
-        this.accumulator = 0;
         this.path.splice(0, this.path.length, ...points);
+    }
+    getPath(): vec2[] {
+        return this.path;
     }
     update(elapsed: number, delta: number): void {
         super.update(elapsed, delta);
-        this.accumulator += delta;
-        const point0 = this.path[Math.floor(this.accumulator / this.duration)];
-        const point1 = this.path[Math.floor(this.accumulator / this.duration) + 1];
-        if (!point1) {
-            this.state = new Idle()
-            this.state.handle(this);
-            return;
-        }
-        const horizontal = point0[0] - point1[0];
-        const vertical = point0[1] - point1[1];
-        const curPoint = vec2.fromValues(
-            lerp(point0[0], point1[0], fract(this.accumulator / this.duration)),
-            lerp(point0[1], point1[1], fract(this.accumulator / this.duration)),
-        )
-        this.state = new Walk(curPoint, vec2.fromValues(horizontal, vertical));
+        this.delta = delta;
         this.state.handle(this);
     }
     updatePosition(data: vec2) {
