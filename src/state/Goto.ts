@@ -1,6 +1,6 @@
 import { vec2 } from "gl-matrix";
 import Character from "../component/drawable/Character.js";
-import CharacterState from "./CharacterState.js";
+import State from "./State.js";
 import Useobject from "./Useobject.js";
 
 function lerp(x0: number, x1: number, t: number) {
@@ -9,15 +9,17 @@ function lerp(x0: number, x1: number, t: number) {
 function fract(x0: number) {
     return x0 - parseInt('' + x0);
 }
-export default class Goto implements CharacterState {
+export default class Goto implements State {
     private accumulator = 0;
     private readonly duration = 100;
-    handle(character: Character): void {
+    constructor(private readonly character: Character) { }
+    handle(): void {
+        const character = this.character;
         this.accumulator += character.delta;
         const point0 = character.getPath()[Math.floor(this.accumulator / this.duration)];
         const point1 = character.getPath()[Math.floor(this.accumulator / this.duration) + 1];
         if (!point0 || !point1) {
-            character.state = new Useobject();
+            character.state = new Useobject(character);
             return;
         }
         const horizontal = point0[0] - point1[0];

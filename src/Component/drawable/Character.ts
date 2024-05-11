@@ -1,10 +1,10 @@
 import { vec2 } from "gl-matrix";
 import Layer from "./Layer.js";
 import Idle from "../../state/Idle.js";
-import CharacterState from "../../state/CharacterState.js";
+import State from "../../state/State.js";
 export default class Character extends Layer {
     private readonly path: vec2[] = []
-    state: CharacterState = new Idle();
+    state: State = new Idle(this);
     delta: number = 0;
     init(): void {
         this.renderer.initVAO(6);
@@ -27,7 +27,7 @@ export default class Character extends Layer {
     update(elapsed: number, delta: number): void {
         super.update(elapsed, delta);
         this.delta = delta;
-        this.state.handle(this);
+        this.state.handle();
     }
     updatePosition(data: vec2) {
         const x = data[0];
