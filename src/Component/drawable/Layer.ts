@@ -20,6 +20,7 @@ export default class Layer extends Drawable {
         const width = layer.width;
         const height = layer.height;
         const firstgrid = this.firstgrid || 1;
+        const fixuv = 0.005;
         for (let i = 0; i < height; i++) {
             for (let j = 0; j < width; j++) {
                 const element = data[i * width + j] - firstgrid;
@@ -27,12 +28,12 @@ export default class Layer extends Drawable {
                     continue;
                 }
                 buffer.push(
-                    0, 0 + j, 0 + i, 0, 0, element, element, 16, 16,
-                    0, 1 + j, 0 + i, 1, 0, element, element, 16, 16,
-                    0, 1 + j, 1 + i, 1, 1, element, element, 16, 16,
-                    0, 1 + j, 1 + i, 1, 1, element, element, 16, 16,
-                    0, 0 + j, 1 + i, 0, 1, element, element, 16, 16,
-                    0, 0 + j, 0 + i, 0, 0, element, element, 16, 16,
+                    0, 0 + j, 0 + i, 0 + fixuv, 0 + fixuv, element, element, 16, 16,
+                    0, 1 + j, 0 + i, 1 - fixuv, 0 + fixuv, element, element, 16, 16,
+                    0, 1 + j, 1 + i, 1 - fixuv, 1 - fixuv, element, element, 16, 16,
+                    0, 1 + j, 1 + i, 1 - fixuv, 1 - fixuv, element, element, 16, 16,
+                    0, 0 + j, 1 + i, 0 + fixuv, 1 - fixuv, element, element, 16, 16,
+                    0, 0 + j, 0 + i, 0 + fixuv, 0 + fixuv, element, element, 16, 16,
                 )
             }
         }
