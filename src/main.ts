@@ -5,7 +5,7 @@ import { update } from '@tweenjs/tween.js';
 import Clock from './clock/Clock.js';
 import { Map } from '@kayahr/tiled';
 import SceneBuilder from './builder/SceneBuilder.js';
-import CommandBuilder from './builder/CommandBuilder.js';
+import CommandInvoker from './builder/CommandInvoker.js';
 async function start(device: Device) {
 	const onmessageHandlers: ((data: WorkerMessage) => void)[] = [];
 	device.onmessage = (data) => {
@@ -22,27 +22,24 @@ async function start(device: Device) {
 	const input = new Input(device);
 	const camera = new Camera();
 	const clock = new Clock(device);
-	const commandBuilder = new CommandBuilder();
 	const tiledMapData = await device.readJson(`resources/tiled/isle.json`) as Map;
 	const scene = await new SceneBuilder()
 		.setData(tiledMapData)
 		.initContext(context)
 		.load(device)
 		.then(builder => builder.init().build());
+	new CommandInvoker()
+		.setCamera(camera)
+		.setHandlers(onmessageHandlers)
+		.setScene(scene)
+		.setSendMessage(device.sendmessage?.bind(device))
+		.setInput(input)
+		.setup()
+		.prepareSend({
+			type: "initTileMap",
+			data: tiledMapData
+		}).build();
 
-	commandBuilder.prepareSend({
-		type: "initTileMap",
-		data: tiledMapData
-	}, device.sendmessage?.bind(device))
-		?.build()
-		.execute();
-	commandBuilder.setupCommands(
-		input,
-		onmessageHandlers,
-		camera,
-		scene,
-		device.sendmessage?.bind(device)
-	)
 
 	function tick() {
 		clock.tick();
