@@ -1,10 +1,11 @@
-import Device from './device/Device';
+import Device, { WorkerMessage } from './device/Device';
 import Input from './input/Input';
 import Camera from './camera/Camera';
 import Clock from './clock/Clock.js';
-import { Map } from '@kayahr/tiled';
 import SceneBuilder from './builder/SceneBuilder.js';
 import CommandInvoker from './builder/CommandInvoker.js';
+import TiledMapBuilder from './builder/TiledMapBuilder.js';
+import GameobjectBuilder from './builder/GameobjectBuilder.js';
 async function start(device: Device) {
 	const onmessageHandlers: ((data: WorkerMessage) => void)[] = [];
 	device.onmessage = (data) => {
@@ -21,10 +22,11 @@ async function start(device: Device) {
 	const input = new Input(device);
 	const camera = new Camera();
 	const clock = new Clock(device);
-	const tiledMapData = await device.readJson(`resources/tiled/isle.json`) as Map;
+	const map = await new TiledMapBuilder()
+		.load(device).then(builder => builder.parse().build());
+	const gameobjectBuilder = new GameobjectBuilder().setContext(context);
 	const scene = await new SceneBuilder()
-		.setData(tiledMapData)
-		.initContext(context)
+		.initTiledMap(map, gameobjectBuilder)
 		.load(device)
 		.then(builder => builder.init().build());
 	new CommandInvoker()
@@ -36,7 +38,7 @@ async function start(device: Device) {
 		.setup()
 		.prepareSend({
 			type: "initTileMap",
-			data: tiledMapData
+			data: map
 		}).build();
 
 

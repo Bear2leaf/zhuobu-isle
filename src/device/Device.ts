@@ -1,3 +1,26 @@
+export type MainMessage = {
+  type: "hello"
+  data: void
+} | {
+  type: "initTileMap",
+  data: any
+} | {
+  type: "plan",
+  data: void
+} | {
+  type: "findPath",
+  data: {
+      start: [number, number],
+      end: [number, number]
+  }
+}
+export type WorkerMessage = {
+  type: "worker"
+  data: number[]
+} | {
+  type: "path",
+  data: [number, number][]
+}
 export default interface Device {
   getContext(): WebGL2RenderingContext;
   reload(): void;

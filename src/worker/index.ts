@@ -12,6 +12,7 @@ import { actions, goal, initialState } from "./goap/data";
 import astar, { Graph } from "javascript-astar";
 import { chunk } from "lodash";
 import { AnyLayer, Map, UnencodedTileLayer } from "@kayahr/tiled";
+import TiledMap from "../tiled/TiledMap.js";
 
 function createIsland() {
   const spacing = 64;
@@ -40,15 +41,15 @@ if (typeof worker === 'undefined') {
 } else {
   device = new MinigameWorker();
 }
-let tiled: Map;
+let tiled: TiledMap;
 let graph: Graph;
 device.onmessage = function (message) {
   if (message.type === "hello") {
     device.postmessage({ type: "worker", data: createIsland().r_biome })
   } else if (message.type === "initTileMap") {
-    tiled = message.data as Map;
-    const firstLayer = tiled.layers[0] as UnencodedTileLayer;
-    graph = new astar.Graph(chunk(firstLayer.data, tiled.width));
+    tiled = new TiledMap(message.data.tilesets, message.data.layers, message.data.width, message.data.height)
+    const firstLayer = tiled.getLayers()[0];
+    graph = new astar.Graph(chunk(firstLayer.data, tiled.getWidth()));
   } else if (message.type === "findPath") {
     const startX = message.data.start[0];
     const startY = message.data.start[1];

@@ -1,16 +1,13 @@
 import Device from "../device/Device";
 import Camera from "../camera/Camera";
-import GameobjectBuilder from "../builder/GameobjectBuilder.js";
 import Gameobject from "../gameobject/Gameobject.js";
 import Drawable from "../component/drawable/Drawable.js";
 import Component from "../component/Component.js";
 
 export default class Scene {
     protected readonly gameobjects: Gameobject[];
-    protected readonly builder: GameobjectBuilder;
     constructor() {
         this.gameobjects = [];
-        this.builder = new GameobjectBuilder();
     }
     async load(device: Device): Promise<void> {
         for await (const object of this.gameobjects) {
