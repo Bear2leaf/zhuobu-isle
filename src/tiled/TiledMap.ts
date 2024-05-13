@@ -1,4 +1,5 @@
 import { EmbeddedTileset, Map, UnencodedTileLayer } from "@kayahr/tiled";
+import { ReadonlyVec2, vec2 } from "gl-matrix";
 
 
 export default class TiledMap {
@@ -43,6 +44,31 @@ export default class TiledMap {
             }
         }
         throw new Error("tilewidth not found")
+    }
+    getCameraPosition(): vec2 {
+
+        for (const layer of this.layers) {
+            if (layer.name === "camera") {
+                return this.getFirstTilePosition(layer)
+            }
+        }
+        throw new Error("camera not found");
+    }
+    getFirstTilePosition(layer: UnencodedTileLayer): vec2 {
+        const width = this.width;
+        const height = this.height;
+        const data = layer.data!;
+        const firstgrid = this.getTilesetFirstgrid(layer) || 1;
+        for (let i = 0; i < height; i++) {
+            for (let j = 0; j < width; j++) {
+                const element = data[i * width + j] - firstgrid;
+                if (element < 0) {
+                    continue;
+                }
+                return vec2.fromValues(-j * 100, -i * 100)
+            }
+        }
+        throw new Error("position not found");
     }
     getTilesetFirstgrid(layer: UnencodedTileLayer) {
         for (const tileset of this.tilesets) {

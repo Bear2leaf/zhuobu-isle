@@ -1,6 +1,5 @@
 import TiledMap from "../../tiled/TiledMap.js";
 import Drawable from "./Drawable";
-import { EmbeddedTileset, UnencodedTileLayer } from "@kayahr/tiled";
 
 export default class Layer extends Drawable {
     protected tiledMap?: TiledMap;
