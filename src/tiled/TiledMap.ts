@@ -21,6 +21,9 @@ export default class TiledMap {
     getWidth(): number {
         return this.width;
     }
+    getHeight(): number {
+        return this.height
+    }
     getTilewidth(): number {
         return this.tilewidth
     }
@@ -58,10 +61,10 @@ export default class TiledMap {
         const width = this.width;
         const height = this.height;
         const data = layer.data!;
-        const firstgrid = this.getTilesetFirstgrid(layer) || 1;
+        const firstgid = this.getTilesetFirstgrid(layer) || 1;
         for (let i = 0; i < height; i++) {
             for (let j = 0; j < width; j++) {
-                const element = data[i * width + j] - firstgrid;
+                const element = data[i * width + j] - firstgid;
                 if (element < 0) {
                     continue;
                 }

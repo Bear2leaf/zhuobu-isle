@@ -16,5 +16,6 @@ export default class TiledScene extends Scene {
             builder.setLayerIndex(layers.indexOf(layer))
             this.gameobjects.push(builder.build());
         }
+        console.log(this)
     }
 }

@@ -1,9 +1,12 @@
+import TileHouse from "../../tiled/TileHouse.js";
 import TiledMap from "../../tiled/TiledMap.js";
 import Drawable from "./Drawable";
 
 export default class Layer extends Drawable {
     protected tiledMap?: TiledMap;
     protected index: number = 0;
+    private readonly houseInterpreter: TileHouse = new TileHouse();
+    private house = 0;
     protected readonly buffer: number[] = [];
     setTiledMap(tiledMap: TiledMap) {
         this.tiledMap = tiledMap;
@@ -25,7 +28,7 @@ export default class Layer extends Drawable {
             throw new Error("tiledMap is undefined");
         }
         const layer = tiledMap.getLayers()[this.index];
-        const firstgrid = tiledMap.getTilesetFirstgrid(layer) || 1;
+        const firstgid = tiledMap.getTilesetFirstgrid(layer) || 1;
         const buffer: number[] = [];
         const data = layer.data as number[];
         const maptilewidth = tiledMap.getTilewidth();
@@ -37,9 +40,12 @@ export default class Layer extends Drawable {
         const fixuv = 0.005;
         for (let i = 0; i < height; i++) {
             for (let j = 0; j < width; j++) {
-                const element = data[i * width + j] - firstgrid;
+                const element = data[i * width + j] - firstgid;
                 if (element < 0) {
                     continue;
+                }
+                if (this.houseInterpreter.interpret(tiledMap, this.index, i * width + j)) {
+                    this.house++;
                 }
                 buffer.push(
                     0, 0 + j, 0 + i, 0 + fixuv, 0 + fixuv, element, element, tilewidth, tileheight,
