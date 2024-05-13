@@ -17,8 +17,7 @@ void main() {
     float buffer = u_inner * u_bufferOutline + (1.0f - u_inner) * u_buffer;
     float edge0 = buffer - u_gamma;
     float edge1 = buffer + u_gamma;
-    ivec2 texSize = textureSize(u_texture, 0);
-    float dist = texture(u_texture, v_texcoord / vec2(texSize)).r;
+    float dist = texture(u_texture, v_texcoord ).r;
     float alpha = smoothstep(edge0, edge1, dist);
     o_color = vec4((u_inner * v_color).rgb, alpha);
 }

@@ -8,11 +8,15 @@ uniform mat4 u_view;
 uniform mat4 u_model;
 uniform mat4 u_scale;
 
+uniform sampler2D u_texture;
+
 out vec2 v_texcoord;
 out vec4 v_color;
 
 void main() {
   gl_Position = u_projection * u_view * u_model * u_scale * vec4(a_position, 0.0f, 1.0f);
-  v_texcoord = a_texcoord;
+
+  ivec2 texSize = textureSize(u_texture, 0);
+  v_texcoord = a_texcoord / vec2(texSize);
   v_color = a_color;
 }
