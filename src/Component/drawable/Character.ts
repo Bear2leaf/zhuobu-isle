@@ -6,18 +6,6 @@ export default class Character extends Layer {
     private readonly path: vec2[] = []
     state: State = new Idle(this);
     delta: number = 0;
-    init(): void {
-        this.renderer.initVAO(6);
-        this.feedback.initVAO(6);
-        this.feedback.updateBuffer(0, [
-            0, 0, 0, 0, 0, 0, 0, 16, 32,
-            0, 1, 0, 1, 0, 0, 0, 16, 32,
-            0, 1, 2, 1, 1, 0, 0, 16, 32,
-            0, 1, 2, 1, 1, 0, 0, 16, 32,
-            0, 0, 2, 0, 1, 0, 0, 16, 32,
-            0, 0, 0, 0, 0, 0, 0, 16, 32,
-        ])
-    }
     addPath(points: vec2[]) {
         this.path.splice(0, this.path.length, ...points);
     }

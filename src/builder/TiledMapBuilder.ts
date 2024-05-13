@@ -19,6 +19,8 @@ export default class TiledMapBuilder implements Builder<TiledMap> {
             , this.map.layers as UnencodedTileLayer[]
             , this.map.width
             , this.map.height
+            , this.map.tilewidth
+            , this.map.tileheight
         );
         return this;
     }

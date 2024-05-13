@@ -6,13 +6,14 @@ export default class TiledScene extends Scene {
     initTiledMap(tiledMap: TiledMap, builder: GameobjectBuilder) {
         const layers = tiledMap.getLayers();
         for (const layer of layers) {
-            const image = tiledMap.getTilesetImage(layer)
-            const firstgrid = tiledMap.getTilesetFirstgrid(layer)
             if (layer.name === "character") {
-                builder.addCharacter(image)
+                builder.addCharacter();
             } else {
-                builder.addLayer(image, layer, firstgrid);
+                builder.addLayer();
             }
+            builder.initRenderer();
+            builder.setTiledMap(tiledMap);
+            builder.setLayerIndex(layers.indexOf(layer))
             this.gameobjects.push(builder.build());
         }
     }

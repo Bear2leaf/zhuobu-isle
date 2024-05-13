@@ -47,7 +47,14 @@ device.onmessage = function (message) {
   if (message.type === "hello") {
     device.postmessage({ type: "worker", data: createIsland().r_biome })
   } else if (message.type === "initTileMap") {
-    tiled = new TiledMap(message.data.tilesets, message.data.layers, message.data.width, message.data.height)
+    tiled = new TiledMap(
+      message.data.tilesets,
+      message.data.layers,
+      message.data.width,
+      message.data.height,
+      message.data.tilewidth,
+      message.data.tileheight,
+    )
     const firstLayer = tiled.getLayers()[0];
     graph = new astar.Graph(chunk(firstLayer.data, tiled.getWidth()));
   } else if (message.type === "findPath") {
