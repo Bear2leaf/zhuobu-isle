@@ -38,7 +38,7 @@ export default class TextRenderer extends Renderer {
         context.uniform1f(this.cacheUniformLocation("u_buffer"), this.buffer);
         context.uniform1f(this.cacheUniformLocation("u_bufferOutline"), this.bufferOutline);
         context.uniform1f(this.cacheUniformLocation("u_gamma"), this.gamma * Math.SQRT2 / this.scale);
-        context.uniformMatrix4fv(this.cacheUniformLocation("u_scale"), false, mat4.fromScaling(mat4.create(), vec3.fromValues(0.1, 0.1, 1)))
+        context.uniform1f(this.cacheUniformLocation("u_scale"), 0.01);
 
     }
     async loadShaderSource(device: Device): Promise<void> {
@@ -64,6 +64,12 @@ export default class TextRenderer extends Renderer {
         this.fontCanvas.initSDFTexture()
         this.text.updateChars("Hello, 你好世界，和气生财！")
         this.text.create(this.fontCanvas.fontInfo)
+
+    }
+    updatePosition(position: vec2) {
+        const context = this.context;
+        context.useProgram(this.handler.program);
+        context.uniform2fv(this.cacheUniformLocation("u_offset"), position)
 
     }
     render(): void {

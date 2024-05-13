@@ -1,3 +1,4 @@
+import { vec2 } from "gl-matrix";
 import TileHouse from "../../tiled/TileHouse.js";
 import TileInterpreter from "../../tiled/TileInterpreter.js";
 import TiledMap from "../../tiled/TiledMap.js";
@@ -71,6 +72,7 @@ export default class Layer extends Drawable {
                     0, 0 + j, 1 * tileheight / maptileheight + i, 0 + fixuv, 1 - fixuv, element, element, tilewidth, tileheight,
                     0, 0 + j, 0 + i, 0 + fixuv, 0 + fixuv, element, element, tilewidth, tileheight,
                 )
+                this.textRenderer?.updatePosition(vec2.fromValues(j, i))
             }
         }
         this.buffer.splice(0, this.buffer.length, ...buffer);

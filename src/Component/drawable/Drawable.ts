@@ -20,12 +20,11 @@ export default class Drawable extends Component {
         this.model = mat4.create();
         this.view = mat4.create();
     }
-    initFontCanvas(context: CanvasRenderingContext2D) {
-        this.textRenderer?.initFontCanvas(context)
+    initFontCanvas(context: WebGL2RenderingContext, context2d: CanvasRenderingContext2D) {
+        this.textRenderer = new TextRenderer(context);
+        this.textRenderer?.initFontCanvas(context2d)
     }
     initRenderer(context: WebGL2RenderingContext) {
-
-        this.textRenderer = new TextRenderer(context);
         this.renderer = new SpriteRenderer(context);
         this.feedback = new SpriteFeedback(context, this.renderer.getTarget());
     }

@@ -40,11 +40,15 @@ export default class GameobjectBuilder implements Builder<Gameobject> {
         this.gameobject.get(Drawable).initRenderer(context)
     }
     initFontCanvas() {
+        const context = this.context;
+        if (!context) {
+            throw new Error("context is undefined");
+        }
         const canvas2dContext = this.canvas2dContext;
         if (!canvas2dContext) {
             throw new Error("canvas2dContext is undefined");
         }
-        this.gameobject.get(Drawable).initFontCanvas(canvas2dContext)
+        this.gameobject.get(Drawable).initFontCanvas(context, canvas2dContext)
     }
     setContext(context: WebGL2RenderingContext) {
         this.context = context;

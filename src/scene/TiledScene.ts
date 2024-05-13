@@ -14,7 +14,6 @@ export default class TiledScene extends Scene {
                 builder.addLayer();
                 builder.initRenderer();
             }
-            builder.initFontCanvas();
             builder.setTiledMap(tiledMap);
             builder.setLayerIndex(layers.indexOf(layer))
             this.gameobjects.push(builder.build());
