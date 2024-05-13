@@ -1,11 +1,17 @@
 import TileHouse from "../../tiled/TileHouse.js";
+import TileInterpreter from "../../tiled/TileInterpreter.js";
 import TiledMap from "../../tiled/TiledMap.js";
 import Drawable from "./Drawable";
 
 export default class Layer extends Drawable {
+    getTilesetFirstgid() {
+        return this.tiledMap?.getTilesetFirstgid(this.getData())
+    }
     protected tiledMap?: TiledMap;
     protected index: number = 0;
-    private readonly houseInterpreter: TileHouse = new TileHouse();
+    private readonly interpreters: TileInterpreter[] = [
+        new TileHouse(),
+    ];
     private house = 0;
     protected readonly buffer: number[] = [];
     setTiledMap(tiledMap: TiledMap) {
@@ -13,6 +19,13 @@ export default class Layer extends Drawable {
     }
     setLayerIndex(index: number) {
         this.index = index;
+    }
+    getData() {
+        const layer = this.tiledMap?.getLayers()[this.index];
+        if (!layer) {
+            throw new Error("layer not found");
+        }
+        return layer;
     }
     initTexture() {
         const tiledMap = this.tiledMap;
@@ -22,13 +35,16 @@ export default class Layer extends Drawable {
         const image = tiledMap.getTilesetImage(tiledMap.getLayers()[this.index]);
         this.setTextureName(image);
     }
+    increaseHouse() {
+        this.house++;
+    }
     init(): void {
         const tiledMap = this.tiledMap;
         if (!tiledMap) {
             throw new Error("tiledMap is undefined");
         }
         const layer = tiledMap.getLayers()[this.index];
-        const firstgid = tiledMap.getTilesetFirstgrid(layer) || 1;
+        const firstgid = tiledMap.getTilesetFirstgid(layer) || 1;
         const buffer: number[] = [];
         const data = layer.data as number[];
         const maptilewidth = tiledMap.getTilewidth();
@@ -44,8 +60,8 @@ export default class Layer extends Drawable {
                 if (element < 0) {
                     continue;
                 }
-                if (this.houseInterpreter.interpret(tiledMap, this.index, i * width + j)) {
-                    this.house++;
+                for (const interpreter of this.interpreters) {
+                    interpreter.interpret(this, i * width + j)
                 }
                 buffer.push(
                     0, 0 + j, 0 + i, 0 + fixuv, 0 + fixuv, element, element, tilewidth, tileheight,

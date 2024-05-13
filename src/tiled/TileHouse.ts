@@ -1,30 +1,38 @@
+import Layer from "../component/drawable/Layer.js";
 import TileInterpreter from "./TileInterpreter.js";
-import TiledMap from "./TiledMap.js";
 
 export default class TileHouse implements TileInterpreter {
-    private readonly partsX = 5;
-    private readonly partsY = 5;
-    interpret(context: TiledMap, layerIdx: number, tileIdx: number): boolean {
-        const layer = context.getLayers()[layerIdx];
-        const mapwidth = context.getWidth();
-        const mapheight = context.getWidth();
-        const firstgid = context.getTilesetFirstgrid(layer) || 1;
-        if (!layer.data) {
-            throw new Error("layer.data not found");
+    // cols & startRowIndices are tile specs, differ from each TileInterpreter
+    private readonly cols = 5;
+    private readonly startRowIndices: readonly number[] = [
+        7, 47, 87, 127, 167
+    ]
+    interpret(context: Layer, tileIdx: number): void {
+        const layer = context.getData();
+        if (!layer?.data) {
+            throw new Error("data not found");
         }
+        const width = layer.width;
+        const height = layer.height;
+        const firstgid = context.getTilesetFirstgid() || 1;
         const tile = layer.data[tileIdx];
         if (!tile) {
             throw new Error("tile not found");
         }
-        for (let i = 0; i < this.partsY; i++) {
-            for (let j = 0; j < this.partsX; j++) {
-                const element = layer.data[tileIdx + i * mapwidth + j] - firstgid;
+        for (let i = 0; i < this.startRowIndices.length; i++) {
+            const col = []
+            for (let j = 0; j < this.cols; j++) {
+                const element = layer.data[tileIdx + i * width + j];
                 if (element < 0) {
-                    return false;
+                    return;
+                }
+                col.push(element)
+                if (element !== this.startRowIndices[i] + j) {
+                    return;
                 }
             }
         }
-        return true;
+        context.increaseHouse();
     }
 
 }

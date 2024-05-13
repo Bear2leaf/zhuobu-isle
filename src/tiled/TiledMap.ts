@@ -61,7 +61,7 @@ export default class TiledMap {
         const width = this.width;
         const height = this.height;
         const data = layer.data!;
-        const firstgid = this.getTilesetFirstgrid(layer) || 1;
+        const firstgid = this.getTilesetFirstgid(layer) || 1;
         for (let i = 0; i < height; i++) {
             for (let j = 0; j < width; j++) {
                 const element = data[i * width + j] - firstgid;
@@ -73,7 +73,7 @@ export default class TiledMap {
         }
         throw new Error("position not found");
     }
-    getTilesetFirstgrid(layer: UnencodedTileLayer) {
+    getTilesetFirstgid(layer: UnencodedTileLayer) {
         for (const tileset of this.tilesets) {
             const match = layer.data?.every(tile => !tile || (tileset.firstgid <= tile && tile < tileset.firstgid + tileset.tilecount))
             if (match) {

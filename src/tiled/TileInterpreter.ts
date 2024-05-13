@@ -1,5 +1,5 @@
-import TiledMap from "./TiledMap.js";
+import Layer from "../component/drawable/Layer.js";
 
 export default interface TileInterpreter {
-    interpret(context: TiledMap, layer: number, tileIdx: number): void;
+    interpret(context: Layer, tileIdx: number): void;
 }
