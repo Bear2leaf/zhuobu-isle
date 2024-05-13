@@ -91,8 +91,8 @@ export default abstract class Renderer {
             throw new Error("Failed to link program");
         }
     }
-    abstract loadTextureSource(device: Device, tex: string): Promise<void>;
-    abstract initVAO(count: number): void;
+    abstract loadTextureSource(device: Device, tex?: string): Promise<void>;
+    abstract initVAO(count?: number): void;
     updateBuffer(start: number, buffer: number[]) {
         const context = this.context;
         context.bindBuffer(context.ARRAY_BUFFER, this.handler.buffer);
@@ -104,6 +104,55 @@ export default abstract class Renderer {
         const program = this.handler.program;
         context.useProgram(program);
         context.uniformMatrix4fv(this.cacheUniformLocation("u_projection"), false, projection);
+    }
+    switchDepthTest(enable: boolean): void {
+        if (enable) {
+            this.context.enable(this.context.DEPTH_TEST);
+        } else {
+            this.context.disable(this.context.DEPTH_TEST);
+        }
+    }
+    switchDepthWrite(enable: boolean): void {
+        this.context.depthMask(enable);
+    }
+    switchBlend(enable: boolean): void {
+        if (enable) {
+            this.context.enable(this.context.BLEND);
+        } else {
+            this.context.disable(this.context.BLEND);
+        }
+    }
+    switchNearestFilter(enable: boolean): void {
+        if (enable) {
+            this.context.texParameteri(this.context.TEXTURE_2D, this.context.TEXTURE_MIN_FILTER, this.context.NEAREST);
+            this.context.texParameteri(this.context.TEXTURE_2D, this.context.TEXTURE_MAG_FILTER, this.context.NEAREST);
+        } else {
+            this.context.texParameteri(this.context.TEXTURE_2D, this.context.TEXTURE_MIN_FILTER, this.context.LINEAR);
+            this.context.texParameteri(this.context.TEXTURE_2D, this.context.TEXTURE_MAG_FILTER, this.context.LINEAR);
+        }
+    }
+    switchRepeat(enable: boolean): void {
+        if (enable) {
+            this.context.texParameterf(this.context.TEXTURE_2D, this.context.TEXTURE_WRAP_S, this.context.REPEAT);
+            this.context.texParameterf(this.context.TEXTURE_2D, this.context.TEXTURE_WRAP_T, this.context.REPEAT);
+        } else {
+            this.context.texParameterf(this.context.TEXTURE_2D, this.context.TEXTURE_WRAP_S, this.context.CLAMP_TO_EDGE);
+            this.context.texParameterf(this.context.TEXTURE_2D, this.context.TEXTURE_WRAP_T, this.context.CLAMP_TO_EDGE);
+        }
+    }
+    switchCulling(enable: boolean): void {
+        if (enable) {
+            this.context.enable(this.context.CULL_FACE);
+        } else {
+            this.context.disable(this.context.CULL_FACE);
+        }
+    }
+    switchUnpackPremultiplyAlpha(enable: boolean): void {
+        this.context.pixelStorei(this.context.UNPACK_PREMULTIPLY_ALPHA_WEBGL, enable);
+    }
+    useBlendFuncOneAndOneMinusSrcAlpha(): void {
+        this.context.blendFunc(this.context.ONE, this.context.ONE_MINUS_SRC_ALPHA);
+        this.context.blendFuncSeparate(this.context.SRC_ALPHA, this.context.ONE_MINUS_SRC_ALPHA, this.context.ONE, this.context.ONE);
     }
     cacheUniformLocation(name: string) {
         let loc = this.locMap.get(name);

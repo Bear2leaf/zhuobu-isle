@@ -74,8 +74,9 @@ export default class Layer extends Drawable {
             }
         }
         this.buffer.splice(0, this.buffer.length, ...buffer);
-        this.renderer.initVAO(buffer.length / 9);
-        this.feedback.initVAO(buffer.length / 9);
-        this.feedback.updateBuffer(0, buffer);
+        this.textRenderer?.initVAO();
+        this.renderer?.initVAO(buffer.length / 9);
+        this.feedback?.initVAO(buffer.length / 9);
+        this.feedback?.updateBuffer(0, buffer);
     }
 }

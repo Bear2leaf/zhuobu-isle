@@ -6,12 +6,17 @@ export default class MinigameDevice implements Device {
     private worker?: WechatMinigame.Worker;
     private readonly windowInfo: readonly [number, number];
     private readonly canvas: WechatMinigame.Canvas
+    private readonly canvas2d: WechatMinigame.Canvas
     private contextCreated: boolean = false;
+    private context2dCreated: boolean = false;
     private readonly divideTimeBy: number;
     private startupTime: number = wx.getPerformance().now();
     constructor() {
         this.canvas = wx.createCanvas();
+        this.canvas2d = wx.createCanvas();
         const info = wx.getWindowInfo();
+        this.canvas2d.width = info.windowWidth * info.pixelRatio;
+        this.canvas2d.height = info.windowHeight * info.pixelRatio;
         (this.canvas.width) = info.windowWidth * info.pixelRatio;
         (this.canvas.height) = info.windowHeight * info.pixelRatio;
         this.windowInfo = [this.canvas.width, this.canvas.height];
@@ -31,6 +36,17 @@ export default class MinigameDevice implements Device {
             throw new Error("context already created");
         }
         this.contextCreated = true;
+        return context;
+    }
+    getContext2d(): CanvasRenderingContext2D {
+        const context = this.canvas2d.getContext("2d");
+        if (!context) {
+            throw new Error("context not created");
+        }
+        if (this.context2dCreated) {
+            throw new Error("context already created");
+        }
+        this.context2dCreated = true;
         return context;
     }
     getWindowInfo(): readonly [number, number] {

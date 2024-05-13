@@ -1,0 +1,24 @@
+#version 300 es 
+precision highp float;
+
+in vec2 v_texcoord;
+in vec4 v_color;
+
+uniform float u_inner;
+uniform float u_buffer;
+uniform float u_bufferOutline;
+uniform float u_gamma;
+
+uniform sampler2D u_texture;
+
+layout(location = 0) out vec4 o_color;
+
+void main() {
+    float buffer = u_inner * u_bufferOutline + (1.0f - u_inner) * u_buffer;
+    float edge0 = buffer - u_gamma;
+    float edge1 = buffer + u_gamma;
+    ivec2 texSize = textureSize(u_texture, 0);
+    float dist = texture(u_texture, v_texcoord / vec2(texSize)).r;
+    float alpha = smoothstep(edge0, edge1, dist);
+    o_color = vec4((u_inner * v_color).rgb, alpha);
+}

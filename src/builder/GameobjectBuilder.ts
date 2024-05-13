@@ -8,6 +8,7 @@ import TiledMap from "../tiled/TiledMap.js";
 export default class GameobjectBuilder implements Builder<Gameobject> {
     private gameobject: Gameobject = new Gameobject();
     private context?: WebGL2RenderingContext;
+    private canvas2dContext?: CanvasRenderingContext2D;
     addCharacter() {
         const context = this.context;
         if (!context) {
@@ -38,8 +39,19 @@ export default class GameobjectBuilder implements Builder<Gameobject> {
         }
         this.gameobject.get(Drawable).initRenderer(context)
     }
+    initFontCanvas() {
+        const canvas2dContext = this.canvas2dContext;
+        if (!canvas2dContext) {
+            throw new Error("canvas2dContext is undefined");
+        }
+        this.gameobject.get(Drawable).initFontCanvas(canvas2dContext)
+    }
     setContext(context: WebGL2RenderingContext) {
         this.context = context;
+        return this;
+    }
+    setFontCanvasContext(context: CanvasRenderingContext2D) {
+        this.canvas2dContext = context;
         return this;
     }
     build(): Gameobject {

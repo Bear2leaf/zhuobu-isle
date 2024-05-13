@@ -22,6 +22,7 @@ export type WorkerMessage = {
   data: [number, number][]
 }
 export default interface Device {
+  getContext2d(): CanvasRenderingContext2D;
   getContext(): WebGL2RenderingContext;
   reload(): void;
   getWindowInfo(): readonly [number, number];

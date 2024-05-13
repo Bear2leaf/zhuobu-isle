@@ -4,10 +4,17 @@ export default class BrowserDevice implements Device {
     private isMouseDown: boolean;
     private readonly windowInfo: [number, number];
     private readonly canvas: HTMLCanvasElement
+    private readonly canvas2d: HTMLCanvasElement
     private contextCreated: boolean = false;
+    private context2dCreated: boolean = false;
     constructor() {
         this.canvas = document.createElement("canvas");
         document.body.appendChild(this.canvas);
+        this.canvas2d = document.createElement("canvas");
+        // document.body.appendChild(this.canvas2d);
+        // this.canvas2d.style.display = "none";
+        this.canvas2d.width = window.innerWidth * devicePixelRatio
+        this.canvas2d.height = window.innerHeight * devicePixelRatio
         this.canvas.width = window.innerWidth * devicePixelRatio
         this.canvas.height = window.innerHeight * devicePixelRatio
         this.windowInfo = [this.canvas.width, this.canvas.height];
@@ -29,6 +36,19 @@ export default class BrowserDevice implements Device {
             throw new Error("context already created");
         }
         this.contextCreated = true;
+        return context;
+    }
+    getContext2d(): CanvasRenderingContext2D {
+        const context = this.canvas2d.getContext("2d", {
+            willReadFrequently: true
+        });
+        if (!context) {
+            throw new Error("context not created");
+        }
+        if (this.context2dCreated) {
+            throw new Error("context already created");
+        }
+        this.context2dCreated = true;
         return context;
     }
     getWindowInfo(): readonly [number, number] {

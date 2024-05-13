@@ -25,7 +25,9 @@ async function start(device: Device) {
 	const map = await new TiledMapBuilder()
 		.load(device).then(builder => builder.parse().build());
 	camera.setPositionFromTiled(map);
-	const gameobjectBuilder = new GameobjectBuilder().setContext(context);
+	const gameobjectBuilder = new GameobjectBuilder()
+		.setContext(context)
+		.setFontCanvasContext(device.getContext2d());
 	const scene = await new SceneBuilder()
 		.initTiledMap(map, gameobjectBuilder)
 		.load(device)

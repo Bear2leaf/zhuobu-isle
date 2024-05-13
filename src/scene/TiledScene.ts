@@ -8,14 +8,16 @@ export default class TiledScene extends Scene {
         for (const layer of layers) {
             if (layer.name === "character") {
                 builder.addCharacter();
+                builder.initRenderer();
+                builder.initFontCanvas();
             } else {
                 builder.addLayer();
+                builder.initRenderer();
             }
-            builder.initRenderer();
+            builder.initFontCanvas();
             builder.setTiledMap(tiledMap);
             builder.setLayerIndex(layers.indexOf(layer))
             this.gameobjects.push(builder.build());
         }
-        console.log(this)
     }
 }
