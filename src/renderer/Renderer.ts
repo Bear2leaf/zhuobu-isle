@@ -1,16 +1,15 @@
 
-
 import { mat4 } from "gl-matrix";
 import Device from "../device/Device";
 
 
 export default abstract class Renderer {
     protected readonly context: WebGL2RenderingContext;
-    protected readonly handler: {
+    readonly handler: {
         readonly vao: WebGLVertexArrayObject,
         readonly buffer: WebGLBuffer,
         readonly program: WebGLProgram,
-        readonly texture: WebGLTexture,
+        texture: WebGLTexture | null,
     }
     private readonly locMap: Map<string, WebGLUniformLocation | null>;
     protected count: number = 0;
@@ -29,24 +28,17 @@ export default abstract class Renderer {
         if (buffer === null) {
             throw new Error("buffer not create");
         }
-        const texture = context.createTexture();
-        if (texture === null) {
-            throw new Error("texture not create");
-        }
         this.handler = {
             program,
             vao,
             buffer,
-            texture
+            texture: null
         }
         context.enable(context.BLEND);
         context.enable(context.SCISSOR_TEST);
         context.blendFunc(context.ONE, context.ONE_MINUS_SRC_ALPHA);
         context.blendFuncSeparate(context.SRC_ALPHA, context.ONE_MINUS_SRC_ALPHA, context.ONE, context.ONE);
         context.pixelStorei(context.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
-    }
-    getTarget() {
-        return { vao: this.handler.vao, buffer: this.handler.buffer };
     }
     async loadShaderSource(device: Device) {
         const name: string = this.name;
@@ -91,7 +83,7 @@ export default abstract class Renderer {
             throw new Error("Failed to link program");
         }
     }
-    abstract loadTextureSource(device: Device, tex?: string): Promise<void>;
+    abstract loadTextureSource(device: Device, texture: string | WebGLTexture): Promise<void>;
     abstract initVAO(count?: number): void;
     updateBuffer(start: number, buffer: number[]) {
         const context = this.context;
@@ -188,8 +180,10 @@ export default abstract class Renderer {
         const context = this.context
         context.useProgram(this.handler.program);
         context.activeTexture(context.TEXTURE0);
-        context.bindTexture(context.TEXTURE_2D, this.handler.texture);
-        context.uniform1i(context.getUniformLocation(this.handler.program, "u_texture"), 0);
+        if (this.handler.texture) {
+            context.bindTexture(context.TEXTURE_2D, this.handler.texture);
+            context.uniform1i(context.getUniformLocation(this.handler.program, "u_texture"), 0);
+        }
         context.bindVertexArray(this.handler.vao);
         context.bindBuffer(context.ARRAY_BUFFER, this.handler.buffer);
         context.drawArrays(context.TRIANGLES, 0, this.count);

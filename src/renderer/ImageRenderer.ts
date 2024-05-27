@@ -18,6 +18,7 @@ export default class ImageRenderer extends Renderer {
     }
     async loadTextureSource(device: Device, tex: string): Promise<void> {
         const context = this.context;
+        this.handler.texture = context.createTexture();
         context.bindTexture(context.TEXTURE_2D, this.handler.texture);
         const img = await device.readImage(`resources/image/gfx/${tex}.png`);
         context.texImage2D(context.TEXTURE_2D, 0, context.RGBA, img.width, img.height, 0, context.RGBA, context.UNSIGNED_BYTE, img);

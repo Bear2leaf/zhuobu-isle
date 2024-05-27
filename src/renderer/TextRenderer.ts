@@ -51,6 +51,7 @@ export default class TextRenderer extends Renderer {
         if (!fontCanvas) {
             throw new Error("fontCanvas is undefind");
         }
+        this.handler.texture = context.createTexture();
         context.bindTexture(context.TEXTURE_2D, this.handler.texture);
         context.texImage2D(context.TEXTURE_2D, 0, context.RGBA, context.RGBA, context.UNSIGNED_BYTE, fontCanvas.getCanvas());
         context.texParameteri(context.TEXTURE_2D, context.TEXTURE_WRAP_S, context.CLAMP_TO_EDGE);

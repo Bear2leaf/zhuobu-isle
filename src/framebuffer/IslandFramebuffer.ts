@@ -2,6 +2,7 @@ import Device from "../device/Device";
 import Renderer from "../renderer/Renderer";
 
 export default class IslandFramebuffer extends Renderer {
+    private framebuffer: WebGLFramebuffer | null = null;
     initVAO(count: number): void {
         this.count = count;
         const context = this.context;
@@ -19,15 +20,29 @@ export default class IslandFramebuffer extends Renderer {
         context.bindVertexArray(null);
         context.bindBuffer(context.ARRAY_BUFFER, null)
     }
-    async loadTextureSource(device: Device, tex: string): Promise<void> {
+    async loadTextureSource(device: Device, texture: WebGLTexture): Promise<void> {
+        this.handler.texture = texture;
         const context = this.context;
+        this.framebuffer = context.createFramebuffer();
+        context.bindFramebuffer(context.FRAMEBUFFER, this.framebuffer);
+        context.activeTexture(context.TEXTURE0);
         context.bindTexture(context.TEXTURE_2D, this.handler.texture);
-        context.texImage2D(context.TEXTURE_2D, 0, context.RGBA, 1024, 1024, 0, context.RGBA, context.UNSIGNED_BYTE, null);
-        context.texParameteri(context.TEXTURE_2D, context.TEXTURE_WRAP_S, context.CLAMP_TO_EDGE);
-        context.texParameteri(context.TEXTURE_2D, context.TEXTURE_WRAP_T, context.CLAMP_TO_EDGE);
-        context.texParameteri(context.TEXTURE_2D, context.TEXTURE_MIN_FILTER, context.NEAREST);
-        context.texParameteri(context.TEXTURE_2D, context.TEXTURE_MAG_FILTER, context.NEAREST);
+        context.framebufferTexture2D(context.FRAMEBUFFER, context.COLOR_ATTACHMENT0, context.TEXTURE_2D, this.handler.texture, 0);
         context.bindTexture(context.TEXTURE_2D, null);
+        context.drawBuffers([context.COLOR_ATTACHMENT0]);
+        context.bindFramebuffer(context.FRAMEBUFFER, null);
+    }
+    bind() {
+        const context = this.context;
+        context.bindFramebuffer(context.FRAMEBUFFER, this.framebuffer);
+    }
+    unbind() {
+        const context = this.context;
+        context.bindFramebuffer(context.FRAMEBUFFER, null);
+    }
+    async loadShaderSource(device: Device): Promise<void> {
+        await super.loadShaderSource(device);
+        this.linkProgram();
     }
     constructor(context: WebGL2RenderingContext) {
         super(context, "islandFBO");

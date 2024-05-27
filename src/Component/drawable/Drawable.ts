@@ -26,7 +26,7 @@ export default class Drawable extends Component {
     }
     initRenderer(context: WebGL2RenderingContext) {
         this.renderer = new SpriteRenderer(context);
-        this.feedback = new SpriteFeedback(context, this.renderer.getTarget());
+        this.feedback = new SpriteFeedback(context, this.renderer.handler);
     }
     setTextureName(name: string) {
         this.textureName = name;
