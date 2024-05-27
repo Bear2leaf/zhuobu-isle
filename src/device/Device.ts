@@ -16,6 +16,10 @@ export type MainMessage = {
 } | {
   type: "initIslandData",
   data: number[]
+} | {
+  type: "initIslandDataStart",
+} | {
+  type: "initIslandDataEnd",
 }
 export type WorkerMessage = {
   type: "worker"
