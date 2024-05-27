@@ -3,21 +3,14 @@ export type FontInfo = { [key: string]: { width: number, height: number, x: numb
 
 export default class Text {
     private color: [number, number, number, number] = [1, 0.3, 0.3, 1];
-    private spacing: number = 0;
-    private readonly lineBreakHeight = 32;
+    private spacing: number = 8;
     private readonly chars: string[] = [];
     readonly vertices: number[] = [];
     private readonly textBoundingSize: vec2 = vec2.fromValues(0, 0);
     updateChars(chars: string) {
         this.chars.splice(0, this.chars.length, ...chars.split(""));
     }
-    getOffsetHeight() {
-        return - (this.textBoundingSize[3] + this.textBoundingSize[1]);
-    }
-    getBoundingSize() {
-        return this.textBoundingSize;
-    }
-    create(fontInfo: FontInfo) {
+    create(fontInfo: FontInfo, lineHeight: number) {
         let [x, y] = [0, 0];
         const { spacing, chars } = this;
         const ox = x;
@@ -33,7 +26,7 @@ export default class Text {
             x += w + spacing;
             if (c === '\n') {
                 x = ox;
-                y += -this.lineBreakHeight + spacing;
+                y += -lineHeight - spacing;
                 continue;
             } else if (c === ' ') {
                 continue;

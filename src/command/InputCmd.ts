@@ -2,6 +2,7 @@ import { vec2, vec4 } from "gl-matrix";
 import Camera from "../camera/Camera.js";
 import Character from "../component/drawable/Character.js";
 import Command from "./Command.js";
+import { MainMessage } from "../device/Device.js";
 
 export default class InputCmd implements Command {
     constructor(

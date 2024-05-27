@@ -13,15 +13,15 @@ export default class BrowserDevice implements Device {
         this.canvas2d = document.createElement("canvas");
         // document.body.appendChild(this.canvas2d);
         // this.canvas2d.style.display = "none";
-        this.canvas2d.width = window.innerWidth * devicePixelRatio
-        this.canvas2d.height = window.innerHeight * devicePixelRatio
-        this.canvas.width = window.innerWidth * devicePixelRatio
-        this.canvas.height = window.innerHeight * devicePixelRatio
+        this.canvas2d.width = window.innerWidth * 3
+        this.canvas2d.height = window.innerHeight * 3
+        this.canvas.width = window.innerWidth * 3
+        this.canvas.height = window.innerHeight * 3
         this.windowInfo = [this.canvas.width, this.canvas.height];
 
         window.addEventListener('resize', () => {
-            this.canvas.width = window.innerWidth * devicePixelRatio
-            this.canvas.height = window.innerHeight * devicePixelRatio
+            this.canvas.width = window.innerWidth * 3
+            this.canvas.height = window.innerHeight * 3
             this.windowInfo[0] = this.canvas.width;
             this.windowInfo[1] = this.canvas.height;
         })

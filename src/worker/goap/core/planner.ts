@@ -34,7 +34,7 @@ const buildGraph = (parent: Node, leaves: PriorityQueue<Node>, actions: Action[]
 
 const getPlanFromLeaf = (goal: Goal, node?: Node) => {
   const plan = [];
-  const cost = node?.cost;
+  const cost = node ? node.cost : undefined;
   while (node) {
     if (node.action) plan.unshift(node.action);
     node = node.parent;

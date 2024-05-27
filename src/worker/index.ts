@@ -1,28 +1,27 @@
-import { createPlan } from "./goap/planner";
 import BrowserWorker from "./device/BrowserWorker";
 import MinigameWorker from "./device/MinigameWorker";
 import WorkerDevice from "./device/WorkerDevice";
-import Island from "./island/Island";
 import MeshBuilder from "./island/MeshBuilder";
 import TriangleMesh from "./island/TriangleMesh";
-import PoissonDiskSampling from "./poisson/PoissonDiskSampling";
-import SeedableRandom from "./util/SeedableRandom";
-import { createNoise2D } from "./util/simplex-noise";
-import { actions, goal, initialState } from "./goap/data";
 import astar, { Graph } from "javascript-astar";
 import { chunk } from "lodash";
-import { AnyLayer, Map, UnencodedTileLayer } from "@kayahr/tiled";
 import TiledMap from "../tiled/TiledMap.js";
+import { createPlan } from "./goap/core/planner.js";
+import { initialState, actions, goals } from "./goap/core/data.js";
+import IslandMap from "./island/IslandMap.js";
+import Alea from "alea";
+import PoissonDiskSampling from "poisson-disk-sampling";
+import { createNoise2D } from "simplex-noise"
 
 function createIsland() {
   const spacing = 64;
-  const distanceRNG = new SeedableRandom(42);
-  const simplex = { noise2D: createNoise2D(() => distanceRNG.nextFloat()) };
-  const rng = new SeedableRandom(25);
-  const map = new Island(new TriangleMesh(new MeshBuilder({ boundarySpacing: spacing }).addPoisson(PoissonDiskSampling, spacing, () => rng.nextFloat()).create()), {
+  const distanceRNG = Alea(42);
+  const simplex = { noise2D: createNoise2D(() => distanceRNG.next()) };
+  const rng = Alea(25);
+  const map = new IslandMap(new TriangleMesh(new MeshBuilder({ boundarySpacing: spacing }).addPoisson(PoissonDiskSampling, spacing, () => rng.next()).create()), {
     amplitude: 0.5,
     length: 4,
-  }, () => (N) => Math.round(rng.nextFloat() * N));
+  }, () => (N) => Math.round(rng.next() * N));
   map.calculate({
     noise: simplex,
     shape: { round: 0.5, inflate: 0.3, amplitudes: [1 / 4, 1 / 8, 1 / 12, 1 / 16] },
@@ -67,7 +66,7 @@ device.onmessage = function (message) {
     const result = astar.astar.search(graph, start, end)
     device.postmessage({ type: "path", data: result.map(p => [p.y, p.x]) })
   } else if (message.type === "plan") {
-    console.log(createPlan(initialState, actions, goal))
+    console.log(createPlan(initialState, actions, goals[0]))
   }
   console.log("message from main", message);
 }

@@ -4,9 +4,10 @@ declare module "javascript-astar" {
         constructor(grid: number[][], options?: { diagonal?: boolean | undefined });
     }
 
-    export class GridNode {
+    export type GridNode = {
         x: number;
         y: number;
+        weight: number;
     }
 
     export interface Heuristic {

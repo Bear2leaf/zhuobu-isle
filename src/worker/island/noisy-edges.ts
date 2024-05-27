@@ -7,7 +7,7 @@
 'use strict';
 
 import TriangleMesh from './TriangleMesh';
-import { mixp } from '../util/math';
+import { mixp } from './math.js';
 
 /**
  * Noisy edges is a variant of midpoint subdivision that keeps the lines

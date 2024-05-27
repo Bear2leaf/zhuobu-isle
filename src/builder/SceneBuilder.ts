@@ -1,6 +1,6 @@
 import { Map } from "@kayahr/tiled";
 import Scene from "../scene/Scene.js";
-import TiledScene from "../scene/TiledScene.js";
+import MapScene from "../scene/MapScene.js";
 import Builder from "./Builder.js";
 import Device from "../device/Device.js";
 import TiledMap from "../tiled/TiledMap.js";
@@ -10,7 +10,7 @@ export default class SceneBuilder implements Builder<Scene> {
     private scene?: Scene;
 
     initTiledMap(tiledMap: TiledMap, gameobjectBuilder: GameobjectBuilder) {
-        const scene = new TiledScene();
+        const scene = new MapScene();
         scene.initTiledMap(tiledMap, gameobjectBuilder)
         this.scene = scene;
         return this;

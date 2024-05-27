@@ -1,7 +1,7 @@
 import Camera from "../camera/Camera.js";
 import Command from "../command/Command.js";
 import FindPathCmd from "../command/FindPathCmd.js";
-import InitTiledCmd from "../command/InitTiledCmd.js";
+import InitMapCmd from "../command/InitMapCmd.js";
 import InputCmd from "../command/InputCmd.js";
 import PathCmd from "../command/PathCmd.js";
 import Character from "../component/drawable/Character.js";
@@ -38,7 +38,7 @@ export default class CommandInvoker implements Builder<Command> {
     }
     prepareSend(data: MainMessage) {
         if (data.type === "initTileMap") {
-            this.command = new InitTiledCmd(data, this.sendmessage);
+            this.command = new InitMapCmd(data, this.sendmessage);
             return this;
         } else if (data.type === "findPath") {
             this.command = new FindPathCmd(data, this.sendmessage);

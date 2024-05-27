@@ -1,3 +1,4 @@
+import { MainMessage } from "../device/Device.js";
 import Command from "./Command.js";
 
 export default class FindPathCmd implements Command {

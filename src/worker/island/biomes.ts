@@ -7,33 +7,55 @@
 'use strict';
 
 import TriangleMesh from './TriangleMesh';
-import { mix } from '../util/math';
-
+import { mix } from './math.js';
+// [
+//     [   8947848, '#888888', 'rgb(136,136,136)',  'BARE'],
+//     [  10522743, '#a09077', 'rgb(160,144,119)',  'BEACH'],
+//     [   3355482, '#33335a', 'rgb( 51, 51, 90)',  'COAST'],
+//     [   8956501, '#88aa55', 'rgb(136,170, 85)',  'GRASSLAND'],
+//     [  10092543, '#99ffff', 'rgb(153,255,255)',  'ICE'],
+//     [   3368601, '#336699', 'rgb( 51,102,153)',  'LAKE'],
+//     [   2250120, '#225588', 'rgb( 34, 85,136)',  'RIVER'],
+//     [   3106406, '#2f6666', 'rgb( 47,102,102)',  'MARSH'],
+//     [   4473978, '#44447a', 'rgb( 68, 68,122)',  'OCEAN'],
+//     [   2250120, '#225588', 'rgb( 34, 85,136)',  'RIVER'],
+//     [   5592405, '#555555', 'rgb( 85, 85, 85)',  'SCORCHED'],
+//     [   8952183, '#889977', 'rgb(136,153,119)',  'SHRUBLAND'],
+//     [  16777215, '#ffffff', 'rgb(255,255,255)',  'SNOW'],
+//     [  13810059, '#d2b98b', 'rgb(210,185,139)',  'SUBTROPICAL_DESERT'],
+//     [  10070647, '#99aa77', 'rgb(153,170,119)',  'TAIGA'],
+//     [   6788185, '#679459', 'rgb(103,148, 89)',  'TEMPERATE_DECIDUOUS_FOREST'],
+//     [  13226651, '#c9d29b', 'rgb(201,210,155)',  'TEMPERATE_DESERT'],
+//     [   4491349, '#448855', 'rgb( 68,136, 85)',  'TEMPERATE_RAIN_FOREST'],
+//     [   3372885, '#337755', 'rgb( 51,119, 85)',  'TROPICAL_RAIN_FOREST'],
+//     [   5609796, '#559944', 'rgb( 85,153, 68)',  'TROPICAL_SEASONAL_FOREST'],
+//     [  12303274, '#bbbbaa', 'rgb(187,187,170)',  'TUNDRA']
+// ]
 export enum BiomeColor {
-    BARE = 136 << 16 | 136 << 8 | 136,
-    BEACH = 160 << 16 | 144 << 8 | 119,
-    COAST = 51 << 16 | 51 << 8 | 90,
-    GRASSLAND = 136 << 16 | 170 << 8 | 85,
-    ICE = 153 << 16 | 255 << 8 | 255,
-    LAKE = 51 << 16 | 102 << 8 | 153,
-    LAKESHORE = 34 << 16 | 85 << 8 | 136,
-    MARSH = 47 << 16 | 102 << 8 | 102,
-    OCEAN = 68 << 16 | 68 << 8 | 122,
-    RIVER = 34 << 16 | 85 << 8 | 136,
-    SCORCHED = 85 << 16 | 85 << 8 | 85,
-    SHRUBLAND = 136 << 16 | 153 << 8 | 119,
-    SNOW = 255 << 16 | 255 << 8 | 255,
-    SUBTROPICAL_DESERT = 210 << 16 | 185 << 8 | 139,
-    TAIGA = 153 << 16 | 170 << 8 | 119,
-    TEMPERATE_DECIDUOUS_FOREST = 103 << 16 | 148 << 8 | 89,
-    TEMPERATE_DESERT = 201 << 16 | 210 << 8 | 155,
-    TEMPERATE_RAIN_FOREST = 68 << 16 | 136 << 8 | 85,
-    TROPICAL_RAIN_FOREST = 51 << 16 | 119 << 8 | 85,
-    TROPICAL_SEASONAL_FOREST = 85 << 16 | 153 << 8 | 68,
-    TUNDRA = 187 << 16 | 187 << 8 | 170,
+    BARE = [136, 136, 136].reduce((prev, cur) => prev << 8 | cur, 0),
+    BEACH = [160, 144, 119].reduce((prev, cur) => prev << 8 | cur, 0),
+    COAST = [51, 51, 90].reduce((prev, cur) => prev << 8 | cur, 0),
+    GRASSLAND = [136, 170, 85].reduce((prev, cur) => prev << 8 | cur, 0),
+    ICE = [153, 255, 255].reduce((prev, cur) => prev << 8 | cur, 0),
+    LAKE = [51, 102, 153].reduce((prev, cur) => prev << 8 | cur, 0),
+    LAKESHORE = [34, 85, 136].reduce((prev, cur) => prev << 8 | cur, 0),
+    MARSH = [47, 102, 102].reduce((prev, cur) => prev << 8 | cur, 0),
+    OCEAN = [68, 68, 122].reduce((prev, cur) => prev << 8 | cur, 0),
+    RIVER = [34, 85, 136].reduce((prev, cur) => prev << 8 | cur, 0),
+    SCORCHED = [85, 85, 85].reduce((prev, cur) => prev << 8 | cur, 0),
+    SHRUBLAND = [136, 153, 119].reduce((prev, cur) => prev << 8 | cur, 0),
+    SNOW = [255, 255, 255].reduce((prev, cur) => prev << 8 | cur, 0),
+    SUBTROPICAL_DESERT = [210, 185, 139].reduce((prev, cur) => prev << 8 | cur, 0),
+    TAIGA = [153, 170, 119].reduce((prev, cur) => prev << 8 | cur, 0),
+    TEMPERATE_DECIDUOUS_FOREST = [103, 148, 89].reduce((prev, cur) => prev << 8 | cur, 0),
+    TEMPERATE_DESERT = [201, 210, 155].reduce((prev, cur) => prev << 8 | cur, 0),
+    TEMPERATE_RAIN_FOREST = [68, 136, 85].reduce((prev, cur) => prev << 8 | cur, 0),
+    TROPICAL_RAIN_FOREST = [51, 119, 85].reduce((prev, cur) => prev << 8 | cur, 0),
+    TROPICAL_SEASONAL_FOREST = [85, 153, 68].reduce((prev, cur) => prev << 8 | cur, 0),
+    TUNDRA = [187, 187, 170].reduce((prev, cur) => prev << 8 | cur, 0),
 };
 
-function biome(ocean: boolean, water: boolean, coast: boolean, temperature: number, moisture: number):  BiomeColor {
+function biome(ocean: boolean, water: boolean, coast: boolean, temperature: number, moisture: number): BiomeColor {
     if (ocean) {
         return BiomeColor.OCEAN;
     } else if (water) {
@@ -74,7 +96,7 @@ export function assign_r_coast(r_coast: boolean[], mesh: TriangleMesh, r_ocean: 
     }
     r_coast.length = mesh.numRegions;
     r_coast.fill(false);
-    
+
     let out_r: number[] = [];
     for (let r1 = 0; r1 < mesh.numRegions; r1++) {
         mesh.r_circulate_r(out_r, r1);
@@ -135,7 +157,7 @@ export function assign_r_biome(
     r_biome.length = mesh.numRegions;
     for (let r = 0; r < mesh.numRegions; r++) {
         r_biome[r] = biome(r_ocean[r], r_water[r], r_coast[r],
-                           r_temperature[r], r_moisture[r]);
+            r_temperature[r], r_moisture[r]);
     }
     return r_biome;
 }

@@ -62,8 +62,8 @@ export default class TextRenderer extends Renderer {
     initFontCanvas(context: CanvasRenderingContext2D) {
         this.fontCanvas = new FontCanvas(context);
         this.fontCanvas.initSDFTexture()
-        this.text.updateChars("Hello, 你好世界，和气生财！")
-        this.text.create(this.fontCanvas.fontInfo)
+        this.text.updateChars("Hello\n你好世界，\n和气生财！".split("\n").reverse().join("\n"))
+        this.text.create(this.fontCanvas.fontInfo, this.fontCanvas.fontSize)
 
     }
     updatePosition(position: vec2) {

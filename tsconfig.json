@@ -2,7 +2,7 @@
     "compilerOptions": {
         "strict": true,
         "module": "ESNext",
-        "lib": ["ES2015", "DOM"],
+        "lib": ["ES2016", "DOM"],
         "moduleResolution": "Bundler"
     }
 }

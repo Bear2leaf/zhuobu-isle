@@ -6,6 +6,7 @@ import SceneBuilder from './builder/SceneBuilder.js';
 import CommandInvoker from './builder/CommandInvoker.js';
 import TiledMapBuilder from './builder/TiledMapBuilder.js';
 import GameobjectBuilder from './builder/GameobjectBuilder.js';
+import AudioManager from './audio/AudioManager.js';
 async function start(device: Device) {
 	const onmessageHandlers: ((data: WorkerMessage) => void)[] = [];
 	device.onmessage = (data) => {
@@ -44,7 +45,7 @@ async function start(device: Device) {
 			data: map
 		}).build();
 
-
+	new AudioManager();
 	function tick() {
 		clock.tick();
 		input.update();

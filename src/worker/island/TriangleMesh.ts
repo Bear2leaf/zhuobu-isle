@@ -4,7 +4,7 @@
  * License: Apache v2.0 <http://www.apache.org/licenses/LICENSE-2.0.html>
  */
 
-import Delaunator from "../util/Delaunator";
+import Delaunator from "delaunator";
 
 
 /**
@@ -141,7 +141,7 @@ class TriangleMesh {
      * Construct a DualMesh from a Delaunator object, without any
      * additional boundary regions.
      */
-    static fromDelaunator(points: number[][], delaunator: Delaunator) {
+    static fromDelaunator(points: number[][], delaunator: Delaunator<[number, number]>) {
         return new TriangleMesh({
             numBoundaryRegions: 0,
             numSolidSides: delaunator.triangles.length,

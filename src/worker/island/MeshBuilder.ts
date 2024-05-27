@@ -11,8 +11,8 @@
 'use strict';
 
 
-import PoissonDiskSampling from '../poisson/PoissonDiskSampling';
-import Delaunator from '../util/Delaunator';
+import PoissonDiskSampling from 'poisson-disk-sampling';
+import Delaunator from 'delaunator';
 import TriangleMesh from './TriangleMesh';
 function s_next_s(s: number) { return (s % 3 == 2) ? s - 2 : s + 1; }
 

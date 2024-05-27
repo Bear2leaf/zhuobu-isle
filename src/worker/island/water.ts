@@ -4,8 +4,8 @@
 
 'use strict';
 import TriangleMesh from './TriangleMesh';
-import { NoiseFunction2D } from '../util/simplex-noise';
-import { mix } from '../util/math';
+import { NoiseFunction2D } from 'simplex-noise';
+import { mix } from './math.js';
 
 
 /**

@@ -3,16 +3,16 @@ import TinySDF from "./TinySDF.js";
 
 export default class FontCanvas {
     private readonly tinySDF: TinySDF
-    private readonly fontSize: number;
     private readonly buffer: number;
+    readonly fontSize: number;
     readonly radius: number;
     readonly fontWeight: string;
     readonly fontInfo: FontInfo;
     constructor(
         private readonly context: CanvasRenderingContext2D,
     ) {
-        const fontSize = this.fontSize = 24;
-        const fontWeight = this.fontWeight = "400";
+        const fontSize = this.fontSize = 48;
+        const fontWeight = this.fontWeight = "300";
         const buffer = this.buffer = Math.ceil(fontSize / 16);
         const radius = this.radius = Math.ceil(fontSize / 9);
         this.tinySDF = new TinySDF({ fontSize, buffer, radius, fontWeight }, this.context);

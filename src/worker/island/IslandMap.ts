@@ -14,14 +14,14 @@
  */
 
 import TriangleMesh from './TriangleMesh';
-import { randomShuffle } from '../util/math';
 import { assign_r_water, assign_r_ocean } from './water';
 import { assign_t_elevation, redistribute_t_elevation, assign_r_elevation } from './elevation';
 import { find_spring_t, assign_s_flow } from './rivers';
 import { assign_r_moisture, find_moisture_seeds_r, redistribute_r_moisture } from './moisture';
 import { assign_r_coast, assign_r_temperature, assign_r_biome, BiomeColor } from './biomes';
 import { assign_s_segments } from './noisy-edges';
-import { NoiseFunction2D } from '../util/simplex-noise';
+import { NoiseFunction2D } from 'simplex-noise';
+import { randomShuffle } from './math.js';
 
 /**
  * Map generator
@@ -32,7 +32,7 @@ import { NoiseFunction2D } from '../util/simplex-noise';
  * noisyEdgeOptions: {length, amplitude, seed}
  * makeRandInt: function(seed) -> function(N) -> an int from 0 to N-1
  */
-class Island {
+class IslandMap {
     readonly mesh: TriangleMesh;
     private readonly makeRandInt: (seed?: number) => (n: number) => number;
     private readonly r_ocean: boolean[];
@@ -142,4 +142,4 @@ class Island {
     }
 }
 
-export default Island;
+export default IslandMap;
