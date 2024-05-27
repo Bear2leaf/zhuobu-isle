@@ -11,9 +11,9 @@ export default class Drawable extends Component {
     protected textRenderer?: TextRenderer;
     protected renderer?: Renderer;
     protected feedback?: Renderer;
-    private readonly projection: mat4;
-    private readonly model: mat4;
-    private readonly view: mat4;
+     readonly projection: mat4;
+     readonly model: mat4;
+     readonly view: mat4;
     constructor() {
         super();
         this.projection = mat4.create();
@@ -37,15 +37,6 @@ export default class Drawable extends Component {
         await this.renderer?.loadShaderSource(device);
         await this.feedback?.loadShaderSource(device)
         await this.renderer?.loadTextureSource(device, this.textureName);
-    }
-    update(elapsed: number, delta: number) {
-        this.textRenderer?.updateProjection(this.projection);
-        this.textRenderer?.updateModel(this.model);
-        this.textRenderer?.updateView(this.view);
-        this.renderer?.updateProjection(this.projection);
-        this.renderer?.updateModel(this.model);
-        this.renderer?.updateView(this.view);
-        this.feedback?.updateDelta(delta);
     }
     draw() {
         this.feedback?.render();

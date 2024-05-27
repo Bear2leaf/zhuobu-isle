@@ -39,6 +39,15 @@ export default class Layer extends Drawable {
     increaseHouse() {
         this.house++;
     }
+    update(elapsed: number, delta: number) {
+        this.textRenderer?.updateProjection(this.projection);
+        this.textRenderer?.updateModel(this.model);
+        this.textRenderer?.updateView(this.view);
+        this.renderer?.updateProjection(this.projection);
+        this.renderer?.updateModel(this.model);
+        this.renderer?.updateView(this.view);
+        this.feedback?.updateDelta(delta);
+    }
     init(): void {
         const tiledMap = this.tiledMap;
         if (!tiledMap) {

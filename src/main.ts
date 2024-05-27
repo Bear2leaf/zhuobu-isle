@@ -29,8 +29,12 @@ async function start(device: Device) {
 	const gameobjectBuilder = new GameobjectBuilder()
 		.setContext(context)
 		.setFontCanvasContext(device.getContext2d());
-	const scene = await new SceneBuilder()
+	const builder =  new SceneBuilder();
+	const scene = await builder
 		.initTiledMap(map, gameobjectBuilder)
+		.load(device)
+		.then(builder => builder.init().build());
+	const islandScene = await builder
 		.initIsland(gameobjectBuilder)
 		.load(device)
 		.then(builder => builder.init().build());
@@ -62,6 +66,11 @@ async function start(device: Device) {
 		scene.updateCamera(camera);
 		scene.update(now, delta);
 		scene.render();
+		context.viewport(0, 0, 1024, 1024);
+		context.scissor(0, 0, 1024, 1024);
+		context.clearColor(0.3, 0.3, 0.3, 1);
+		context.clear(context.COLOR_BUFFER_BIT | context.STENCIL_BUFFER_BIT);
+		islandScene.render();
 		requestAnimationFrame(tick);
 	}
 	tick();

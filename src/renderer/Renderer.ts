@@ -91,12 +91,6 @@ export default abstract class Renderer {
         context.bufferSubData(context.ARRAY_BUFFER, start * 4, new Float32Array(buffer));
         context.bindBuffer(context.ARRAY_BUFFER, null)
     }
-    updateProjection(projection: mat4) {
-        const context = this.context;
-        const program = this.handler.program;
-        context.useProgram(program);
-        context.uniformMatrix4fv(this.cacheUniformLocation("u_projection"), false, projection);
-    }
     switchDepthTest(enable: boolean): void {
         if (enable) {
             this.context.enable(this.context.DEPTH_TEST);
@@ -158,6 +152,12 @@ export default abstract class Renderer {
         }
         return loc;
     }
+    updateProjection(projection: mat4) {
+        const context = this.context;
+        const program = this.handler.program;
+        context.useProgram(program);
+        context.uniformMatrix4fv(this.cacheUniformLocation("u_projection"), false, projection);
+    }
     updateView(view: mat4) {
         const context = this.context;
         const program = this.handler.program;
@@ -177,7 +177,7 @@ export default abstract class Renderer {
         context.uniform1f(this.cacheUniformLocation("u_delta"), delta);
     }
     render() {
-        const context = this.context
+        const context = this.context;
         context.useProgram(this.handler.program);
         context.activeTexture(context.TEXTURE0);
         if (this.handler.texture) {

@@ -20,13 +20,21 @@ export default class ImageRenderer extends Renderer {
         const context = this.context;
         this.handler.texture = context.createTexture();
         context.bindTexture(context.TEXTURE_2D, this.handler.texture);
-        const img = await device.readImage(`resources/image/gfx/${tex}.png`);
-        context.texImage2D(context.TEXTURE_2D, 0, context.RGBA, img.width, img.height, 0, context.RGBA, context.UNSIGNED_BYTE, img);
+        if (tex === "") {
+            context.texImage2D(context.TEXTURE_2D, 0, context.RGBA, 1024, 1024, 0, context.RGBA, context.UNSIGNED_BYTE, null);
+        } else {
+            const img = await device.readImage(`resources/image/gfx/${tex}.png`);
+            context.texImage2D(context.TEXTURE_2D, 0, context.RGBA, img.width, img.height, 0, context.RGBA, context.UNSIGNED_BYTE, img);
+        }
         context.texParameteri(context.TEXTURE_2D, context.TEXTURE_WRAP_S, context.CLAMP_TO_EDGE);
         context.texParameteri(context.TEXTURE_2D, context.TEXTURE_WRAP_T, context.CLAMP_TO_EDGE);
         context.texParameteri(context.TEXTURE_2D, context.TEXTURE_MIN_FILTER, context.NEAREST);
         context.texParameteri(context.TEXTURE_2D, context.TEXTURE_MAG_FILTER, context.NEAREST);
         context.bindTexture(context.TEXTURE_2D, null);
+    }
+    async loadShaderSource(device: Device): Promise<void> {
+        await super.loadShaderSource(device);
+        this.linkProgram();    
     }
     constructor(context: WebGL2RenderingContext) {
         super(context, "image");
