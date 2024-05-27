@@ -6,7 +6,6 @@ import Device from "../device/Device.js";
 import TiledMap from "../tiled/TiledMap.js";
 import GameobjectBuilder from "./GameobjectBuilder.js";
 import IslandScene from "../scene/IslandScene.js";
-import IslandMap from "../worker/island/IslandMap.js";
 
 export default class SceneBuilder implements Builder<Scene> {
     private scene?: Scene;
@@ -17,9 +16,9 @@ export default class SceneBuilder implements Builder<Scene> {
         this.scene = scene;
         return this;
     }
-    initIsland(islandData: IslandMap, gameobjectBuilder: GameobjectBuilder) {
+    initIsland(gameobjectBuilder: GameobjectBuilder) {
         const scene = new IslandScene();
-        scene.initIsland(islandData, gameobjectBuilder)
+        scene.initIsland(gameobjectBuilder)
         this.scene = scene;
         return this;
     }

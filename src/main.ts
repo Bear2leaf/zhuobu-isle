@@ -7,7 +7,6 @@ import CommandInvoker from './builder/CommandInvoker.js';
 import TiledMapBuilder from './builder/TiledMapBuilder.js';
 import GameobjectBuilder from './builder/GameobjectBuilder.js';
 import AudioManager from './audio/AudioManager.js';
-import IslandMap from './worker/island/IslandMap.js';
 async function start(device: Device) {
 	const onmessageHandlers: ((data: WorkerMessage) => void)[] = [];
 	device.onmessage = (data) => {
@@ -20,7 +19,6 @@ async function start(device: Device) {
 		type: "hello",
 		data: void (0)
 	});
-	const islandMap = undefined as unknown as IslandMap;
 	const context = device.getContext();
 	const input = new Input(device);
 	const camera = new Camera();
@@ -33,7 +31,7 @@ async function start(device: Device) {
 		.setFontCanvasContext(device.getContext2d());
 	const scene = await new SceneBuilder()
 		.initTiledMap(map, gameobjectBuilder)
-		.initIsland(islandMap, gameobjectBuilder)
+		.initIsland(gameobjectBuilder)
 		.load(device)
 		.then(builder => builder.init().build());
 	new CommandInvoker()

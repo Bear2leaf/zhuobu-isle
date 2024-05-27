@@ -5,7 +5,6 @@ import Layer from "../component/drawable/Layer.js";
 import Drawable from "../component/drawable/Drawable.js";
 import TiledMap from "../tiled/TiledMap.js";
 import Island from "../component/drawable/Island.js";
-import IslandMap from "../worker/island/IslandMap.js";
 
 export default class GameobjectBuilder implements Builder<Gameobject> {
     private gameobject: Gameobject = new Gameobject();
@@ -41,14 +40,6 @@ export default class GameobjectBuilder implements Builder<Gameobject> {
         }
         this.gameobject.add(Layer);
         return this;
-    }
-    initIslandFramebuffer(islandData: IslandMap) {
-        
-        const context = this.context;
-        if (!context) {
-            throw new Error("context is undefined");
-        }
-        // this.gameobject.get(Island).initIslandFBOData()
     }
     initRenderer() {
         const context = this.context;
