@@ -109,9 +109,7 @@ export default class Island extends Drawable {
         this.renderer?.updateBuffer(0, bufferSprite);
     }
     draw(): void {
-        this.framebuffer?.bind();
         this.framebuffer?.render();
-        this.framebuffer?.unbind();
         this.renderer?.render();
     }
 }

@@ -7,6 +7,7 @@ import CommandInvoker from './builder/CommandInvoker.js';
 import TiledMapBuilder from './builder/TiledMapBuilder.js';
 import GameobjectBuilder from './builder/GameobjectBuilder.js';
 import AudioManager from './audio/AudioManager.js';
+import { BiomeColor } from './island/biomes.js';
 async function start(device: Device) {
 	const onmessageHandlers: ((data: WorkerMessage) => void)[] = [];
 	device.onmessage = (data) => {
@@ -29,7 +30,7 @@ async function start(device: Device) {
 	const gameobjectBuilder = new GameobjectBuilder()
 		.setContext(context)
 		.setFontCanvasContext(device.getContext2d());
-	const builder =  new SceneBuilder();
+	const builder = new SceneBuilder();
 	const scene = await builder
 		.initTiledMap(map, gameobjectBuilder)
 		.load(device)
@@ -66,10 +67,6 @@ async function start(device: Device) {
 		scene.updateCamera(camera);
 		scene.update(now, delta);
 		scene.render();
-		context.viewport(0, 0, 1024, 1024);
-		context.scissor(0, 0, 1024, 1024);
-		context.clearColor(0.3, 0.3, 0.3, 1);
-		context.clear(context.COLOR_BUFFER_BIT | context.STENCIL_BUFFER_BIT);
 		islandScene.render();
 		requestAnimationFrame(tick);
 	}

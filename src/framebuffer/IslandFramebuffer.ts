@@ -1,4 +1,5 @@
 import Device from "../device/Device";
+import { BiomeColor } from "../island/biomes.js";
 import Renderer from "../renderer/Renderer";
 
 export default class IslandFramebuffer extends Renderer {
@@ -32,12 +33,16 @@ export default class IslandFramebuffer extends Renderer {
         context.drawBuffers([context.COLOR_ATTACHMENT0]);
         context.bindFramebuffer(context.FRAMEBUFFER, null);
     }
-    bind() {
+    render(): void {
         const context = this.context;
         context.bindFramebuffer(context.FRAMEBUFFER, this.framebuffer);
-    }
-    unbind() {
-        const context = this.context;
+		context.viewport(0, 0, 1024, 1024);
+		context.scissor(0, 0, 1024, 1024);
+		const ocean = BiomeColor.OCEAN;
+		context.clearColor(((ocean >> 16) & 0xff) / 255, ((ocean >> 8) & 0xff) / 255, ((ocean & 0xff) / 255), 1);
+		context.clear(context.COLOR_BUFFER_BIT | context.STENCIL_BUFFER_BIT);
+        this.context.clear(this.context.COLOR_BUFFER_BIT | this.context.STENCIL_BUFFER_BIT)
+        super.render();
         context.bindFramebuffer(context.FRAMEBUFFER, null);
     }
     async loadShaderSource(device: Device): Promise<void> {
