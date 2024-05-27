@@ -36,15 +36,24 @@ export default class IslandFramebuffer extends Renderer {
     render(): void {
         const context = this.context;
         context.bindFramebuffer(context.FRAMEBUFFER, this.framebuffer);
-		context.viewport(0, 0, 1024, 1024);
-		context.scissor(0, 0, 1024, 1024);
-		const ocean = BiomeColor.OCEAN;
-		context.clearColor(((ocean >> 16) & 0xff) / 255, ((ocean >> 8) & 0xff) / 255, ((ocean & 0xff) / 255), 1);
-		context.clear(context.COLOR_BUFFER_BIT | context.STENCIL_BUFFER_BIT);
-        this.context.clear(this.context.COLOR_BUFFER_BIT | this.context.STENCIL_BUFFER_BIT)
+        context.viewport(0, 0, 1024, 1024);
+        context.scissor(0, 0, 1024, 1024);
+        const ocean = BiomeColor.OCEAN;
+        context.clearColor(((ocean >> 16) & 0xff) / 255, ((ocean >> 8) & 0xff) / 255, ((ocean & 0xff) / 255), 1);
+        context.clear(context.COLOR_BUFFER_BIT | context.STENCIL_BUFFER_BIT);
         super.render();
+        if (this.pixels === undefined) {
+            this.pixels = new Uint8ClampedArray(1024 * 1024 * 4);
+            context.readPixels(0, 0, 1024, 1024, context.RGBA, context.UNSIGNED_BYTE, this.pixels);
+            if (this.onPixelCreated === undefined) {
+                throw new Error("onPixelCreated is undefined")
+            }
+            this.onPixelCreated([...this.pixels]);
+        }
         context.bindFramebuffer(context.FRAMEBUFFER, null);
     }
+    onPixelCreated?: (pixels: number[]) => void;
+    pixels?: Uint8ClampedArray;
     async loadShaderSource(device: Device): Promise<void> {
         await super.loadShaderSource(device);
         this.linkProgram();

@@ -34,7 +34,13 @@ function createIsland() {
 export default class Island extends Drawable {
     private framebuffer?: IslandFramebuffer;
     private readonly islandMap: IslandMap = createIsland();
-
+    onPixelCreated(callback: (pixels: number[]) => void) {
+        const framebuffer = this.framebuffer;
+        if (framebuffer === undefined) {
+            throw new Error("framebuffer is undefined");
+        };
+        framebuffer.onPixelCreated = callback;
+    }
     initRenderer(context: WebGL2RenderingContext): void {
         this.renderer = new ImageRenderer(context);
         this.framebuffer = new IslandFramebuffer(context);

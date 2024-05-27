@@ -1,10 +1,12 @@
 import Camera from "../camera/Camera.js";
 import Command from "../command/Command.js";
-import FindPathCmd from "../command/FindPathCmd.js";
+import InitIslandDataCmd from "../command/InitIslandDataCmd.js";
 import InitMapCmd from "../command/InitMapCmd.js";
 import InputCmd from "../command/InputCmd.js";
 import PathCmd from "../command/PathCmd.js";
 import Character from "../component/drawable/Character.js";
+import Island from "../component/drawable/Island.js";
+import { MainMessage, WorkerMessage } from "../device/Device.js";
 import Input from "../input/Input.js";
 import Scene from "../scene/Scene.js";
 import Builder from "./Builder.js";
@@ -16,6 +18,7 @@ export default class CommandInvoker implements Builder<Command> {
     private input?: Input;
     private handlers?: ((data: WorkerMessage) => void)[];
     private scene?: Scene;
+    private islandScene?: Scene;
     setSendMessage(sendmessage: ((data: MainMessage) => void) | undefined) {
         this.sendmessage = sendmessage;
         return this;
@@ -36,12 +39,13 @@ export default class CommandInvoker implements Builder<Command> {
         this.scene = scene;
         return this;
     }
+    setIslandScene(scene: Scene | undefined) {
+        this.islandScene = scene;
+        return this;
+    }
     prepareSend(data: MainMessage) {
         if (data.type === "initTileMap") {
             this.command = new InitMapCmd(data, this.sendmessage);
-            return this;
-        } else if (data.type === "findPath") {
-            this.command = new FindPathCmd(data, this.sendmessage);
             return this;
         }
         throw new Error("unsupport type")
@@ -83,9 +87,9 @@ export default class CommandInvoker implements Builder<Command> {
         if (!scene) {
             throw new Error("scene is undefined");
         }
-        const sendmessage = this.sendmessage;
-        if (!sendmessage) {
-            throw new Error("sendmessage is undefined");
+        const islandScene = this.islandScene;
+        if (!islandScene) {
+            throw new Error("islandScene is undefined");
         }
         input.onclick = (x: number, y: number) => {
             this.prepareInput(x, y, "onclick").build();
@@ -98,6 +102,15 @@ export default class CommandInvoker implements Builder<Command> {
         }
         input.ondrag = (x: number, y: number) => {
             this.prepareInput(x, y, "ondrag").build();
+        }
+        const sendmessage = this.sendmessage;
+        if (!sendmessage) {
+            throw new Error("sendmessage is undefined");
+        }
+        for (const island of islandScene.getComponents(Island)) {
+            island.onPixelCreated((pixels) => {
+                new InitIslandDataCmd(pixels, sendmessage).execute();
+            })
         }
         handlers.push((data) => {
             for (const character of scene.getComponents(Character)) {

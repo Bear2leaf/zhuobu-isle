@@ -13,6 +13,9 @@ export type MainMessage = {
       start: [number, number],
       end: [number, number]
   }
+} | {
+  type: "initIslandData",
+  data: number[]
 }
 export type WorkerMessage = {
   type: "worker"

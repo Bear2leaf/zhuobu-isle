@@ -7,7 +7,6 @@ import CommandInvoker from './builder/CommandInvoker.js';
 import TiledMapBuilder from './builder/TiledMapBuilder.js';
 import GameobjectBuilder from './builder/GameobjectBuilder.js';
 import AudioManager from './audio/AudioManager.js';
-import { BiomeColor } from './island/biomes.js';
 async function start(device: Device) {
 	const onmessageHandlers: ((data: WorkerMessage) => void)[] = [];
 	device.onmessage = (data) => {
@@ -43,6 +42,7 @@ async function start(device: Device) {
 		.setCamera(camera)
 		.setHandlers(onmessageHandlers)
 		.setScene(scene)
+		.setIslandScene(islandScene)
 		.setSendMessage(device.sendmessage?.bind(device))
 		.setInput(input)
 		.setup()
