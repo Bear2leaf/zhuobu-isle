@@ -1,7 +1,6 @@
 {
   "name": "zhuobu-isle",
   "version": "0.0.1",
-  "type": "module",
   "scripts": {
     "build": "esbuild src/main.ts src/worker/index.ts --outdir=dist --bundle --format=esm",
     "dev": "esbuild --sourcemap src/main.ts src/worker/index.ts --outdir=dist --bundle --format=esm --watch --servedir=.",
@@ -16,6 +15,7 @@
     "@types/poisson-disk-sampling": "^2.2.4",
     "esbuild": "^0.20.2",
     "minigame-api-typings": "^3.8.4",
+    "esbuild-runner": "^2.2.2",
     "typescript": "^5.4.5"
   },
   "dependencies": {
