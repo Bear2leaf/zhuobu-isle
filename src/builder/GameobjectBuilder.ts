@@ -3,7 +3,7 @@ import Character from "../component/drawable/Character.js";
 import Builder from "./Builder.js";
 import Layer from "../component/drawable/Layer.js";
 import Drawable from "../component/drawable/Drawable.js";
-import TiledMap from "../tiled/TiledMap.js";
+import Tilemap from "../tiled/Tilemap.js";
 import Island from "../component/drawable/Island.js";
 
 export default class GameobjectBuilder implements Builder<Gameobject> {
@@ -26,7 +26,7 @@ export default class GameobjectBuilder implements Builder<Gameobject> {
         this.gameobject.add(Island);
         return this;
     }
-    setTiledMap(tiledMap: TiledMap) {
+    setTiledMap(tiledMap: Tilemap) {
         this.gameobject.get(Layer).setTiledMap(tiledMap)
     }
     setLayerIndex(index: number) {

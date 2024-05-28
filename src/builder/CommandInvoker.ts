@@ -3,12 +3,16 @@ import Command from "../command/Command.js";
 import InitIslandDataCmd from "../command/InitIslandDataCmd.js";
 import InitMapCmd from "../command/InitMapCmd.js";
 import InputCmd from "../command/InputCmd.js";
+import NoopCmd from "../command/NoopCmd.js";
 import PathCmd from "../command/PathCmd.js";
+import UpdateLayerCmd from "../command/UpdateLayerCmd.js";
 import Character from "../component/drawable/Character.js";
 import Island from "../component/drawable/Island.js";
+import Layer from "../component/drawable/Layer.js";
 import { MainMessage, WorkerMessage } from "../device/Device.js";
 import Input from "../input/Input.js";
 import Scene from "../scene/Scene.js";
+import Tilemap from "../tiled/Tilemap.js";
 import Builder from "./Builder.js";
 
 export default class CommandInvoker implements Builder<Command> {
@@ -50,21 +54,26 @@ export default class CommandInvoker implements Builder<Command> {
         }
         throw new Error("unsupport type")
     }
-    preparePath(data: WorkerMessage, character: Character) {
+    prepareLayerCmd(data: WorkerMessage, layer: Layer) {
+        if (data.type === "updateLayer") {
+            this.command = new UpdateLayerCmd(layer, data.data)
+        }
+        return this;
+    }
+    prepareCharacterCmd(data: WorkerMessage, character: Character) {
         if (data.type === "path") {
             this.command = new PathCmd(character, data.data)
-            return this;
         }
-        throw new Error("unsupport type")
+        return this;
     }
-    prepareInput(x: number, y: number, type: string,  character?: Character) {
+    prepareInput(x: number, y: number, type: string, character?: Character) {
         this.command = new InputCmd(x, y, type, this.camera, character, this.sendmessage);
         return this;
     }
     build(): Command {
-        const command = this.command;
+        let command = this.command;
         if (!command) {
-            throw new Error("command not created");
+            command = new NoopCmd()
         }
         command.execute();
         this.command = undefined;
@@ -107,14 +116,19 @@ export default class CommandInvoker implements Builder<Command> {
         if (!sendmessage) {
             throw new Error("sendmessage is undefined");
         }
+        const tiled = scene.getComponents(Layer)[0].getTiledMap()
         for (const island of islandScene.getComponents(Island)) {
             island.onPixelCreated((pixels) => {
-                new InitIslandDataCmd(pixels, sendmessage).execute();
+                new InitIslandDataCmd(pixels, tiled, sendmessage).execute();
             })
         }
         handlers.push((data) => {
-            for (const character of scene.getComponents(Character)) {
-                this.preparePath(data, character).build();
+            for (const layer of scene.getComponents(Layer)) {
+                if (layer instanceof Character) {
+                    this.prepareCharacterCmd(data, layer).build();
+                } else {
+                    this.prepareLayerCmd(data, layer).build();
+                }
             }
         })
         return this;

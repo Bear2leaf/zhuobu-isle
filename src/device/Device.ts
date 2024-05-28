@@ -1,3 +1,5 @@
+import type { BiomeColor } from "../island/biomes.js"
+
 export type MainMessage = {
   type: "hello"
   data: void
@@ -15,11 +17,7 @@ export type MainMessage = {
   }
 } | {
   type: "initIslandData",
-  data: number[]
-} | {
-  type: "initIslandDataStart",
-} | {
-  type: "initIslandDataEnd",
+  data: {conners: number[][], biomeColors: typeof BiomeColor}
 }
 export type WorkerMessage = {
   type: "worker"
@@ -27,6 +25,9 @@ export type WorkerMessage = {
 } | {
   type: "path",
   data: [number, number][]
+} | {
+  type: "updateLayer",
+  data: number[][]
 }
 export default interface Device {
   getContext2d(): CanvasRenderingContext2D;

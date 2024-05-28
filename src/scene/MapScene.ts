@@ -1,9 +1,9 @@
 import GameobjectBuilder from "../builder/GameobjectBuilder.js";
-import TiledMap from "../tiled/TiledMap.js";
+import Tilemap from "../tiled/Tilemap.js";
 import Scene from "./Scene.js";
 
 export default class MapScene extends Scene {
-    initTiledMap(tiledMap: TiledMap, builder: GameobjectBuilder) {
+    initTiledMap(tiledMap: Tilemap, builder: GameobjectBuilder) {
         const layers = tiledMap.getLayers();
         for (const layer of layers) {
             if (layer.name === "character") {

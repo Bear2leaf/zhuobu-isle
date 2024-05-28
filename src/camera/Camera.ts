@@ -1,6 +1,6 @@
 import { mat4, vec2, vec3, vec4 } from "gl-matrix";
 import Drawable from "../component/drawable/Drawable";
-import TiledMap from "../tiled/TiledMap.js";
+import Tilemap from "../tiled/Tilemap.js";
 
 export default class Camera {
     private readonly velocity: vec2;
@@ -42,7 +42,7 @@ export default class Camera {
         vec4.transformMat4(p, p, mat4.invert(mat4.create(), this.model));
         console.log(`clicked: screen->[${x},${y}], p-> ${p.join(",")}`);
     }
-    setPositionFromTiled(tiledMap: TiledMap) {
+    setPositionFromTiled(tiledMap: Tilemap) {
         vec2.copy(this.cameraPosition,  tiledMap.getCameraPosition())
     }
     updateWindowInfo(width: number, height: number) {

@@ -16,7 +16,7 @@ export default class TileHouse implements TileInterpreter {
         const height = layer.height;
         const firstgid = context.getTilesetFirstgid() || 1;
         const tile = layer.data[tileIdx];
-        if (!tile) {
+        if (tile === undefined) {
             throw new Error("tile not found");
         }
         for (let i = 0; i < this.startRowIndices.length; i++) {

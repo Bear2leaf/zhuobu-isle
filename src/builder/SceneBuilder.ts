@@ -3,14 +3,14 @@ import Scene from "../scene/Scene.js";
 import MapScene from "../scene/MapScene.js";
 import Builder from "./Builder.js";
 import Device from "../device/Device.js";
-import TiledMap from "../tiled/TiledMap.js";
+import Tilemap from "../tiled/Tilemap.js";
 import GameobjectBuilder from "./GameobjectBuilder.js";
 import IslandScene from "../scene/IslandScene.js";
 
 export default class SceneBuilder implements Builder<Scene> {
     private scene?: Scene;
 
-    initTiledMap(tiledMap: TiledMap, gameobjectBuilder: GameobjectBuilder) {
+    initTiledMap(tiledMap: Tilemap, gameobjectBuilder: GameobjectBuilder) {
         const scene = new MapScene();
         scene.initTiledMap(tiledMap, gameobjectBuilder)
         this.scene = scene;

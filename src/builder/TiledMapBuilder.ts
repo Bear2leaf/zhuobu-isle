@@ -1,10 +1,10 @@
 import { EmbeddedTileset, Map, UnencodedTileLayer } from "@kayahr/tiled";
 import Device from "../device/Device.js";
 import Builder from "./Builder.js";
-import TiledMap from "../tiled/TiledMap.js";
+import Tilemap from "../tiled/Tilemap.js";
 
-export default class TiledMapBuilder implements Builder<TiledMap> {
-    private tiledMap?: TiledMap;
+export default class TiledMapBuilder implements Builder<Tilemap> {
+    private tiledMap?: Tilemap;
     private map?: Map;
     async load(device: Device) {
         this.map = await device.readJson(`resources/tiled/isle.json`) as Map;
@@ -14,7 +14,7 @@ export default class TiledMapBuilder implements Builder<TiledMap> {
         if (!this.map) {
             throw new Error("map is undefined");
         }
-        this.tiledMap = new TiledMap(
+        this.tiledMap = new Tilemap(
             this.map.tilesets as EmbeddedTileset[]
             , this.map.layers as UnencodedTileLayer[]
             , this.map.width
@@ -24,7 +24,7 @@ export default class TiledMapBuilder implements Builder<TiledMap> {
         );
         return this;
     }
-    build(): TiledMap {
+    build(): Tilemap {
         const tiledMap = this.tiledMap;
         if (!tiledMap) {
             throw new Error("tiledMap is undefined");

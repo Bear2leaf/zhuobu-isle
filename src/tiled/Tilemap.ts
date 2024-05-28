@@ -2,7 +2,7 @@ import { EmbeddedTileset, Map, UnencodedTileLayer } from "@kayahr/tiled";
 import { ReadonlyVec2, vec2 } from "gl-matrix";
 
 
-export default class TiledMap {
+export default class Tilemap {
     constructor(
         private readonly tilesets: EmbeddedTileset[],
         private readonly layers: UnencodedTileLayer[],
