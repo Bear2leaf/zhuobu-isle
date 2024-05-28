@@ -10,6 +10,7 @@ export default class Camera {
     private readonly model: mat4;
     private readonly cameraPosition: vec2;
     private readonly speed;
+    private readonly scale = 100;
     constructor() {
         this.cameraPosition = vec2.create();
         this.velocity = vec2.create();
@@ -43,10 +44,11 @@ export default class Camera {
         console.log(`clicked: screen->[${x},${y}], p-> ${p.join(",")}`);
     }
     setPositionFromTiled(tiledMap: Tilemap) {
-        vec2.copy(this.cameraPosition,  tiledMap.getCameraPosition())
+        vec2.scale(this.cameraPosition, tiledMap.getCameraPosition(), this.scale)
     }
     setPositionFromPosition(position: vec2) {
-        vec2.copy(this.cameraPosition,  position)
+        vec2.scale(this.cameraPosition, position, this.scale)
+        vec2.add(this.cameraPosition, this.cameraPosition, vec2.multiply(vec2.create(), this.windowInfo, vec2.fromValues(0.5, 0.5)))
     }
     updateWindowInfo(width: number, height: number) {
         this.windowInfo[0] = width
@@ -60,7 +62,7 @@ export default class Camera {
         mat4.lookAt(this.view, vec3.fromValues(cameraPos[0], cameraPos[1], 1), vec3.fromValues(cameraPos[0], cameraPos[1], 0), vec3.fromValues(0, 1, 0));
         const [width, height] = this.windowInfo;
         mat4.ortho(this.projection, 0, width, height, 0, 1, -1);
-        mat4.fromScaling(this.model, vec3.fromValues(100, 100, 1))
+        mat4.fromScaling(this.model, vec3.fromValues(this.scale, this.scale, 1))
     }
     updateDrawable(drawobject: Drawable) {
         const invert = mat4.create();

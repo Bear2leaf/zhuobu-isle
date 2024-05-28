@@ -68,7 +68,7 @@ export default class Tilemap {
                 if (element < 0) {
                     continue;
                 }
-                return vec2.fromValues(-j * 100, -i * 100)
+                return vec2.fromValues(-j, -i)
             }
         }
         throw new Error("position not found");

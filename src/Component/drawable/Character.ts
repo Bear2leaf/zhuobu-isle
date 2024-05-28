@@ -36,7 +36,7 @@ export default class Character extends Layer {
         this.feedback?.updateBuffer(37, [0 + x, 2 + y]);
         this.feedback?.updateBuffer(46, [0 + x, 0 + y]);
         this.textRenderer?.updatePosition(data);
-        this.camera?.setPositionFromPosition([-(x - 4) * 100, -(y - 4) * 100])
+        this.camera?.setPositionFromPosition([-x, -y])
     }
     updateAnimation(start: number, end: number) {
         this.feedback?.updateBuffer(5, [start, end]);
