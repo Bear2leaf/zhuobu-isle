@@ -10,7 +10,7 @@ import AudioManager from './audio/AudioManager.js';
 async function start(device: Device) {
 	const onmessageHandlers: ((data: WorkerMessage) => void)[] = [];
 	device.onmessage = (data) => {
-		// console.log("message from worker", data);
+		console.log("message from worker", data);
 		onmessageHandlers.forEach(handler => handler(data))
 	};
 	device.createWorker("dist/worker/index.js");

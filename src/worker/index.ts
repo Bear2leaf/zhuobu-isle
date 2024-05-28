@@ -9,7 +9,7 @@ import { initialState, actions, goals, ITEM_DATA } from "./goap/core/data.js";
 import { EmbeddedTileset } from "@kayahr/tiled";
 import Alea from "alea";
 import { generateStone, initLayers } from "./goap/core/world.js";
-import ConsoleAgent from "./goap/agent/ConsoleAgent.js";
+import ConsoleAgent, { pick } from "./goap/agent/ConsoleAgent.js";
 import AgentView from "./goap/view/AgentView.js";
 import WorldView from "./goap/view/WorldView.js";
 declare const worker: WechatMinigame.Worker;
@@ -92,20 +92,13 @@ device.onmessage = function (message) {
     const agent = new ConsoleAgent(device.postmessage.bind(device));
     const viewer = new AgentView(agent);
     const worldViewer = new WorldView(agent);
-    for (let index = 0; index < 5; index++) {
-        generateStone({x: 32, y: 32});
-    }
     setInterval(() => {
-        // console.clear();
-        // worldViewer.update();
-        agent.update();
-        // viewer.update();
+      // console.clear();
+      // worldViewer.update();
+      agent.update();
+      // viewer.update();
     }, 1000);
-    
+
   }
-}
-const rnd = Alea(666);
-function pick<T>(choices: T[]): T {
-  return choices[Math.floor(choices.length * rnd.next())];
 }
 export { };

@@ -12,12 +12,12 @@ export type MainMessage = {
 } | {
   type: "findPath",
   data: {
-      start: [number, number],
-      end: [number, number]
+    start: [number, number],
+    end: [number, number]
   }
 } | {
   type: "initIslandData",
-  data: {conners: number[][], biomeColors: typeof BiomeColor}
+  data: { conners: number[][], biomeColors: typeof BiomeColor }
 }
 export type WorkerMessage = {
   type: "worker"
@@ -25,6 +25,18 @@ export type WorkerMessage = {
 } | {
   type: "path",
   data: [number, number][]
+} | {
+  type: "generateObject",
+  data: {
+    position: [number, number],
+    element:number
+  }
+} | {
+  type: "removeObject",
+  data: {
+    position: [number, number],
+    element:number
+  }
 } | {
   type: "updateLayer",
   data: number[][]

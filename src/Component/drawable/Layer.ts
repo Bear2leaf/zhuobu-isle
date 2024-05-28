@@ -5,9 +5,6 @@ import Tilemap from "../../tiled/Tilemap.js";
 import Drawable from "./Drawable";
 
 export default class Layer extends Drawable {
-    getTilesetFirstgid() {
-        return this.tiledMap?.getTilesetFirstgid(this.getData())
-    }
     protected tiledMap?: Tilemap;
     protected index: number = 0;
     private readonly interpreters: TileInterpreter[] = [
@@ -96,6 +93,22 @@ export default class Layer extends Drawable {
         this.feedback?.initVAO(buffer.length / 9);
         this.feedback?.updateBuffer(0, buffer);
     }
+    generateObject(data: number[], element: number) {
+        const layer = this.tiledMap?.getLayers()[this.index];
+        if (layer === undefined) {
+            throw new Error("layer is undefined");
+        }
+        const index = (data[1] * layer.width + data[0]) * 9 * 6;
+        this.feedback?.updateBuffer(index + 4 + 1, [element, element]);
+        this.feedback?.updateBuffer(index + 4 + 10, [element, element]);
+        this.feedback?.updateBuffer(index + 4 + 19, [element, element]);
+        this.feedback?.updateBuffer(index + 4 + 28, [element, element]);
+        this.feedback?.updateBuffer(index + 4 + 37, [element, element]);
+        this.feedback?.updateBuffer(index + 4 + 46, [element, element]);
+    }
+    getTilesetFirstgid() {
+        return this.tiledMap?.getTilesetFirstgid(this.getData())
+    }
     updateLayer(grid: number[][]) {
         const tiledMap = this.tiledMap;
         if (!tiledMap) {
@@ -119,21 +132,21 @@ export default class Layer extends Drawable {
                 }
                 if (i === height - 1 || j === width - 1) {
                     buffer.push(
-                        0, 0 + j, 0 + i                                                         , 0 + fixuv, 0 + fixuv, element, element, tilewidth, tileheight,
-                        0, 1 * tilewidth / maptilewidth + j, 0 + i                              , 1 - fixuv, 0 + fixuv, element, element, tilewidth, tileheight,
-                        0, 1 * tilewidth / maptilewidth + j, 1 * tileheight / maptileheight + i , 1 - fixuv, 1 - fixuv, element, element, tilewidth, tileheight,
-                        0, 1 * tilewidth / maptilewidth + j, 1 * tileheight / maptileheight + i , 1 - fixuv, 1 - fixuv, element, element, tilewidth, tileheight,
-                        0, 0 + j, 1 * tileheight / maptileheight + i                            , 0 + fixuv, 1 - fixuv, element, element, tilewidth, tileheight,
-                        0, 0 + j, 0 + i                                                         , 0 + fixuv, 0 + fixuv, element, element, tilewidth, tileheight,
+                        0, 0 + j, 0 + i, 0 + fixuv, 0 + fixuv, element, element, tilewidth, tileheight,
+                        0, 1 * tilewidth / maptilewidth + j, 0 + i, 1 - fixuv, 0 + fixuv, element, element, tilewidth, tileheight,
+                        0, 1 * tilewidth / maptilewidth + j, 1 * tileheight / maptileheight + i, 1 - fixuv, 1 - fixuv, element, element, tilewidth, tileheight,
+                        0, 1 * tilewidth / maptilewidth + j, 1 * tileheight / maptileheight + i, 1 - fixuv, 1 - fixuv, element, element, tilewidth, tileheight,
+                        0, 0 + j, 1 * tileheight / maptileheight + i, 0 + fixuv, 1 - fixuv, element, element, tilewidth, tileheight,
+                        0, 0 + j, 0 + i, 0 + fixuv, 0 + fixuv, element, element, tilewidth, tileheight,
                     )
                 } else {
                     buffer.push(
-                        0, 0 + j, 0 + i                                                         , 0 + fixuv, 0 + fixuv, element, element, tilewidth, tileheight,
-                        0, 1 * tilewidth / maptilewidth + j, 0 + i                              , 2 - fixuv, 0 + fixuv, element, element, tilewidth, tileheight,
-                        0, 1 * tilewidth / maptilewidth + j, 1 * tileheight / maptileheight + i , 2 - fixuv, 2 - fixuv, element, element, tilewidth, tileheight,
-                        0, 1 * tilewidth / maptilewidth + j, 1 * tileheight / maptileheight + i , 2 - fixuv, 2 - fixuv, element, element, tilewidth, tileheight,
-                        0, 0 + j, 1 * tileheight / maptileheight + i                            , 0 + fixuv, 2 - fixuv, element, element, tilewidth, tileheight,
-                        0, 0 + j, 0 + i                                                         , 0 + fixuv, 0 + fixuv, element, element, tilewidth, tileheight,
+                        0, 0 + j, 0 + i, 0 + fixuv, 0 + fixuv, element, element, tilewidth, tileheight,
+                        0, 1 * tilewidth / maptilewidth + j, 0 + i, 2 - fixuv, 0 + fixuv, element, element, tilewidth, tileheight,
+                        0, 1 * tilewidth / maptilewidth + j, 1 * tileheight / maptileheight + i, 2 - fixuv, 2 - fixuv, element, element, tilewidth, tileheight,
+                        0, 1 * tilewidth / maptilewidth + j, 1 * tileheight / maptileheight + i, 2 - fixuv, 2 - fixuv, element, element, tilewidth, tileheight,
+                        0, 0 + j, 1 * tileheight / maptileheight + i, 0 + fixuv, 2 - fixuv, element, element, tilewidth, tileheight,
+                        0, 0 + j, 0 + i, 0 + fixuv, 0 + fixuv, element, element, tilewidth, tileheight,
                     )
                 }
             }

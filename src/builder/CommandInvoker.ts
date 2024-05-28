@@ -1,5 +1,6 @@
 import Camera from "../camera/Camera.js";
 import Command from "../command/Command.js";
+import GenerateObjectCmd from "../command/GenerateObjectCmd.js";
 import InitIslandDataCmd from "../command/InitIslandDataCmd.js";
 import InitMapCmd from "../command/InitMapCmd.js";
 import InputCmd from "../command/InputCmd.js";
@@ -57,6 +58,10 @@ export default class CommandInvoker implements Builder<Command> {
     prepareLayerCmd(data: WorkerMessage, layer: Layer) {
         if (data.type === "updateLayer") {
             this.command = new UpdateLayerCmd(layer, data.data)
+        } else if (data.type === "generateObject") {
+            this.command = new GenerateObjectCmd(layer, data.data.position, data.data.element)
+        } else if (data.type === "removeObject") {
+            this.command = new GenerateObjectCmd(layer, data.data.position, data.data.element)
         }
         return this;
     }

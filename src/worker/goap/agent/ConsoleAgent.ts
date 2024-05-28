@@ -1,13 +1,26 @@
 import Alea from "alea";
 import Agent from "./Agent.js";
-import { findPathToGround, findPathGroundTo, findPathToObject, removeStone as removeObject } from "../core/world.js";
+import { findPathToGround, findPathGroundTo, findPathToObject, removeStone as removeObject, generateStone } from "../core/world.js";
 import { ITEM_DATA, actions, goals, initialState } from "../core/data.js";
 import { createPlan } from "../core/planner.js";
 import { WorkerMessage } from "../../../device/Device.js";
 
+const rnd = Alea(666);
+export function pick<T>(choices: T[]): T {
+    return choices[Math.floor(choices.length * rnd.next())];
+}
 export default class ConsoleAgent implements Agent {
     constructor(private postmessage: (data: WorkerMessage) => void) {
-
+        for (let index = 0; index < 5; index++) {
+            const point = generateStone({ x: 32, y: 32 });
+            postmessage({
+                type: "generateObject",
+                data: {
+                    position: [point.x, point.y],
+                    element: pick(ITEM_DATA.Stone)
+                }
+            });
+        }
     }
     readonly npc = { x: 32, y: 32 };
     currentPlan?: ReturnType<typeof createPlan>;
@@ -42,6 +55,13 @@ export default class ConsoleAgent implements Agent {
             } else if (this.currentAction === "gatherStone") {
                 this.onAction(npc, () => {
                     removeObject(npc);
+                    this.postmessage({
+                        type: "removeObject",
+                        data: {
+                            position: [npc.x, npc.y],
+                            element: pick(ITEM_DATA.Transparent)
+                        }
+                    })
                 })
             } else if (this.currentAction === "rest") {
                 this.onAction(npc)
@@ -72,10 +92,10 @@ export default class ConsoleAgent implements Agent {
         const pos = path.shift();
         if (pos) {
             // setTimeout(() => {
-                this.npc.x = pos.x;
-                this.npc.y = pos.y;
-                this.postmessage({ type: "path", data: [[pos.x, pos.y]] })
-                this.onMoveAction({ npc, path, onComplete });
+            this.npc.x = pos.x;
+            this.npc.y = pos.y;
+            this.postmessage({ type: "path", data: [[pos.x, pos.y]] })
+            this.onMoveAction({ npc, path, onComplete });
             // }, 100);
         } else {
             const action = actions.find(action => action.label === this.currentAction)
