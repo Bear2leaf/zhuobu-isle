@@ -25,8 +25,8 @@ export default class InitIslandDataCmd implements Command {
         const chunks = chunk(this.data, gridsX * tileWidth * 4);
         for (let i = 0; i < connersY; i++) {
             for (let j = 0; j < connersX; j++) {
-                if (i === connersY - 1 || j === connersX - 1) {
-                    fields[connersY - i - 1][j] = BiomeColor.OCEAN;
+                if (i === gridsY || j === gridsX) {
+                    fields[i][j] = BiomeColor.OCEAN;
                 } else {
                     const colors0 = chunks[i * tileHeight][j * tileWidth * 4];
                     const colors1 = chunks[i * tileHeight][j * tileWidth * 4 + 1];
@@ -34,9 +34,9 @@ export default class InitIslandDataCmd implements Command {
                     const colors3 = chunks[i * tileHeight][j * tileWidth * 4 + 3];
                     const color = (colors0 << 16) | (colors1 << 8) | (colors2)
                     if (color === BiomeColor.OCEAN || color === BiomeColor.BEACH || color === BiomeColor.GRASSLAND) {
-                        fields[connersY - i - 1][j] = color;
+                        fields[i][j] = color;
                     } else {
-                        fields[connersY - i - 1][j] = BiomeColor.TEMPERATE_RAIN_FOREST;
+                        fields[i][j] = BiomeColor.TEMPERATE_RAIN_FOREST;
                     }
                 }
             }

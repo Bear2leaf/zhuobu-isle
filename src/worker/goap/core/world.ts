@@ -34,7 +34,7 @@ export function generateStone(from: Point): Point {
     if (valid) {
         stones[0] += 1;
         objectLayer[row][col] = ITEM_DATA.Stone[Math.floor(ITEM_DATA.Stone.length * rnd.next())];
-        return {y: row, x: col}
+        return { y: row, x: col }
     } else {
         return generateStone(from);
     }
@@ -56,8 +56,8 @@ export function findPathToObject(from: Point, to: number): Point[] | undefined {
     const groundPath = findPathGroundTo({ x: startNode.y, y: startNode.x }, { x: endNode.y, y: endNode.x });
     // console.log(from, to)
     // const graphA = new Graph(groundLayer);
-    // console.log(graphA.grid[Math.floor(startNode.x / 2)][Math.floor(startNode.y / 2)]);
-    // console.log(graphA.grid[Math.floor(endNode.x / 2)][Math.floor(endNode.y / 2)]);
+    // console.log(graphA.grid[Math.floor(startNode.x)][Math.floor(startNode.y)]);
+    // console.log(graphA.grid[Math.floor(endNode.x)][Math.floor(endNode.y)]);
     if (groundPath === undefined) {
         return;
     }
@@ -73,12 +73,12 @@ export function findPathToGround(from: Point, to: number): Point[] | undefined {
     const graph = new Graph(groundLayer);
     let startNode: GridNode | undefined;
     let endNode: GridNode | undefined;
-    let [x, y] = sampling.addRandomPoint().map(p => Math.floor(p / 2));
+    let [x, y] = sampling.addRandomPoint().map(p => Math.floor(p));
     while (graph.grid[y][x].weight !== to) {
-        [x, y] = sampling.addRandomPoint().map(p => Math.floor(p / 2));
+        [x, y] = sampling.addRandomPoint().map(p => Math.floor(p));
     }
     endNode = graph.grid[y][x]
-    startNode = graph.grid[Math.floor(from.y / 2)][Math.floor(from.x / 2)];
+    startNode = graph.grid[from.y][from.x];
     if (startNode === undefined || endNode === undefined) {
         return;
     }
@@ -86,7 +86,7 @@ export function findPathToGround(from: Point, to: number): Point[] | undefined {
     if (path.length === 0) {
         return;
     } else {
-        return path.map(p => ({ x: p.y * 2, y: p.x * 2 }))
+        return path.map(p => ({ x: p.y, y: p.x }))
     }
 }
 export function findPathGroundTo(from: Point, to: Point): Point[] | undefined {
@@ -94,8 +94,8 @@ export function findPathGroundTo(from: Point, to: Point): Point[] | undefined {
     const graph = new Graph(groundLayer);
     let startNode: GridNode | undefined;
     let endNode: GridNode | undefined;
-    startNode = graph.grid[Math.floor(from.y / 2)][Math.floor(from.x / 2)];
-    endNode = graph.grid[Math.floor(to.y / 2)][Math.floor(to.x / 2)];
+    startNode = graph.grid[from.y][from.x];
+    endNode = graph.grid[to.y][to.x];
     if (startNode === undefined || endNode === undefined) {
         return;
     }
@@ -103,7 +103,7 @@ export function findPathGroundTo(from: Point, to: Point): Point[] | undefined {
     if (path.length === 0) {
         return;
     } else {
-        return path.map(p => ({ x: p.y * 2, y: p.x * 2 }))
+        return path.map(p => ({ x: p.y, y: p.x }))
     }
 }
 export function removeStone(from: Point): void {

@@ -110,22 +110,32 @@ export default class Layer extends Drawable {
         const height = layer.height;
         const tilewidth = tiledMap.getTilesetWidth(layer);
         const tileheight = tiledMap.getTilesetHeight(layer);
-        const fixuv = 0.005;
-        console.log(maptilewidth, width, tilewidth)
+        const fixuv = 0.0;
         for (let i = 0; i < height; i++) {
             for (let j = 0; j < width; j++) {
                 const element = grid[i][j];
                 for (const interpreter of this.interpreters) {
                     interpreter.interpret(this, i * width + j)
                 }
-                buffer.push(
-                    0, 0 + j, 0 + i                                                         , 0 + fixuv, 0 + fixuv, element, element, tilewidth, tileheight,
-                    0, 1 * tilewidth / maptilewidth + j, 0 + i                              , 2 - fixuv, 0 + fixuv, element, element, tilewidth, tileheight,
-                    0, 1 * tilewidth / maptilewidth + j, 1 * tileheight / maptileheight + i , 2 - fixuv, 2 - fixuv, element, element, tilewidth, tileheight,
-                    0, 1 * tilewidth / maptilewidth + j, 1 * tileheight / maptileheight + i , 2 - fixuv, 2 - fixuv, element, element, tilewidth, tileheight,
-                    0, 0 + j, 1 * tileheight / maptileheight + i                            , 0 + fixuv, 2 - fixuv, element, element, tilewidth, tileheight,
-                    0, 0 + j, 0 + i                                                         , 0 + fixuv, 0 + fixuv, element, element, tilewidth, tileheight,
-                )
+                if (i === height - 1 || j === width - 1) {
+                    buffer.push(
+                        0, 0 + j, 0 + i                                                         , 0 + fixuv, 0 + fixuv, element, element, tilewidth, tileheight,
+                        0, 1 * tilewidth / maptilewidth + j, 0 + i                              , 1 - fixuv, 0 + fixuv, element, element, tilewidth, tileheight,
+                        0, 1 * tilewidth / maptilewidth + j, 1 * tileheight / maptileheight + i , 1 - fixuv, 1 - fixuv, element, element, tilewidth, tileheight,
+                        0, 1 * tilewidth / maptilewidth + j, 1 * tileheight / maptileheight + i , 1 - fixuv, 1 - fixuv, element, element, tilewidth, tileheight,
+                        0, 0 + j, 1 * tileheight / maptileheight + i                            , 0 + fixuv, 1 - fixuv, element, element, tilewidth, tileheight,
+                        0, 0 + j, 0 + i                                                         , 0 + fixuv, 0 + fixuv, element, element, tilewidth, tileheight,
+                    )
+                } else {
+                    buffer.push(
+                        0, 0 + j, 0 + i                                                         , 0 + fixuv, 0 + fixuv, element, element, tilewidth, tileheight,
+                        0, 1 * tilewidth / maptilewidth + j, 0 + i                              , 2 - fixuv, 0 + fixuv, element, element, tilewidth, tileheight,
+                        0, 1 * tilewidth / maptilewidth + j, 1 * tileheight / maptileheight + i , 2 - fixuv, 2 - fixuv, element, element, tilewidth, tileheight,
+                        0, 1 * tilewidth / maptilewidth + j, 1 * tileheight / maptileheight + i , 2 - fixuv, 2 - fixuv, element, element, tilewidth, tileheight,
+                        0, 0 + j, 1 * tileheight / maptileheight + i                            , 0 + fixuv, 2 - fixuv, element, element, tilewidth, tileheight,
+                        0, 0 + j, 0 + i                                                         , 0 + fixuv, 0 + fixuv, element, element, tilewidth, tileheight,
+                    )
+                }
             }
         }
         this.buffer = buffer;

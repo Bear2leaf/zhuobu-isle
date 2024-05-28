@@ -5,9 +5,13 @@ import astar, { Graph } from "javascript-astar";
 import { chunk } from "lodash";
 import Tilemap from "../tiled/Tilemap.js";
 import { createPlan } from "./goap/core/planner.js";
-import { initialState, actions, goals } from "./goap/core/data.js";
+import { initialState, actions, goals, ITEM_DATA } from "./goap/core/data.js";
 import { EmbeddedTileset } from "@kayahr/tiled";
 import Alea from "alea";
+import { generateStone, initLayers } from "./goap/core/world.js";
+import ConsoleAgent from "./goap/agent/ConsoleAgent.js";
+import AgentView from "./goap/view/AgentView.js";
+import WorldView from "./goap/view/WorldView.js";
 declare const worker: WechatMinigame.Worker;
 let device: WorkerDevice;
 if (typeof worker === 'undefined') {
@@ -67,6 +71,8 @@ device.onmessage = function (message) {
     const gridsY = tiled.getHeight();
     const grid: number[][] = new Array(gridsY).fill([])
     grid.forEach((col, i, arr) => arr[i] = new Array(gridsX).fill(0));
+    const objectGrid: number[][] = new Array(gridsY).fill([])
+    objectGrid.forEach((col, i, arr) => arr[i] = new Array(gridsX).fill(pick(ITEM_DATA.Transparent)));
     for (let i = 0; i < gridsY; i++) {
       for (let j = 0; j < gridsX; j++) {
         const tr = biomeFields[i][j + 1];
@@ -77,10 +83,25 @@ device.onmessage = function (message) {
         const blKey = BiomeColor[bl];
         const rbKey = BiomeColor[rb];
         const ltKey = BiomeColor[lt];
-        grid[i][j] = pick(configToTile[`${trKey}-${rbKey}-${blKey}-${ltKey}`]);
+        const config = `${trKey}-${rbKey}-${blKey}-${ltKey}`;
+        grid[i][j] = pick(configToTile[config]);
       }
     }
     device.postmessage({ type: "updateLayer", data: grid })
+    initLayers(grid, objectGrid)
+    const agent = new ConsoleAgent();
+    const viewer = new AgentView(agent);
+    const worldViewer = new WorldView(agent);
+    for (let index = 0; index < 5; index++) {
+        generateStone({x: 32, y: 32});
+    }
+    setInterval(() => {
+        // console.clear();
+        // worldViewer.update();
+        agent.update();
+        // viewer.update();
+    }, 20);
+    
   }
 }
 const rnd = Alea(666);
