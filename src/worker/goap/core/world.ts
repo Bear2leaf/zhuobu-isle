@@ -23,7 +23,12 @@ export function initLayers(groundLayer: number[][] = groundLayerRaw, objectLayer
             const element = groundLayer[i][j];
             groundLayer[i][j] = ITEM_DATA.Water.indexOf(element) !== -1 ? 0 : element
         }
-
+    }
+    for (let i = 0; i < groundLayer.length; i++) {
+        for (let j = 0; j < groundLayer[i].length; j++) {
+            const element = groundLayer[i][j];
+            objectLayer[i][j] = !element ? 0 : objectLayer[i][j]
+        }
     }
 }
 export function generateStone(from: Point): Point {
@@ -65,7 +70,9 @@ export function findPathToObject(from: Point, to: number): Point[] | undefined {
     if (path.length === 0) {
         return;
     } else {
-        return path.map(p => ({ x: p.y, y: p.x }))
+        const result = path.map(p => ({ x: p.y, y: p.x }));
+        result.unshift(from)
+        return result;
     }
 }
 export function findPathToGround(from: Point, to: number): Point[] | undefined {
@@ -86,7 +93,9 @@ export function findPathToGround(from: Point, to: number): Point[] | undefined {
     if (path.length === 0) {
         return;
     } else {
-        return path.map(p => ({ x: p.y, y: p.x }))
+        const result = path.map(p => ({ x: p.y, y: p.x }));
+        result.unshift(from)
+        return result;
     }
 }
 export function findPathGroundTo(from: Point, to: Point): Point[] | undefined {
@@ -103,7 +112,9 @@ export function findPathGroundTo(from: Point, to: Point): Point[] | undefined {
     if (path.length === 0) {
         return;
     } else {
-        return path.map(p => ({ x: p.y, y: p.x }))
+        const result = path.map(p => ({ x: p.y, y: p.x }));
+        result.unshift(from)
+        return result;
     }
 }
 export function removeStone(from: Point): void {

@@ -7,7 +7,7 @@ export default class Idle implements State {
     handle(): void {
         const character = this.character;
         character.updateAnimation(0, 0)
-        if (character.getPath().length >= 2) {
+        if (character.getPathLength() >= 2) {
             character.state = new Goto(character);
         }
     }

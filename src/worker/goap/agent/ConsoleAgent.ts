@@ -3,9 +3,12 @@ import Agent from "./Agent.js";
 import { findPathToGround, findPathGroundTo, findPathToObject, removeStone as removeObject } from "../core/world.js";
 import { ITEM_DATA, actions, goals, initialState } from "../core/data.js";
 import { createPlan } from "../core/planner.js";
+import { WorkerMessage } from "../../../device/Device.js";
 
 export default class ConsoleAgent implements Agent {
+    constructor(private postmessage: (data: WorkerMessage) => void) {
 
+    }
     readonly npc = { x: 32, y: 32 };
     currentPlan?: ReturnType<typeof createPlan>;
     iteration = 0;
@@ -26,6 +29,7 @@ export default class ConsoleAgent implements Agent {
             if (this.currentAction === "goToWater") {
                 this.onMoveAction({ npc, path: findPathToGround(npc, ITEM_DATA.NearWater[Math.floor(this.rnd.next() * ITEM_DATA.NearWater.length)]) });
             } else if (this.currentAction === "goToStone") {
+
                 const config = { npc, path: findPathToObject(npc, ITEM_DATA.Stone[Math.floor(this.rnd.next() * ITEM_DATA.Stone.length)]) };
                 this.onMoveAction(config);
             } else if (this.currentAction === "walkAround") {
@@ -67,11 +71,12 @@ export default class ConsoleAgent implements Agent {
         }
         const pos = path.shift();
         if (pos) {
-            setTimeout(() => {
+            // setTimeout(() => {
                 this.npc.x = pos.x;
                 this.npc.y = pos.y;
+                this.postmessage({ type: "path", data: [[pos.x, pos.y]] })
                 this.onMoveAction({ npc, path, onComplete });
-            }, 20);
+            // }, 100);
         } else {
             const action = actions.find(action => action.label === this.currentAction)
             if (!action) {

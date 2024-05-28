@@ -2,15 +2,24 @@ import { vec2 } from "gl-matrix";
 import Layer from "./Layer.js";
 import Idle from "../../state/Idle.js";
 import State from "../../state/State.js";
+import Camera from "../../camera/Camera.js";
 export default class Character extends Layer {
+    private camera?: Camera;
+    setCamera(camera: Camera) {
+        this.camera = camera;
+    }
     private readonly path: vec2[] = []
     state: State = new Idle(this);
     delta: number = 0;
     addPath(points: vec2[]) {
-        this.path.splice(0, this.path.length, ...points);
+        this.path.push(...points);
     }
-    getPath(): vec2[] {
-        return this.path;
+    getPathLength() {
+        return this.path.length;
+    }
+    splicePath(): vec2[] {
+        const path = this.path.splice(0, this.path.length);
+        return path;
     }
     update(elapsed: number, delta: number): void {
         super.update(elapsed, delta);
@@ -27,6 +36,7 @@ export default class Character extends Layer {
         this.feedback?.updateBuffer(37, [0 + x, 2 + y]);
         this.feedback?.updateBuffer(46, [0 + x, 0 + y]);
         this.textRenderer?.updatePosition(data);
+        this.camera?.setPositionFromPosition([-(x - 4) * 100, -(y - 4) * 100])
     }
     updateAnimation(start: number, end: number) {
         this.feedback?.updateBuffer(5, [start, end]);

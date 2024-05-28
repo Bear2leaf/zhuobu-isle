@@ -89,7 +89,7 @@ device.onmessage = function (message) {
     }
     device.postmessage({ type: "updateLayer", data: grid })
     initLayers(grid, objectGrid)
-    const agent = new ConsoleAgent();
+    const agent = new ConsoleAgent(device.postmessage.bind(device));
     const viewer = new AgentView(agent);
     const worldViewer = new WorldView(agent);
     for (let index = 0; index < 5; index++) {
@@ -100,7 +100,7 @@ device.onmessage = function (message) {
         // worldViewer.update();
         agent.update();
         // viewer.update();
-    }, 20);
+    }, 1000);
     
   }
 }

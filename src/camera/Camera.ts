@@ -45,6 +45,9 @@ export default class Camera {
     setPositionFromTiled(tiledMap: Tilemap) {
         vec2.copy(this.cameraPosition,  tiledMap.getCameraPosition())
     }
+    setPositionFromPosition(position: vec2) {
+        vec2.copy(this.cameraPosition,  position)
+    }
     updateWindowInfo(width: number, height: number) {
         this.windowInfo[0] = width
         this.windowInfo[1] = height;

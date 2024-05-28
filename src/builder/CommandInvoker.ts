@@ -122,6 +122,8 @@ export default class CommandInvoker implements Builder<Command> {
                 new InitIslandDataCmd(pixels, tiled, sendmessage).execute();
             })
         }
+        const character = scene.getComponents(Character)[0];
+        character.setCamera(camera);
         handlers.push((data) => {
             for (const layer of scene.getComponents(Layer)) {
                 if (layer instanceof Character) {

@@ -2,7 +2,7 @@ import { pad } from "lodash";
 import { stones } from "../core/world.js";
 import View from "./View.js";
 import Agent from "../agent/Agent.js";
-import { objectLayerRaw } from "../core/data.js";
+import { groundLayerRaw, objectLayerRaw } from "../core/data.js";
 
 export default class WorldView implements View {
     constructor(private readonly agent: Agent) {
@@ -18,10 +18,10 @@ export default class WorldView implements View {
 
         // for (let i = 0; i < groundLayerRaw.length; i++) {
         //     for (let j = 0; j < groundLayerRaw[i].length; j++) {
-        //         if (Math.floor(this.agent.npc.x / 2) === j && Math.floor(this.agent.npc.y / 2) === i) {
+        //         if (Math.floor(this.agent.npc.x) === j && Math.floor(this.agent.npc.y) === i) {
         //             msg += pad(`🐱`, 3);
         //         } else {
-        //             msg += pad(`${groundLayerRaw[i][j]}`, 4);
+        //             msg += pad(`${groundLayerRaw[i][j].toString(16)}`, 4);
         //         }
 
         //     }

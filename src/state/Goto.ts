@@ -12,12 +12,15 @@ function fract(x0: number) {
 export default class Goto implements State {
     private accumulator = 0;
     private readonly duration = 100;
-    constructor(private readonly character: Character) { }
+    private readonly currentPath: vec2[] = []
+    constructor(private readonly character: Character) {
+        this.currentPath = character.splicePath();
+    }
     handle(): void {
         const character = this.character;
         this.accumulator += character.delta;
-        const point0 = character.getPath()[Math.floor(this.accumulator / this.duration)];
-        const point1 = character.getPath()[Math.floor(this.accumulator / this.duration) + 1];
+        const point0 = this.currentPath[Math.floor(this.accumulator / this.duration)];
+        const point1 = this.currentPath[Math.floor(this.accumulator / this.duration) + 1];
         if (!point0 || !point1) {
             character.state = new Useobject(character);
             return;
