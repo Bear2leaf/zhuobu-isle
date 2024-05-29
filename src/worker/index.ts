@@ -22,7 +22,7 @@ if (typeof worker === 'undefined') {
 let tiled: Tilemap;
 let graph: Graph;
 device.onmessage = function (message) {
-  console.log("message from main", message);
+  // console.log("message from main", message);
   if (message.type === "hello") {
   } else if (message.type === "initTileMap") {
     tiled = new Tilemap(

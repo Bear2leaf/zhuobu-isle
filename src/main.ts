@@ -3,14 +3,14 @@ import Input from './input/Input';
 import Camera from './camera/Camera';
 import Clock from './clock/Clock.js';
 import SceneBuilder from './builder/SceneBuilder.js';
-import CommandInvoker from './builder/CommandInvoker.js';
-import TiledMapBuilder from './builder/TiledMapBuilder.js';
+import CommandBuilder from './builder/CommandBuilder.js';
+import TilemapBuilder from './builder/TilemapBuilder.js';
 import GameobjectBuilder from './builder/GameobjectBuilder.js';
 import AudioManager from './audio/AudioManager.js';
 async function start(device: Device) {
 	const onmessageHandlers: ((data: WorkerMessage) => void)[] = [];
 	device.onmessage = (data) => {
-		console.log("message from worker", data);
+		// console.log("message from worker", data);
 		onmessageHandlers.forEach(handler => handler(data))
 	};
 	device.createWorker("dist/worker/index.js");
@@ -23,7 +23,7 @@ async function start(device: Device) {
 	const input = new Input(device);
 	const camera = new Camera();
 	const clock = new Clock(device);
-	const map = await new TiledMapBuilder()
+	const map = await new TilemapBuilder()
 		.load(device).then(builder => builder.parse().build());
 	camera.setPositionFromTiled(map);
 	const gameobjectBuilder = new GameobjectBuilder()
@@ -38,7 +38,7 @@ async function start(device: Device) {
 		.initIsland(gameobjectBuilder)
 		.load(device)
 		.then(builder => builder.init().build());
-	new CommandInvoker()
+	new CommandBuilder()
 		.setCamera(camera)
 		.setHandlers(onmessageHandlers)
 		.setScene(scene)

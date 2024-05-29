@@ -16,7 +16,7 @@ import Scene from "../scene/Scene.js";
 import Tilemap from "../tiled/Tilemap.js";
 import Builder from "./Builder.js";
 
-export default class CommandInvoker implements Builder<Command> {
+export default class CommandBuilder implements Builder<Command> {
     private command?: Command;
     private sendmessage?: (data: MainMessage) => void;
     private camera?: Camera;

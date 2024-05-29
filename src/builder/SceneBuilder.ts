@@ -1,4 +1,3 @@
-import { Map } from "@kayahr/tiled";
 import Scene from "../scene/Scene.js";
 import MapScene from "../scene/MapScene.js";
 import Builder from "./Builder.js";

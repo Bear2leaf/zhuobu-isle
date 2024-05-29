@@ -3,7 +3,7 @@ import Device from "../device/Device.js";
 import Builder from "./Builder.js";
 import Tilemap from "../tiled/Tilemap.js";
 
-export default class TiledMapBuilder implements Builder<Tilemap> {
+export default class TilemapBuilder implements Builder<Tilemap> {
     private tiledMap?: Tilemap;
     private map?: Map;
     async load(device: Device) {
