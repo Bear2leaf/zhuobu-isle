@@ -66,7 +66,7 @@ export default class Layer extends Drawable {
         const height = layer.height;
         const tilewidth = tiledMap.getTilesetWidth(layer);
         const tileheight = tiledMap.getTilesetHeight(layer);
-        const fixuv = 0.005;
+        const fixuv = 0.0; // use 0.005 to fix gaps
         for (let i = 0; i < height; i++) {
             for (let j = 0; j < width; j++) {
                 const element = data[i * width + j] - firstgid;

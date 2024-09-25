@@ -516,11 +516,11 @@
         {
          "columns":18,
          "firstgid":2261,
-         "image":"..\/image\/gfx\/wang3c_pure_border.png",
+         "image":"..\/image\/gfx\/wang3c_pure.png",
          "imageheight":576,
          "imagewidth":576,
          "margin":0,
-         "name":"wang3c_pure_border",
+         "name":"wang3c_pure",
          "spacing":0,
          "tilecount":324,
          "tileheight":32,

@@ -11,7 +11,7 @@ function fract(x0: number) {
 }
 export default class Goto implements State {
     private accumulator = 0;
-    private readonly duration = 100;
+    private readonly duration = 500;
     private readonly currentPath: vec2[] = []
     constructor(private readonly character: Character) {
         this.currentPath = character.splicePath();
