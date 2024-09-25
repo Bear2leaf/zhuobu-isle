@@ -2,7 +2,7 @@ import { vec2 } from "gl-matrix";
 import TileHouse from "../../tiled/TileHouse.js";
 import TileInterpreter from "../../tiled/TileInterpreter.js";
 import Tilemap from "../../tiled/Tilemap.js";
-import Drawable from "./Drawable";
+import Drawable from "./Drawable.js";
 
 export default class Layer extends Drawable {
     protected tiledMap?: Tilemap;
